@@ -1101,10 +1101,10 @@
   #endif
 
   // BACK menu items keep the highlight at the top
-  //#define TURBO_BACK_MENU_ITEM
+  #define TURBO_BACK_MENU_ITEM // 20210105 testing function to see if it impoves UI ----------------------------------------------------------------------------------------------
 
   // Add a mute option to the LCD menu
-  #define SOUND_MENU_ITEM // 20201231 enabled menu item to queit speaker (default is to have sonunds) ----------------------------------------------------------------
+  #define SOUND_MENU_ITEM // 20201231 enabled menu item to queit speaker (default is to have sonunds) ----------------------------------------------------------------------------
 
   /**
    * LED Control Menu
@@ -3324,7 +3324,7 @@
  * Add G-codes M810-M819 to define and run G-code macros.
  * Macros are not saved to EEPROM.
  */
-//#define GCODE_MACROS
+#define GCODE_MACROS // 20210105 enabled to test gcode macro functionality ----------------------------------------------------------------------------------------------
 #if ENABLED(GCODE_MACROS)
   #define GCODE_MACROS_SLOTS       5  // Up to 10 may be used
   #define GCODE_MACROS_SLOT_SIZE  50  // Maximum length of a single macro
