@@ -132,7 +132,7 @@
 #endif
 
 // Name displayed in the LCD "Ready" message and Info menu
-#define CUSTOM_MACHINE_NAME "Replicator v0.5b" // does not appear to work if defined in Version.h -------------------------------------------------------------------------------
+#define CUSTOM_MACHINE_NAME "Replicator v0.5c" // does not appear to work if defined in Version.h -------------------------------------------------------------------------------
 
 // Printer's unique ID, used by some programs to dffferentiate between machines.
 // Choose your own or use a service like https://www.uuidgenerator.net/version4
@@ -1435,12 +1435,12 @@ M500
 #endif
 
 // Add a menu item to move between bed corners for manual bed adjustment
-#define LEVEL_BED_CORNERS                 // 20200911 enabled & is VERY useful for first-leveling ------------------------------------------------------------------------------
+#define LEVEL_BED_CORNERS                 // 20200911 enabled & is VERY useful for first-leveling ----------------------------------------------------------------------------------
 
 #if ENABLED(LEVEL_BED_CORNERS)
-  #define LEVEL_CORNERS_INSET_LFRB { 30, 30, 30, 30 } // (mm) Left, Front, Right, Back insets
-  #define LEVEL_CORNERS_HEIGHT      0.0   // (mm) Z height of nozzle at leveling points
-  #define LEVEL_CORNERS_Z_HOP       4.0   // (mm) Z height of nozzle between leveling points
+  #define LEVEL_CORNERS_INSET_LFRB { 30, 30, 50, 10 } // (mm) Left, Front, Right, Back insets // (0,40),(170,210)
+  #define LEVEL_CORNERS_HEIGHT      3.0   // (mm) Z height of nozzle at leveling points      // 20210105 changed from default 0.0 to 3 ---------------------------------------------
+  #define LEVEL_CORNERS_Z_HOP       4.0   // (mm) Z height of nozzle between leveling points // 20210105 changed from default 4.0 to 10 --------------------------------------------
   //#define LEVEL_CENTER_TOO              // Move to the center after the last corner
 #endif
 
@@ -1478,7 +1478,7 @@ M500
 #endif
 
 // Homing speeds (mm/min)
-#define HOMING_FEEDRATE_MM_M { (60*60), (60*60), (6*60) } // 20210102 was (20*60), (20*60), (4*60) - 20210105 changing did not resolve homing error ------------------------------
+#define HOMING_FEEDRATE_MM_M { (150*60), (150*60), (6*60) } // 20210102 was (20*60), (20*60), (4*60) - 20210105 changing did not resolve homing error ------------------------------
 
 // Validate that endstops are triggered on homing moves
 #define VALIDATE_HOMING_ENDSTOPS
