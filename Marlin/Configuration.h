@@ -132,7 +132,7 @@
 #endif
 
 // Name displayed in the LCD "Ready" message and Info menu
-#define CUSTOM_MACHINE_NAME "Replicator v0.5d" // does not appear to work if defined in Version.h -------------------------------------------------------------------------------
+#define CUSTOM_MACHINE_NAME "Replicator v0.5g" // does not appear to work if defined in Version.h -------------------------------------------------------------------------------
 
 // Printer's unique ID, used by some programs to dffferentiate between machines.
 // Choose your own or use a service like https://www.uuidgenerator.net/version4
@@ -1016,7 +1016,7 @@
 #define PROBING_MARGIN 10
 
 // X and Y axis travel speed (mm/min) between probes
-#define XY_PROBE_SPEED (150*60) // 20201221 default is  133 - 20210105 changing did not resolve homing error ---------------------------------------------------------------------
+#define XY_PROBE_SPEED (150*60) // 20201221 default is  133 - 20210105 changing did not resolve homing error - -------------------------------------------------------------------
 
 // Feedrate (mm/min) for the first approach when double-probing (MULTIPLE_PROBING == 2)
 #define Z_PROBE_SPEED_FAST (8*60) // 20201220 was 4*60 - 20210105 changing did not resolve homing error --------------------------------------------------------------------------
@@ -1438,9 +1438,9 @@ M500
 #define LEVEL_BED_CORNERS                 // 20200911 enabled & is VERY useful for first-leveling ----------------------------------------------------------------------------------
 
 #if ENABLED(LEVEL_BED_CORNERS)
-  #define LEVEL_CORNERS_INSET_LFRB { 40, 40, 50, 10 } // (mm) Left, Front, Right, Back insets // (0,40),(170,210)
+  #define LEVEL_CORNERS_INSET_LFRB { -3, 30, 50, 10 } // (mm) Left, Front, Right, Back insets // (-3,40),(170,210) -----------------------------------------------------------------
   #define LEVEL_CORNERS_HEIGHT      5.0   // (mm) Z height of nozzle at leveling points      // 20210105 changed from default 0.0 to 5 ---------------------------------------------
-  #define LEVEL_CORNERS_Z_HOP       10.0  // (mm) Z height of nozzle between leveling points // 20210105 changed from default 4.0 to 10 --------------------------------------------
+  #define LEVEL_CORNERS_Z_HOP       12.5  // (mm) Z height of nozzle between leveling points // 20210105 changed from default 4.0 to 12.5 ------------------------------------------
   //#define LEVEL_CENTER_TOO              // Move to the center after the last corner
 #endif
 
@@ -1478,7 +1478,7 @@ M500
 #endif
 
 // Homing speeds (mm/min)
-#define HOMING_FEEDRATE_MM_M { (150*60), (150*60), (6*60) } // 20210102 was (20*60), (20*60), (4*60) - 20210105 changing did not resolve homing error ------------------------------
+#define HOMING_FEEDRATE_MM_M { (120*60), (120*60), (6*60) } // 20210102 was (20*60), (20*60), (4*60) - 150 too fast - 20210105 changing did not resolve homing error -------------
 
 // Validate that endstops are triggered on homing moves
 #define VALIDATE_HOMING_ENDSTOPS
