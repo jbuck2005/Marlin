@@ -132,7 +132,7 @@
 #endif
 
 // Name displayed in the LCD "Ready" message and Info menu
-#define CUSTOM_MACHINE_NAME "Replicator v0.5c" // does not appear to work if defined in Version.h -------------------------------------------------------------------------------
+#define CUSTOM_MACHINE_NAME "Replicator v0.5d" // does not appear to work if defined in Version.h -------------------------------------------------------------------------------
 
 // Printer's unique ID, used by some programs to dffferentiate between machines.
 // Choose your own or use a service like https://www.uuidgenerator.net/version4
@@ -1019,7 +1019,7 @@
 #define XY_PROBE_SPEED (150*60) // 20201221 default is  133 - 20210105 changing did not resolve homing error ---------------------------------------------------------------------
 
 // Feedrate (mm/min) for the first approach when double-probing (MULTIPLE_PROBING == 2)
-#define Z_PROBE_SPEED_FAST (6*60) // 20201220 was 4*60 - 20210105 changing did not resolve homing error --------------------------------------------------------------------------
+#define Z_PROBE_SPEED_FAST (8*60) // 20201220 was 4*60 - 20210105 changing did not resolve homing error --------------------------------------------------------------------------
 
 // Feedrate (mm/min) for the "accurate" probe of each point
 #define Z_PROBE_SPEED_SLOW (Z_PROBE_SPEED_FAST / 2)
@@ -1438,9 +1438,9 @@ M500
 #define LEVEL_BED_CORNERS                 // 20200911 enabled & is VERY useful for first-leveling ----------------------------------------------------------------------------------
 
 #if ENABLED(LEVEL_BED_CORNERS)
-  #define LEVEL_CORNERS_INSET_LFRB { 30, 30, 50, 10 } // (mm) Left, Front, Right, Back insets // (0,40),(170,210)
-  #define LEVEL_CORNERS_HEIGHT      3.0   // (mm) Z height of nozzle at leveling points      // 20210105 changed from default 0.0 to 3 ---------------------------------------------
-  #define LEVEL_CORNERS_Z_HOP       4.0   // (mm) Z height of nozzle between leveling points // 20210105 changed from default 4.0 to 10 --------------------------------------------
+  #define LEVEL_CORNERS_INSET_LFRB { 40, 40, 50, 10 } // (mm) Left, Front, Right, Back insets // (0,40),(170,210)
+  #define LEVEL_CORNERS_HEIGHT      5.0   // (mm) Z height of nozzle at leveling points      // 20210105 changed from default 0.0 to 5 ---------------------------------------------
+  #define LEVEL_CORNERS_Z_HOP       10.0  // (mm) Z height of nozzle between leveling points // 20210105 changed from default 4.0 to 10 --------------------------------------------
   //#define LEVEL_CENTER_TOO              // Move to the center after the last corner
 #endif
 
