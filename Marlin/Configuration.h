@@ -1111,11 +1111,7 @@
 //#define DELAY_BEFORE_PROBING 200  // (ms) To prevent vibrations from triggering piezo sensors
 
 // Require minimum nozzle and/or bed temperature for probing
-<<<<<<< HEAD
 //#define PREHEAT_BEFORE_PROBING // 20201220 enabled - disabled shortly after as it did not seem to turn off heat after probing -------------------------------------------------
-=======
-//#define PREHEAT_BEFORE_PROBING
->>>>>>> d2969d2326f18470583a7e9c6cd7e608e471afd7
 #if ENABLED(PREHEAT_BEFORE_PROBING)
 //  #define PROBING_NOZZLE_TEMP 120   // (°C) Only applies to E0 at this time 20201220 disabled since nozzle temp did not seem to matter before ---------------------------------
   #define PROBING_BED_TEMP     60 // 20201220 was 50 ----------------------------------------------------------------------------------------------------------------------------
