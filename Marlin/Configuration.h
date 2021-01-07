@@ -121,7 +121,7 @@
  *
  * :[2400, 9600, 19200, 38400, 57600, 115200, 250000, 500000, 1000000]
  */
-#define BAUDRATE 115200 // 20201221 was 115200 20210105 back to 115200 to test if it is root cause of firmware errors -----------------------------------------------------------
+#define BAUDRATE 250000 // 20201221 was 115200 20210107 changing back to 115200 was not root cause of firmware errors when tilting mesh ----------------------------------------
 
 // Enable the Bluetooth serial interface on AT90USB devices
 //#define BLUETOOTH
@@ -132,7 +132,7 @@
 #endif
 
 // Name displayed in the LCD "Ready" message and Info menu
-#define CUSTOM_MACHINE_NAME "Replicator v0.5j" // does not appear to work if defined in Version.h -------------------------------------------------------------------------------
+#define CUSTOM_MACHINE_NAME "Replicator v0.5k" // does not appear to work if defined in Version.h -------------------------------------------------------------------------------
 
 // Printer's unique ID, used by some programs to dffferentiate between machines.
 // Choose your own or use a service like https://www.uuidgenerator.net/version4
@@ -445,7 +445,7 @@
 
 // Below this temperature the heater will be switched off
 // because it probably indicates a broken thermistor wire.
-#define HEATER_0_MINTEMP   5 // 20210102 changed from default 5 20210105 back to default to see if it resolved firmware failures --------------------------------
+#define HEATER_0_MINTEMP   5 // 20210102 changed from default 5 20210107 back to default did not resolve firmware failures ---------------------------------------------------------
 #define HEATER_1_MINTEMP   5
 #define HEATER_2_MINTEMP   5
 #define HEATER_3_MINTEMP   5
@@ -453,12 +453,12 @@
 #define HEATER_5_MINTEMP   5
 #define HEATER_6_MINTEMP   5
 #define HEATER_7_MINTEMP   5
-#define BED_MINTEMP        5 // 20210102 changed from default 5 20210105 back to default to see if it resolved firmware failures --------------------------------
+#define BED_MINTEMP        5 // 20210102 changed from default 5 20210107 back to default did not resolve firmware failures ---------------------------------------------------------
 
 // Above this temperature the heater will be switched off.
 // This can protect components from overheating, but NOT from shorts and failures.
 // (Use MINTEMP for thermistor short/failure protection.)
-#define HEATER_0_MAXTEMP 275 // 20210112 changed from default 275 ------------------------------------------------------------------------------------------------
+#define HEATER_0_MAXTEMP 275 // 20210112 changed from default 275 -----------------------------------------------------------------------------------------------------------------
 #define HEATER_1_MAXTEMP 275
 #define HEATER_2_MAXTEMP 275
 #define HEATER_3_MAXTEMP 275
@@ -466,7 +466,7 @@
 #define HEATER_5_MAXTEMP 275
 #define HEATER_6_MAXTEMP 275
 #define HEATER_7_MAXTEMP 275
-#define BED_MAXTEMP      100 // 20210102 changed from default 125 ------------------------------------------------------------------------------------------------
+#define BED_MAXTEMP      100 // 20210102 changed from default 125 ----------------------------------------------------------------------------------------------------------------
 
 //===========================================================================
 //============================= PID Settings ================================
@@ -622,7 +622,7 @@
 // extra connectors. Leave undefined any used for non-endstop and non-probe purposes.
 #define USE_XMIN_PLUG
 #define USE_YMIN_PLUG
-#define USE_ZMIN_PLUG // 20210102 should this be disabled for filament runout sensing? ---------------------------------------------------------------------------
+#define USE_ZMIN_PLUG // 20210102 should this be disabled for filament runout sensing? ---------------------------------------------------------------------------------------------
 //#define USE_XMAX_PLUG
 //#define USE_YMAX_PLUG
 //#define USE_ZMAX_PLUG
@@ -850,10 +850,10 @@
  * The probe replaces the Z-MIN endstop and is used for Z homing.
  * (Automatically enables USE_PROBE_FOR_Z_HOMING.)
  */
-//#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN // disabled 20201012 - this appears to use the Z stop port for probing -------------------------------------------------
+//#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN // disabled 20201012 - this appears to use the Z stop port for probing ----------------------------------------------------------------
 
 // Force the use of the probe for Z-axis homing
-#define USE_PROBE_FOR_Z_HOMING // 20200915 --------------------------------------------------------------------------------------------------------------------------------------
+#define USE_PROBE_FOR_Z_HOMING // 20200915 -----------------------------------------------------------------------------------------------------------------------------------------
 
 /**
  * Z_MIN_PROBE_PIN
@@ -1009,20 +1009,20 @@
 // can be set by M851 X Y Z // 20200910 ; example M851 Z-0.6750
 #define NOZZLE_TO_PROBE_OFFSET { -41, -11, -1.44 }    // 20201221 using new Z probe offset wizard & direct drive plate on a hot bed, cold nozzle ---------------------------------
                                                       // measured 0.67 via https://marlinfw.org/docs/gcode/M851.html -------------------------------------------------------------
-                                                      // was set to 1.425 and worked until 20201220 (increased to 1.44 after UBL proven "wokring" well)
+                                                      // 20210107 -1.44 has been working flawlessly for PLA
 
 // Most probes should stay away from the edges of the bed, but
 // with NOZZLE_AS_PROBE this can be negative for a wider probing area.
 #define PROBING_MARGIN 10
 
 // X and Y axis travel speed (mm/min) between probes
-#define XY_PROBE_SPEED (150*60) // 20201221 default is  133 - 20210105 changing did not resolve homing error - -------------------------------------------------------------------
+#define XY_PROBE_SPEED (150*60) // 20201221 default is  133 - 20210105 changing did not resolve homing error ---------------------------------------------------------------------
 
 // Feedrate (mm/min) for the first approach when double-probing (MULTIPLE_PROBING == 2)
 #define Z_PROBE_SPEED_FAST (8*60) // 20201220 was 4*60 - 20210105 changing did not resolve homing error --------------------------------------------------------------------------
 
 // Feedrate (mm/min) for the "accurate" probe of each point
-#define Z_PROBE_SPEED_SLOW (Z_PROBE_SPEED_FAST / 2)
+#define Z_PROBE_SPEED_SLOW (Z_PROBE_SPEED_FAST / 4) // 20210107 changed from 2 to 4 to respect original ratio (4*60)/2 = 120 thus, (8*60)/4 = 120 --------------------------------
 
 /**
  * Probe Activation Switch
@@ -1478,7 +1478,7 @@ M500
 #endif
 
 // Homing speeds (mm/min)
-#define HOMING_FEEDRATE_MM_M { (120*60), (120*60), (6*60) } // 20210102 was (20*60), (20*60), (4*60) - 150 too fast - 20210105 changing did not resolve homing error -------------
+#define HOMING_FEEDRATE_MM_M { (120*60), (120*60), (6*60) } // 20210102 was (20*60), (20*60), (4*60) - 150 too fast --------------------------------------------------------------
 
 // Validate that endstops are triggered on homing moves
 #define VALIDATE_HOMING_ENDSTOPS
@@ -1899,8 +1899,8 @@ M500
 // Note: Test audio output with the G-Code:
 //  M300 S<frequency Hz> P<duration ms>
 //
-//#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
-//#define LCD_FEEDBACK_FREQUENCY_HZ 5000
+#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2 // 20210107 changed from default 2 to 0 to disable sound by default -------------------------------------------------------------------------------------------------
+#define LCD_FEEDBACK_FREQUENCY_HZ 5          // 20210107 changed from default 5000 to 0 to disable sound by default ----------------------------------------------------------------------------------------------
 
 //=============================================================================
 //======================== LCD / Controller Selection =========================
