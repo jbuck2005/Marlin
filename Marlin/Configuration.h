@@ -132,7 +132,7 @@
 #endif
 
 // Name displayed in the LCD "Ready" message and Info menu
-#define CUSTOM_MACHINE_NAME "Dad's Build-o-matic v0.1a" // 20210106 --------------------------------------------------------------------------------------------------
+#define CUSTOM_MACHINE_NAME "Dad's Build-o-matic v0.1a" // 20210107 --------------------------------------------------------------------------------------------------
 
 // Printer's unique ID, used by some programs to differentiate between machines.
 // Choose your own or use a service like https://www.uuidgenerator.net/version4
@@ -445,7 +445,7 @@
 
 // Below this temperature the heater will be switched off
 // because it probably indicates a broken thermistor wire.
-#define HEATER_0_MINTEMP   15 // 20210105 changed from 0 to 15 -------------------------------------------------------------------------------------------------------
+#define HEATER_0_MINTEMP   0  // 20210105 changed from 0 to 15 - 20210107 reverted to 0 for bug testing --------------------------------------------------------------
 #define HEATER_1_MINTEMP   5
 #define HEATER_2_MINTEMP   5
 #define HEATER_3_MINTEMP   5
@@ -453,7 +453,7 @@
 #define HEATER_5_MINTEMP   5
 #define HEATER_6_MINTEMP   5
 #define HEATER_7_MINTEMP   5
-#define BED_MINTEMP        15 // 20210105 changed from 0 to 15 -------------------------------------------------------------------------------------------------------
+#define BED_MINTEMP        0  // 20210105 changed from 0 to 15 - 20210107 reverted to 0 for bug testing --------------------------------------------------------------
 
 // Above this temperature the heater will be switched off.
 // This can protect components from overheating, but NOT from shorts and failures.
@@ -493,9 +493,9 @@
     #define DEFAULT_Ki_LIST {   2.62,   2.62 }
     #define DEFAULT_Kd_LIST {  78.81,  78.81 }
   #else
-    #define DEFAULT_Kp  25.20 // 20210106 M303 C10 E0 S205 U1 ----------------------------------------------------------------------------------------------------------
-    #define DEFAULT_Ki   2.18 // 20210106 ------------------------------------------------------------------------------------------------------------------------------
-    #define DEFAULT_Kd  72.73 // 20210106 ------------------------------------------------------------------------------------------------------------------------------
+    #define DEFAULT_Kp  25.14 // 20210107 M303 C10 E0 S205 U1 ----------------------------------------------------------------------------------------------------------
+    #define DEFAULT_Ki   2.15 // 20210107 ------------------------------------------------------------------------------------------------------------------------------
+    #define DEFAULT_Kd  73.43 // 20210107 ------------------------------------------------------------------------------------------------------------------------------
   #endif
 #endif // PIDTEMP
 
@@ -534,15 +534,15 @@
 
   // 120V 250W silicone heater into 4mm borosilicate (MendelMax 1.5+)
   // from FOPDT model - kp=.39 Tp=405 Tdead=66, Tc set to 79.2, aggressive factor of .15 (vs .1, 1, 10)
-  #define DEFAULT_bedKp 143.34  // 20210106 M303 C10 E-1 S60 U1 -------------------------------------------------------------------------------------------------------
-  #define DEFAULT_bedKi 27.09   // 20210106 M303 C10 E-1 S60 U1 -------------------------------------------------------------------------------------------------------
-  #define DEFAULT_bedKd 505.61  // 20210106 M303 C10 E-1 S60 U1 -------------------------------------------------------------------------------------------------------
+  #define DEFAULT_bedKp 151.39  // 20210107 M303 C10 E-1 S60 U1 -------------------------------------------------------------------------------------------------------
+  #define DEFAULT_bedKi 27.73   // 20210107 M303 C10 E-1 S60 U1 -------------------------------------------------------------------------------------------------------
+  #define DEFAULT_bedKd 54.28   // 20210107 M303 C10 E-1 S60 U1 -------------------------------------------------------------------------------------------------------
 
   // FIND YOUR OWN: "M303 E-1 C8 S90" to run autotune on the bed at 90 degreesC for 8 cycles.
 #endif // PIDTEMPBED
 
 #if EITHER(PIDTEMP, PIDTEMPBED)
-  //#define PID_DEBUG             // Sends debug data to the serial port. Use 'M303 D' to toggle activation.
+  //#define PID_DEBUG             // Sends debug data to the serial port. Use 'M303 D' to toggle activation. 20210107 may need to enable this to figure out the PID crash ---------
   //#define PID_OPENLOOP          // Puts PID in open loop. M104/M140 sets the output power from 0 to PID_MAX
   //#define SLOW_PWM_HEATERS      // PWM with very low frequency (roughly 0.125Hz=8s) and minimum state time of approximately 1s useful for heaters driven by a relay
   #define PID_FUNCTIONAL_RANGE 10 // If the temperature difference between the target temperature and the actual temperature
@@ -840,10 +840,10 @@
  * The probe replaces the Z-MIN endstop and is used for Z homing.
  * (Automatically enables USE_PROBE_FOR_Z_HOMING.)
  */
-#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN // 20200105 default is enabled - this is for z-axis switch homing ----------------------------------------------------------
+#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN // 20200107 default is enabled - this is for z-axis limit switch homing ----------------------------------------------------------
 
 // Force the use of the probe for Z-axis homing
-//#define USE_PROBE_FOR_Z_HOMING
+//#define USE_PROBE_FOR_Z_HOMING // 20210107 if probe (ie. BLTouch) is installed, this should be enabled --------------------------------------------------------------------
 
 /**
  * Z_MIN_PROBE_PIN
@@ -904,7 +904,7 @@
 /**
  * The BLTouch probe uses a Hall effect sensor and emulates a servo.
  */
-//#define BLTOUCH
+//#define BLTOUCH // 20210107 if BLTouch installed, this is enabled --------------------------------------------------------------------------------------------------------------
 
 /**
  * Touch-MI Probe by hotends.fr
@@ -1321,7 +1321,7 @@
 //#define AUTO_BED_LEVELING_3POINT
 //#define AUTO_BED_LEVELING_LINEAR
 //#define AUTO_BED_LEVELING_BILINEAR
-//#define AUTO_BED_LEVELING_UBL
+//#define AUTO_BED_LEVELING_UBL // 20210107 this is the one I currently use ; mine seems to crash every 3rd "tilt" however (which is new) .. not sure why yet ------------------------
 //#define MESH_BED_LEVELING
 
 /**
@@ -1414,7 +1414,7 @@
   //#define MESH_EDIT_GFX_OVERLAY   // Display a graphics overlay while editing the mesh
 
   #define MESH_INSET 1              // Set Mesh bounds as an inset region of the bed
-  #define GRID_MAX_POINTS_X 10      // Don't use more than 15 points per axis, implementation limited.
+  #define GRID_MAX_POINTS_X 6       // Don't use more than 15 points per axis, implementation limited. 20210107 changed from 10 to 6 as 10 takes a LONG time ------------------------
   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
 
   #define UBL_MESH_EDIT_MOVES_Z     // Sophisticated users prefer no movement of nozzle
@@ -1492,7 +1492,7 @@
 // - Move the Z probe (or nozzle) to a defined XY point before Z Homing.
 // - Prevent Z homing when the Z probe is outside bed area.
 //
-//#define Z_SAFE_HOMING
+//#define Z_SAFE_HOMING // 20210107 enable with probe homing -----------------------------------------------------------------------------------------------------------------------
 
 #if ENABLED(Z_SAFE_HOMING)
   #define Z_SAFE_HOMING_X_POINT ((X_BED_SIZE - 10) / 2)    // X point for Z homing
@@ -1931,8 +1931,8 @@
 // Note: Test audio output with the G-Code:
 //  M300 S<frequency Hz> P<duration ms>
 //
-#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
-#define LCD_FEEDBACK_FREQUENCY_HZ 5000
+#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 0  // 20210107 changed from 2 to 0 to disable sound by default -------------------------------------------------------------------------
+#define LCD_FEEDBACK_FREQUENCY_HZ 0           // 20210101 changef from 5000 to 0 to disable sound by default ----------------------------------------------------------------------
 
 //=============================================================================
 //======================== LCD / Controller Selection =========================

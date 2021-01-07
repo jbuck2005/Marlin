@@ -3345,11 +3345,14 @@
   #define USER_SCRIPT_AUDIBLE_FEEDBACK
   //#define USER_SCRIPT_RETURN  // Return to status screen after a script
 
-  #define USER_DESC_1 "PID Autotune (Bed + Extruder)"
-  #define USER_GCODE_1 "M303 C10 E0 S205 U1\nM303 C10 E-1 S60 U1"
+  #define USER_DESC_1 "Extruder PID Autotune" // 20200107 broke Bed & Extruder PID autotune down into two tests for troubleshooting the crash / failure ----------------------
+  #define USER_GCODE_1 "M303 C10 E0 S205 U1"
 
-  #define USER_DESC_2 "Extrude 100mm filament"
-  #define USER_GCODE_2 "M109 205\nG1 E100 F300\nM104 S0"
+  #define USER_DESC_2 "Bed PID Autotune"      // 20200107 broke Bed & Extruder PID autotune down into two tests for troubleshooting the crash / failure ----------------------
+  #define USER_GCODE_2 "M303 C10 E-1 S60 U1"
+
+  #define USER_DESC_3 "Extrude 100mm filament"
+  #define USER_GCODE_3 "M109 205\nG1 E100 F300\nM104 S0"
 
 //  #define USER_DESC_3 "Probe bed (5m heat time)"  // 20200102 last updated
 //  #define USER_GCODE_3 "M118 E1 Starting bed probing routine\nM190 S60\nM117 Heating bed\nM117 Waiting 5 minutes for bed to heat evenly\nM118 E1 Waiting 5 minutes for bed to head\nG4 S300\nG28\nM117 Probing bed\nM118 E1 Probing bed\nG29 P1\nM104 S0\nG29 P3\nG29 F10\nG29 S1\nG29 A\nG29 L1\nM500\nM190 S0"
