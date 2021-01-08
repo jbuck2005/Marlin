@@ -1899,7 +1899,7 @@ M500
 // Note: Test audio output with the G-Code:
 //  M300 S<frequency Hz> P<duration ms>
 //
-#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2 // 20210107 changed from default 2 to 0 to disable sound by default -------------------------------------------------------------------------------------------------
+#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 0 // 20210107 changed from default 2 to 0 to disable sound by default -------------------------------------------------------------------------------------------------
 #define LCD_FEEDBACK_FREQUENCY_HZ 0          // 20210107 changed from default 5000 to 0 to disable sound by default ----------------------------------------------------------------------------------------------
 
 //=============================================================================
