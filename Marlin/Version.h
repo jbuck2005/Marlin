@@ -41,7 +41,7 @@
  * here we define this default string as the date where the latest release
  * version was tagged.
  */
-#define STRING_DISTRIBUTION_DATE "2021-01-07 10:30" // ------------------------------------------------------------------------------------------------------------------------
+#define STRING_DISTRIBUTION_DATE "2021-01-08 16:15" // ------------------------------------------------------------------------------------------------------------------------
 
 /**
  * Defines a generic printer name to be output to the LCD after booting Marlin.
@@ -54,7 +54,7 @@
  * has a distinct Github fork— the Source Code URL should just be the main
  * Marlin repository.
  */
-#define SOURCE_CODE_URL "https://github.com/jbuck2005/Marlin_Custom/tree/james" // 20210107 added GIT URL for my repo ---------------------------------------------------------
+#define SOURCE_CODE_URL "https://github.com/jbuck2005/Marlin_Custom/tree/john" // 20210108 added GIT URL for my repo ---------------------------------------------------------
 
 /**
  * Default generic printer UUID.

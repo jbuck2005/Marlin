@@ -70,7 +70,7 @@
 // @section info
 
 // Author info of this build printed to the host during boot and M115
-#define STRING_CONFIG_H_AUTHOR "(james, james config)" // Who made the changes. 20210105 -----------------------------------------------------------------------------------------
+#define STRING_CONFIG_H_AUTHOR "(james, john config)" // Who made the changes. 20210108 ------------------------------------------------------------------------------------------
 #define CUSTOM_VERSION_FILE Version.h // Path from the root directory (no quotes) 20201221 enabled hoping that it would read the version.h config file ---------------------------
 
 /**
