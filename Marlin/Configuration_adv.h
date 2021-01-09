@@ -371,7 +371,7 @@
  * Hotend Idle Timeout
  * Prevent filament in the nozzle from charring and causing a critical jam.
  */
-//#define HOTEND_IDLE_TIMEOUT
+#define HOTEND_IDLE_TIMEOUT // 20210109 enabled for testing ---------------------------------------------------------------
 #if ENABLED(HOTEND_IDLE_TIMEOUT)
   #define HOTEND_IDLE_TIMEOUT_SEC (5*60)    // (seconds) Time without extruder movement to trigger protection
   #define HOTEND_IDLE_MIN_TRIGGER   180     // (°C) Minimum temperature to enable hotend protection
@@ -1311,7 +1311,7 @@
    * This feature must be enabled with "M540 S1" or from the LCD menu.
    * To have any effect, endstops must be enabled during SD printing.
    */
-  //#define SD_ABORT_ON_ENDSTOP_HIT // 20210107 could be a way to add emergency stop button (in parallel to an end-stop!) -----------------------------------------
+  #define SD_ABORT_ON_ENDSTOP_HIT // 20210109 enabled - could be a way to add emergency stop button (in parallel to an end-stop!) -----------------------------------------
 
   /**
    * This option makes it easier to print the same SD Card file again.
