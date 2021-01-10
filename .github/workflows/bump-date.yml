@@ -4,7 +4,7 @@
 #
 # modified by James 20210110
 #
-name: Bump Distribution Date
+name: Bump James Distribution Date
 
 on:
   schedule:
@@ -12,7 +12,7 @@ on:
 
 jobs:
   bump_date:
-    name: Bump Distribution Date
+    name: Bump James Distribution Date
     if: github.repository == 'jbuck2005/Marlin_Custom'
 
     runs-on: ubuntu-latest
