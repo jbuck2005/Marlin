@@ -8,14 +8,14 @@ name: Bump James Distribution Date
 
 on:
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '0 2 * * *'
 
 jobs:
   bump_date:
     name: Bump James Distribution Date
     if: github.repository == 'jbuck2005/Marlin_Custom'
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
 
