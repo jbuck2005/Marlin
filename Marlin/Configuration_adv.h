@@ -3356,7 +3356,7 @@
 //  #define USER_GCODE_2 "M303 C10 E-1 S60 U1"
 
   #define USER_DESC_2 "Extrude 100mm filament"
-  #define USER_GCODE_2 "G21\nG90\nG92 E0\nM109 205\nG1 E100 F100\nG92 E0\nM104 S0" // 20210113 added G21 (specify mm), G90 (use absolute), G92 E0 (zero extruer position)
+  #define USER_GCODE_2 "G21\nG90\nG92 E0\nM109 S205\nG1 E100 F100\nG92 E0\nM104 S0" // 20210113 added G21 (specify mm), G90 (use absolute), G92 E0 (zero extruer position)
 
 //  #define USER_DESC_3 "Probe bed (5m heat time)"  // 20200102 last updated
 //  #define USER_GCODE_3 "M118 E1 Starting bed probing routine\nM190 S60\nM117 Heating bed\nM117 Waiting 5 minutes for bed to heat evenly\nM118 E1 Waiting 5 minutes for bed to head\nG4 S300\nG28\nM117 Probing bed\nM118 E1 Probing bed\nG29 P1\nM104 S0\nG29 P3\nG29 F10\nG29 S1\nG29 A\nG29 L1\nM500\nM190 S0"
