@@ -1080,7 +1080,7 @@
 #define Z_CLEARANCE_DEPLOY_PROBE   10 // Z Clearance for Deploy/Stow
 #define Z_CLEARANCE_BETWEEN_PROBES  5 // Z Clearance between probe points
 #define Z_AFTER_PROBING            10 // Z position after probing is done  // 20200915 enabled to have nozzle sit higher than at the build plate - was 5 and disabled ------------
-#define Z_PROBE_LOW_POINT          -1 // Farthest distance below the trigger-point to go before stopping  // 20200910 was -2 -----------------------------------------------------
+#define Z_PROBE_LOW_POINT          -5 // Farthest distance below the trigger-point to go before stopping  // 20200910 was -2 -----------------------------------------------------
 
 // For M851 give a range for adjusting the Z probe offset
 #define Z_PROBE_OFFSET_RANGE_MIN -3 // 20201220 was -20 --------------------------------------------------------------------------------------------------------------------------
