@@ -132,7 +132,7 @@
 #endif
 
 // Name displayed in the LCD "Ready" message and Info menu
-#define CUSTOM_MACHINE_NAME "Replicator v0.1.11a" // does not appear to work if defined in Version.h -------------------------------------------------------------------------------
+#define CUSTOM_MACHINE_NAME "Replicator v0.1.13a" // does not appear to work if defined in Version.h -------------------------------------------------------------------------------
 
 // Printer's unique ID, used by some programs to dffferentiate between machines.
 // Choose your own or use a service like https://www.uuidgenerator.net/version4
@@ -1077,7 +1077,7 @@
  * Example: `M851 Z-5` with a CLEARANCE of 4  =>  9mm from bed to nozzle.
  *     But: `M851 Z+1` with a CLEARANCE of 2  =>  2mm from bed to nozzle.
  */
-#define Z_CLEARANCE_DEPLOY_PROBE   10 // Z Clearance for Deploy/Stow
+#define Z_CLEARANCE_DEPLOY_PROBE   8  // Z Clearance for Deploy/Stow 20210113 changed from 10 to 8 hoping to resolve probing firmware panic
 #define Z_CLEARANCE_BETWEEN_PROBES  5 // Z Clearance between probe points
 #define Z_AFTER_PROBING            10 // Z position after probing is done  // 20200915 enabled to have nozzle sit higher than at the build plate - was 5 and disabled ------------
 #define Z_PROBE_LOW_POINT          -1 // Farthest distance below the trigger-point to go before stopping  // 20200910 was -2 -----------------------------------------------------
@@ -1166,7 +1166,7 @@
 #define Z_HOMING_HEIGHT  10       // enabled 20200915 (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ... --------------------------------------
                                   // Be sure to have this much clearance over your Z_MAX_POS to prevent grinding.
 
-#define Z_AFTER_HOMING  10        // enabled 20200915 (mm) Height to move to after homing Z -------------------------------------------------------------------------------------
+#define Z_AFTER_HOMING  6         // enabled 20200915 (mm) Height to move to after homing Z 20210113 changed from 10 to 6 hoping to resolve probing failure / firmware panic ----
 
 // Direction of endstops when homing; 1=MAX, -1=MIN
 // :[-1,1]
