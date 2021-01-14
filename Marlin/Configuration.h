@@ -1077,10 +1077,10 @@
  * Example: `M851 Z-5` with a CLEARANCE of 4  =>  9mm from bed to nozzle.
  *     But: `M851 Z+1` with a CLEARANCE of 2  =>  2mm from bed to nozzle.
  */
-#define Z_CLEARANCE_DEPLOY_PROBE   8  // Z Clearance for Deploy/Stow 20210113 changed from 10 to 8 hoping to resolve probing firmware panic
+#define Z_CLEARANCE_DEPLOY_PROBE    8 // Z Clearance for Deploy/Stow 20210113 changed from 10 to 8 hoping to resolve probing firmware panic
 #define Z_CLEARANCE_BETWEEN_PROBES  5 // Z Clearance between probe points
 #define Z_AFTER_PROBING            10 // Z position after probing is done  // 20200915 enabled to have nozzle sit higher than at the build plate - was 5 and disabled ------------
-#define Z_PROBE_LOW_POINT          -5 // Farthest distance below the trigger-point to go before stopping  // 20210113 changed to -5 ----------------------------------------------
+#define Z_PROBE_LOW_POINT         -10 // Farthest distance below the trigger-point to go before stopping  // 20210113 changed to -5 and still had panic on tilting mesh !! -------
                                       // this may be the root cause of the firmware panics !! ------------------------------------------------------------------------------------
 // For M851 give a range for adjusting the Z probe offset
 #define Z_PROBE_OFFSET_RANGE_MIN -3 // 20201220 was -20 --------------------------------------------------------------------------------------------------------------------------
