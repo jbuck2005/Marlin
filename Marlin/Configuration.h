@@ -1442,8 +1442,6 @@ M500
   #define LEVEL_CORNERS_HEIGHT      5.0   // (mm) Z height of nozzle at leveling points      // 20210105 changed from default 0.0 to 5 ---------------------------------------------
   #define LEVEL_CORNERS_Z_HOP       12.5  // (mm) Z height of nozzle between leveling points // 20210105 changed from default 4.0 to 12.5 ------------------------------------------
   //#define LEVEL_CENTER_TOO              // Move to the center after the last corner
-<<<<<<< HEAD
-=======
   //#define LEVEL_CORNERS_USE_PROBE
   #if ENABLED(LEVEL_CORNERS_USE_PROBE)
     #define LEVEL_CORNERS_PROBE_TOLERANCE 0.1
@@ -1469,7 +1467,6 @@ M500
    *  LF --------- RF   LF --------- RF    LF --------- RF   LF --------- RF
    */
   #define LEVEL_CORNERS_LEVELING_ORDER { LF, RF, RB, LB }
->>>>>>> fec58157ac12a06b801710d97b4376d6ee0857a8
 #endif
 
 /**
