@@ -1,4 +1,4 @@
-<h1>To install:</h1>
+<h1>! Rename before trying to upgrade !</h1>
 <h3>Download the firmware image you are interested in loading onto your printer.
 <br>**Pay special attention to the name and the date!**</h3>
 Next, you need to remove the <b>_name</b> component of the firmware image. For example, you would need to rename:<br>
