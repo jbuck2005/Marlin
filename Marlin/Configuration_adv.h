@@ -3348,14 +3348,17 @@
   #define USER_SCRIPT_AUDIBLE_FEEDBACK
   //#define USER_SCRIPT_RETURN  // Return to status screen after a script
 
-  #define USER_DESC_1 "PID Autotune (Bed + Extruder)"
-  #define USER_GCODE_1 "M303 C10 E0 S205 U1\nM303 C10 E-1 S60 U1"
+  #define USER_DESC_1 "Home & UBL Info"
+  #define USER_GCODE_1 "G29NW"
 
-  #define USER_DESC_2 "Extrude 100mm filament"
-  #define USER_GCODE_2 "G21\nG90\nG92 E0\nM109 S205\nG1 E100 F100\nG92 E0\nM104 S0" // 20210113 added G21 (specify mm), G90 (use absolute), G92 E0 (zero extruer position)
+  #define USER_DESC_2 "PID Autotune (Bed + Extruder)"
+  #define USER_GCODE_2 "M303 C10 E0 S205 U1\nM303 C10 E-1 S60 U1"
 
-  #define USER_DESC_3 "Probe bed (5m heat time)"  // 20200102 last updated
-  #define USER_GCODE_3 "M118 E1 Starting bed probing routine\nM190 S60\nM117 Heating bed\nM117 Waiting 5 minutes for bed to heat evenly\nM118 E1 Waiting 5 minutes for bed to head\nG4 S300\nG28\nM117 Probing bed\nM118 E1 Probing bed\nG29 P1\nM104 S0\nG29 P3\nG29 F10\nG29 S1\nG29 A\nG29 L1\nM500\nM190 S0"
+  #define USER_DESC_3 "Extrude 100mm filament"
+  #define USER_GCODE_3 "G21\nG90\nG92 E0\nM109 S205\nG1 E100 F100\nG92 E0\nM104 S0" // 20210113 added G21 (specify mm), G90 (use absolute), G92 E0 (zero extruer position)
+
+  #define USER_DESC_4 "Probe bed (5m heat time)"  // 20200102 last updated
+  #define USER_GCODE_4 "M118 E1 Starting bed probing routine\nM190 S60\nM117 Heating bed\nM117 Waiting 5 minutes for bed to heat evenly\nM118 E1 Waiting 5 minutes for bed to head\nG4 S300\nG28\nM117 Probing bed\nM118 E1 Probing bed\nG29 P1\nM104 S0\nG29 P3\nG29 F10\nG29 S1\nG29 A\nG29 L1\nM500\nM190 S0"
 
 /*
   #define USER_DESC_2 "Preheat for " PREHEAT_1_LABEL
@@ -3365,7 +3368,7 @@
   #define USER_GCODE_3 "M140 S" STRINGIFY(PREHEAT_2_TEMP_BED) "\nM104 S" STRINGIFY(PREHEAT_2_TEMP_HOTEND)
 
   #define USER_DESC_4 "Heat Bed/Home/Level"
-  #define USER_GCODE_4 "M140 S" STRINGIFY(PREHEAT_2_TEMP_BED) "\nG28\nG29"
+  #define USER_GCODE_4 "M140 S" STRINGIFY(PREHEAT_2_TEMP_BED) "\nG29N"
 
   #define USER_DESC_5 "Home & Info"
   #define USER_GCODE_5 "G28\nM503"
