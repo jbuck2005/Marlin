@@ -3348,12 +3348,17 @@
   #define USER_SCRIPT_AUDIBLE_FEEDBACK
   //#define USER_SCRIPT_RETURN  // Return to status screen after a script
 
+<<<<<<< HEAD
   #define USER_DESC_1 "Extruder PID Autotune" // 20200107 broke Bed & Extruder PID autotune down into two tests for troubleshooting the crash / failure ----------------------
 //  #define USER_GCODE_1 "M303 C10 E0 S205 U1"
   #define USER_GCODE_1 "M303 C10 E0 S205 U1\nG4 S1\nM303 C10 E-1 S60 U1" // 20210113 added 1s pause for testing (to see if this will resolve issue of beeping during bed PID)
 
 //  #define USER_DESC_2 "Bed PID Autotune"      // 20200107 broke Bed & Extruder PID autotune down into two tests for troubleshooting the crash / failure ----------------------
 //  #define USER_GCODE_2 "M303 C10 E-1 S60 U1"
+=======
+  #define USER_DESC_1 "Home & UBL Info"
+  #define USER_GCODE_1 "G29NW"
+>>>>>>> fda9fb563bcf71aa00c38a8273c5444f4733ef9e
 
   #define USER_DESC_2 "Extrude 100mm filament"
   #define USER_GCODE_2 "G21\nG90\nG92 E0\nM109 S205\nG1 E100 F100\nG92 E0\nM104 S0" // 20210113 added G21 (specify mm), G90 (use absolute), G92 E0 (zero extruer position)
@@ -3369,7 +3374,7 @@
   #define USER_GCODE_3 "M140 S" STRINGIFY(PREHEAT_2_TEMP_BED) "\nM104 S" STRINGIFY(PREHEAT_2_TEMP_HOTEND)
 
   #define USER_DESC_4 "Heat Bed/Home/Level"
-  #define USER_GCODE_4 "M140 S" STRINGIFY(PREHEAT_2_TEMP_BED) "\nG28\nG29"
+  #define USER_GCODE_4 "M140 S" STRINGIFY(PREHEAT_2_TEMP_BED) "\nG29N"
 
   #define USER_DESC_5 "Home & Info"
   #define USER_GCODE_5 "G28\nM503"
