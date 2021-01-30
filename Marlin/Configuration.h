@@ -1750,11 +1750,7 @@ M500
  *
  * View the current statistics with M78.
  */
-<<<<<<< HEAD
 #define PRINTCOUNTER // 20210102 enabled to test functionality -----------------------------------------------------------------------------------------------------------
-=======
-//#define PRINTCOUNTER
->>>>>>> a1019413f4998d7cf46d69e03f4e919c59c72524
 #if ENABLED(PRINTCOUNTER)
   #define PRINTCOUNTER_SAVE_INTERVAL 60 // (minutes) EEPROM save interval during print
 #endif
