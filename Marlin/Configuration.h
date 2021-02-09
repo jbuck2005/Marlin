@@ -1166,7 +1166,8 @@
 #define Z_HOMING_HEIGHT  10       // enabled 20200915 (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ... --------------------------------------
                                   // Be sure to have this much clearance over your Z_MAX_POS to prevent grinding.
 
-#define Z_AFTER_HOMING  6         // enabled 20200915 (mm) Height to move to after homing Z 20210113 changed from 10 to 6 hoping to resolve probing failure / firmware panic ----
+#define Z_AFTER_HOMING  10        // enabled 20200915 (mm) Height to move to after homing Z 20210113 changed from 10 to 6 hoping to resolve probing failure / firmware panic ----
+				  // change to 6 seemed to mess up homing and leveling - machine thought Z height was 6 after homing (and was too high by >3 mm)
 
 // Direction of endstops when homing; 1=MAX, -1=MIN
 // :[-1,1]
