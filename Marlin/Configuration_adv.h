@@ -697,7 +697,7 @@
 
   // Safety: The probe needs time to recognize the command.
   //         Minimum command delay (ms). Enable and increase if needed.
-  //#define BLTOUCH_DELAY 500
+  #define BLTOUCH_DELAY 600 // 20210209 enabled (was disabled) and increase to 600ms hoping this will resolve false-triggers ----------------------------------------------------
 
   /**
    * Settings for BLTOUCH Classic 1.2, 1.3 or BLTouch Smart 1.0, 2.0, 2.2, 3.0, 3.1, and most clones:
@@ -3365,7 +3365,7 @@
 
   #define USER_DESC_1 "Home & UBL Info"
   #define USER_GCODE_1 "G28\nG29W"
-
+  
   #define USER_DESC_2 "PID Autotune (Bed + Extruder)"
   #define USER_GCODE_2 "M303 C10 E0 S205 U1\nG4 S1\nM303 C10 E-1 S60 U1" // 20210113 added 1s pause for testing (to see if this will resolve issue of beeping during bed PID)
 
