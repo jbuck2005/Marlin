@@ -1104,10 +1104,10 @@
  */
 #define PROBING_HEATERS_OFF       // Turn heaters off when probing 20201221 enabled this function -------------------------------------------------------------------------------
 #if ENABLED(PROBING_HEATERS_OFF)
-  #define WAIT_FOR_BED_HEATER     // Wait for bed to heat back up between probes (to improve accuracy) // 20201221 enabled - 20210102 made probing very slow so it was disabled 20210210 reenabled ------------------------------------
+#  #define WAIT_FOR_BED_HEATER     // Wait for bed to heat back up between probes (to improve accuracy) // 20201221 enabled - 20210102 made probing very slow so it was disabled 20210210 reenabled ------------------------------------
 #endif
-  #define PROBING_FANS_OFF          // Turn fans off when probing //20210210 enabled in an attempt to resolve failure to probe ---------------------------------------------------------------------------------------
-  #define PROBING_STEPPERS_OFF      // Turn steppers off (unless needed to hold position) when probing // 20210210 on next test, enable to test with firmware revision -------------------------
+#  #define PROBING_FANS_OFF          // Turn fans off when probing //20210210 enabled in an attempt to resolve failure to probe - may have solved probing issues with ferrite & remag tip ----------------------------------------------
+#  #define PROBING_STEPPERS_OFF      // Turn steppers off (unless needed to hold position) when probing // 20210210 on next test, enable to test with firmware revision -------------------------
 //#define DELAY_BEFORE_PROBING 200  // (ms) To prevent vibrations from triggering piezo sensors
 
 // Require minimum nozzle and/or bed temperature for probing
