@@ -128,6 +128,7 @@
 
 // Choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
+//  #define MOTHERBOARD BOARD_BTT_SKR_PRO_V1_1 // 20210213 ----------------------------------------------------------------------------------------------------------------------------------------------
   #define MOTHERBOARD BOARD_BTT_SKR_PRO_V1_1 // 20210213 ----------------------------------------------------------------------------------------------------------------------------------------------
 #endif
 
@@ -1603,7 +1604,7 @@ M500
  *   M501 - Read settings from EEPROM. (i.e., Throw away unsaved changes)
  *   M502 - Revert settings to "factory" defaults. (Follow with M500 to init the EEPROM.)
  */
-//#define EEPROM_SETTINGS     // Persistent storage with M500 and M501
+//#define EEPROM_SETTINGS     // Persistent storage with M500 and M501 // 20210213 enabled --------------------------------------------------------------------------------------------------------------
 //#define DISABLE_M503        // Saves ~2700 bytes of PROGMEM. Disable for release!
 #define EEPROM_CHITCHAT       // Give feedback on EEPROM commands. Disable to save PROGMEM.
 #define EEPROM_BOOT_SILENT    // Keep M503 quiet and only give errors during first load
@@ -1774,7 +1775,7 @@ M500
  *
  * View the current statistics with M78.
  */
-#define PRINTCOUNTER // 20210213 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------------
+//#define PRINTCOUNTER // 20210213 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------------
 #if ENABLED(PRINTCOUNTER)
   #define PRINTCOUNTER_SAVE_INTERVAL 120 // (minutes) EEPROM save interval during print // 20210213 changed from 60 to 120 ----------------------------------------------------------------------------
 #endif
@@ -2202,7 +2203,7 @@ M500
 // This is RAMPS-compatible using a single 10-pin connector.
 // (For CR-10 owners who want to replace the Melzi Creality board but retain the display)
 //
-//#define CR10_STOCKDISPLAY
+#define CR10_STOCKDISPLAY // 20210213 enabled to compile ----------------------------------------------------------------------------------------------------------------------------------------------
 
 //
 // Ender-2 OEM display, a variant of the MKS_MINI_12864
