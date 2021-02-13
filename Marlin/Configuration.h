@@ -750,7 +750,7 @@
  * Override with M92
  *                                      X, Y, Z, E0 [, E1[, E2...]]
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 79.7, 79.6, 399.5, 102.8 }    // 20201221 direct drive value for E -----------------------------------------------------------------------
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 79.7, 79.6, 399.5, 98.85 }    // 20210213 direct drive value for E -----------------------------------------------------------------------
 
 /**
  * Default Max Feed Rate (mm/s)
