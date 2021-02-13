@@ -48,7 +48,7 @@
  *
  * Set this value to 0 to fail on the first error to occur.
  */
-#define THERMOCOUPLE_MAX_ERRORS 15
+#define THERMOCOUPLE_MAX_ERRORS 20  // was 15 20201206 --------------------------------------------------------------------------------------------------------------------------
 
 //
 // Custom Thermistor 1000 parameters
@@ -480,7 +480,7 @@
  * Multiple extruders can be assigned to the same pin in which case
  * the fan will turn on when any selected extruder is above the threshold.
  */
-#define E0_AUTO_FAN_PIN -1
+#define E0_AUTO_FAN_PIN -1 // 20210107 should figure this out !! ------------------------------------------------------------------------
 #define E1_AUTO_FAN_PIN -1
 #define E2_AUTO_FAN_PIN -1
 #define E3_AUTO_FAN_PIN -1
@@ -515,17 +515,12 @@
   #define INVERT_CASE_LIGHT false             // Set true if Case Light is ON when pin is LOW
   #define CASE_LIGHT_DEFAULT_ON true          // Set default power-up state on
   #define CASE_LIGHT_DEFAULT_BRIGHTNESS 105   // Set default power-up brightness (0-255, requires PWM pin)
-  //#define CASE_LIGHT_NO_BRIGHTNESS          // Disable brightness control. Enable for non-PWM lighting.
-  //#define CASE_LIGHT_MAX_PWM 128            // Limit PWM duty cycle (0-255)
+  //#define CASE_LIGHT_MAX_PWM 128            // Limit pwm
   //#define CASE_LIGHT_MENU                   // Add Case Light options to the LCD menu
-  #if ENABLED(NEOPIXEL_LED)
-    //#define CASE_LIGHT_USE_NEOPIXEL         // Use NeoPixel LED as case light
-  #endif
-  #if EITHER(RGB_LED, RGBW_LED)
-    //#define CASE_LIGHT_USE_RGB_LED          // Use RGB / RGBW LED as case light
-  #endif
-  #if EITHER(CASE_LIGHT_USE_NEOPIXEL, CASE_LIGHT_USE_RGB_LED)
-    #define CASE_LIGHT_DEFAULT_COLOR { 255, 255, 255, 255 } // { Red, Green, Blue, White }
+  //#define CASE_LIGHT_NO_BRIGHTNESS          // Disable brightness control. Enable for non-PWM lighting.
+  //#define CASE_LIGHT_USE_NEOPIXEL           // Use NeoPixel LED as case light, requires NEOPIXEL_LED.
+  #if ENABLED(CASE_LIGHT_USE_NEOPIXEL)
+    #define CASE_LIGHT_NEOPIXEL_COLOR { 255, 255, 255, 255 } // { Red, Green, Blue, White }
   #endif
 #endif
 
@@ -710,7 +705,7 @@
 
   // Feature: Switch into SW mode after a deploy. It makes the output pulse longer. Can be useful
   //          in special cases, like noisy or filtered input configurations.
-  //#define BLTOUCH_FORCE_SW_MODE
+  // #define BLTOUCH_FORCE_SW_MODE // enabled 20201206 and it seemed to break homing --------------------------------------------------------------------------------------------
 
   /**
    * Settings for BLTouch Smart 3.0 and 3.1
@@ -728,7 +723,7 @@
    * differs, a mode set eeprom write will be completed at initialization.
    * Use the option below to force an eeprom write to a V3.1 probe regardless.
    */
-  #define BLTOUCH_SET_5V_MODE
+  #define BLTOUCH_SET_5V_MODE // 20201228 was enabled but I am getting failure to home resets - may need to disable this --------------------------------------------------------
 
   /**
    * Safety: Activate if connecting a probe with an unknown voltage mode.
@@ -747,7 +742,7 @@
   //#define BLTOUCH_HS_MODE
 
   // Safety: Enable voltage mode settings in the LCD menu.
-  //#define BLTOUCH_LCD_VOLTAGE_MENU
+  #define BLTOUCH_LCD_VOLTAGE_MENU // 20210104 enabled (default is disabled) in the hopes of troubleshooting failure to home issues -------------------------------------------------------
 
 #endif // BLTOUCH
 
@@ -803,7 +798,7 @@
 
   // On a 300mm bed a 5% grade would give a misalignment of ~1.5cm
   #define G34_MAX_GRADE              5    // (%) Maximum incline that G34 will handle
-  #define Z_STEPPER_ALIGN_ITERATIONS 5    // Number of iterations to apply during alignment
+  #define Z_STEPPER_ALIGN_ITERATIONS 3    // Number of iterations to apply during alignment
   #define Z_STEPPER_ALIGN_ACC        0.02 // Stop iterating early if the accuracy is better than this
   #define RESTORE_LEVELING_AFTER_G34      // Restore leveling after G34 is done?
   // After G34, re-home Z (G28 Z) or just calculate it from the last probe heights?
@@ -814,11 +809,11 @@
 //
 // Add the G35 command to read bed corners to help adjust screws. Requires a bed probe.
 //
-//#define ASSISTED_TRAMMING
+//#define ASSISTED_TRAMMING     // enabled 20200909 - did not work; disabled 20200910 - failed at point 1 (not enough program memory to enable verbose logging) ----------------
 #if ENABLED(ASSISTED_TRAMMING)
 
   // Define positions for probe points.
-  #define TRAMMING_POINT_XY { {  20, 20 }, { 180,  20 }, { 180, 180 }, { 20, 180 } }
+  #define TRAMMING_POINT_XY { {  45, 45 }, { 190,  45 }, { 190, 190 }, { 45, 190 } }  // 20209010 updated values from 20 & 200 -------------------------------------------------
 
   // Define position names for probe points.
   #define TRAMMING_POINT_NAME_1 "Front-Left"
@@ -839,8 +834,8 @@
    *   M4: 40 = Clockwise, 41 = Counter-Clockwise
    *   M5: 50 = Clockwise, 51 = Counter-Clockwise
    */
-  #define TRAMMING_SCREW_THREAD 30
-
+  #define TRAMMING_SCREW_THREAD 40  // 20200910 Ender 3 uses 4mm clockwise ------------------------------------------------------------------------------------------------------
+                                    // as per https://i.reddit.com/r/ender3/comments/hymv70/marlin_20x_guide_skr_mini_e3_v12_ender_3/ -------------------------------------------
 #endif
 
 // @section motion
@@ -904,7 +899,7 @@
 // Backlash Compensation
 // Adds extra movement to axes on direction-changes to account for backlash.
 //
-//#define BACKLASH_COMPENSATION
+//#define BACKLASH_COMPENSATION       // 20200922 enabled -----------------------------------------------------------------------------------------------------------------------
 #if ENABLED(BACKLASH_COMPENSATION)
   // Define values for backlash distance and correction.
   // If BACKLASH_GCODE is enabled these values are the defaults.
@@ -916,7 +911,7 @@
   //#define BACKLASH_SMOOTHING_MM 3 // (mm)
 
   // Add runtime configuration and tuning of backlash values (M425)
-  //#define BACKLASH_GCODE
+  #define BACKLASH_GCODE            // 20200922 enabled -------------------------------------------------------------------------------------------------------------------------
 
   #if ENABLED(BACKLASH_GCODE)
     // Measure the Z backlash when probing (G29) and set with "M425 Z"
@@ -1096,7 +1091,7 @@
 
   // Add Probe Z Offset calibration to the Z Probe Offsets menu
   #if HAS_BED_PROBE
-    //#define PROBE_OFFSET_WIZARD
+    #define PROBE_OFFSET_WIZARD // 20201108 enabled ----------------------------------------------------------------------------------------------------------------------------
     #if ENABLED(PROBE_OFFSET_WIZARD)
       //
       // Enable to init the Probe Z-Offset when starting the Wizard.
@@ -1106,7 +1101,7 @@
       //#define PROBE_OFFSET_WIZARD_START_Z -4.0
 
       // Set a convenient position to do the calibration (probing point and nozzle/bed-distance)
-      //#define PROBE_OFFSET_WIZARD_XY_POS { X_CENTER, Y_CENTER }
+      #define PROBE_OFFSET_WIZARD_XY_POS XY_CENTER // 20201220 enabled - was diabled --------------------------------------------------------------------------------
     #endif
   #endif
 
@@ -1120,7 +1115,7 @@
   //#define TURBO_BACK_MENU_ITEM
 
   // Add a mute option to the LCD menu
-  //#define SOUND_MENU_ITEM
+  #define SOUND_MENU_ITEM // 20201231 enabled menu item to queit speaker (default is to have sonunds) ----------------------------------------------------------------
 
   /**
    * LED Control Menu
@@ -1155,14 +1150,14 @@
   //#define LCD_TIMEOUT_TO_STATUS 15000
 
   #if ENABLED(SHOW_BOOTSCREEN)
-    #define BOOTSCREEN_TIMEOUT 4000      // (ms) Total Duration to display the boot screen(s)
+  #define BOOTSCREEN_TIMEOUT 1000        // (ms) Total Duration to display the boot screen(s) 20201206 was 4000 -----------------------------------------------------------------
     #if EITHER(HAS_MARLINUI_U8GLIB, TFT_COLOR_UI)
       #define BOOT_MARLIN_LOGO_SMALL     // Show a smaller Marlin logo on the Boot Screen (saving lots of flash)
     #endif
   #endif
 
   // Scroll a longer status message into view
-  #define STATUS_MESSAGE_SCROLLING
+  #define STATUS_MESSAGE_SCROLLING // 20201231 is this new? ---------------------------------------------------------------------------------------------------------------------
 
   // On the Info Screen, display XY with one decimal place when possible
   //#define LCD_DECIMAL_SMALL_XY
@@ -1214,7 +1209,7 @@
   //#define SD_DETECT_STATE HIGH
 
   //#define SD_IGNORE_AT_STARTUP            // Don't mount the SD card when starting up
-  //#define SDCARD_READONLY                 // Read-only SD card (to save over 2K of flash)
+  //#define SDCARD_READONLY                 // Read-only SD card (to save over 2K of flash) 20210101 disabled to allow print restart ----------------------------------
 
   //#define GCODE_REPEAT_MARKERS            // Enable G-code M808 to set repeat markers and do looping
 
@@ -1248,7 +1243,7 @@
    * an option on the LCD screen to continue the print from the last-known
    * point in the file.
    */
-  //#define POWER_LOSS_RECOVERY
+  #define POWER_LOSS_RECOVERY // 20201231 enabled to test power failure recovery ---------------------------------------------------------------------------------------------
   #if ENABLED(POWER_LOSS_RECOVERY)
     #define PLR_ENABLED_DEFAULT   false // Power Loss Recovery enabled by default. (Set with 'M413 Sn' & M500)
     //#define BACKUP_POWER_SUPPLY       // Backup power / UPS to move the steppers on power loss
@@ -1263,7 +1258,7 @@
 
     // Without a POWER_LOSS_PIN the following option helps reduce wear on the SD card,
     // especially with "vase mode" printing. Set too high and vases cannot be continued.
-    #define POWER_LOSS_MIN_Z_CHANGE 0.05 // (mm) Minimum Z change before saving power-loss data
+    #define POWER_LOSS_MIN_Z_CHANGE 0.05 // (mm) Minimum Z change before saving power-loss data // 20201231 investigate the best value for this -----------------------------------
   #endif
 
   /**
@@ -1684,11 +1679,11 @@
 #if ENABLED(BABYSTEPPING)
   //#define INTEGRATED_BABYSTEPPING         // EXPERIMENTAL integration of babystepping into the Stepper ISR
   //#define BABYSTEP_WITHOUT_HOMING
-  //#define BABYSTEP_ALWAYS_AVAILABLE       // Allow babystepping at all times (not just during movement).
+  #define BABYSTEP_ALWAYS_AVAILABLE         // 20200915 enabled; Allow babystepping at all times (not just during movement) -----------------------------------------------------
   //#define BABYSTEP_XY                     // Also enable X/Y Babystepping. Not supported on DELTA!
   #define BABYSTEP_INVERT_Z false           // Change if Z babysteps should go the other way
-  //#define BABYSTEP_MILLIMETER_UNITS       // Specify BABYSTEP_MULTIPLICATOR_(XY|Z) in mm instead of micro-steps
-  #define BABYSTEP_MULTIPLICATOR_Z  1       // (steps or mm) Steps or millimeter distance for each Z babystep
+  #define BABYSTEP_MILLIMETER_UNITS         // Specify BABYSTEP_MULTIPLICATOR_(XY|Z) in mm instead of micro-steps 20201205 - enabled trying to solve weird Z-offset values --------
+  #define BABYSTEP_MULTIPLICATOR_Z 0.01    //  20201220 set to 0.01 (from 1) due to using MM units (see above) ------------------------------------------------------------------
   #define BABYSTEP_MULTIPLICATOR_XY 1       // (steps or mm) Steps or millimeter distance for each XY babystep
 
   #define DOUBLECLICK_FOR_Z_BABYSTEPPING    // Double-click on the Status Screen for Z Babystepping.
@@ -1703,7 +1698,7 @@
 
   //#define BABYSTEP_DISPLAY_TOTAL          // Display total babysteps since last G28
 
-  //#define BABYSTEP_ZPROBE_OFFSET          // Combine M851 Z and Babystepping
+  //#define BABYSTEP_ZPROBE_OFFSET          // Combine M851 Z and Babystepping 20201220 was enabled in my working firmware ------------------------------------------------------
   #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
     //#define BABYSTEP_HOTEND_Z_OFFSET      // For multiple hotends, babystep relative Z offsets
     //#define BABYSTEP_ZPROBE_GFX_OVERLAY   // Enable graphical overlay on Z-offset editor
@@ -1774,6 +1769,11 @@
   //#define PROBING_MARGIN_RIGHT PROBING_MARGIN
   //#define PROBING_MARGIN_FRONT PROBING_MARGIN
   //#define PROBING_MARGIN_BACK PROBING_MARGIN
+
+  #define PROBING_MARGIN_LEFT 45    // 20201205 enabled, setting to 45 allowing firmware to center grids as per: https://youtu.be/neS7lB7fCww --------------------------------
+  #define PROBING_MARGIN_RIGHT 45   // 20201205 enabled, setting to 45 allowing firmware to center grids as per: https://youtu.be/neS7lB7fCww --------------------------------
+  #define PROBING_MARGIN_FRONT 15   // 20201205 enabled, setting to 45 allowing firmware to center grids as per: https://youtu.be/neS7lB7fCww --------------------------------
+  #define PROBING_MARGIN_BACK 15    // 20201205 enabled, setting to 45 allowing firmware to center grids as per: https://youtu.be/neS7lB7fCww --------------------------------
 #endif
 
 #if EITHER(MESH_BED_LEVELING, AUTO_BED_LEVELING_UBL)
@@ -2041,7 +2041,7 @@
 #define SERIAL_OVERRUN_PROTECTION
 
 // For serial echo, the number of digits after the decimal point
-//#define SERIAL_FLOAT_PRECISION 4
+//#define SERIAL_FLOAT_PRECISION 4 // 20200105 https://github.com/jbuck2005/Marlin_Custom/pull/6#commitcomment-45650308 -------------------------------------------------------------------
 
 // @section extras
 
@@ -2168,14 +2168,14 @@
  * Requires NOZZLE_PARK_FEATURE.
  * This feature is required for the default FILAMENT_RUNOUT_SCRIPT.
  */
-//#define ADVANCED_PAUSE_FEATURE
+#define ADVANCED_PAUSE_FEATURE                    // enabled 20201221 to test M701 & M702 codes - uses a large amount of program memory ------------------------------------------
 #if ENABLED(ADVANCED_PAUSE_FEATURE)
   #define PAUSE_PARK_RETRACT_FEEDRATE         60  // (mm/s) Initial retract feedrate.
   #define PAUSE_PARK_RETRACT_LENGTH            2  // (mm) Initial retract.
                                                   // This short retract is done immediately, before parking the nozzle.
   #define FILAMENT_CHANGE_UNLOAD_FEEDRATE     10  // (mm/s) Unload filament feedrate. This can be pretty fast.
   #define FILAMENT_CHANGE_UNLOAD_ACCEL        25  // (mm/s^2) Lower acceleration may allow a faster feedrate.
-  #define FILAMENT_CHANGE_UNLOAD_LENGTH      100  // (mm) The length of filament for a complete unload.
+  #define FILAMENT_CHANGE_UNLOAD_LENGTH      400  // (mm) The length of filament for a complete unload.             // 20200911 was 100mm - 380 appeared to do 180 ---------------
                                                   //   For Bowden, the full length of the tube and nozzle.
                                                   //   For direct drive, the full length of the nozzle.
                                                   //   Set to 0 for manual unloading.
@@ -2187,7 +2187,7 @@
   #define FILAMENT_CHANGE_FAST_LOAD_LENGTH     0  // (mm) Load length of filament, from extruder gear to nozzle.
                                                   //   For Bowden, the full length of the tube and nozzle.
                                                   //   For direct drive, the full length of the nozzle.
-  //#define ADVANCED_PAUSE_CONTINUOUS_PURGE       // Purge continuously up to the purge length until interrupted.
+  #define ADVANCED_PAUSE_CONTINUOUS_PURGE         // Purge continuously up to the purge length until interrupted.   // 20200911 enabled for testing ------------------------------
   #define ADVANCED_PAUSE_PURGE_FEEDRATE        3  // (mm/s) Extrude feedrate (after loading). Should be slower than load feedrate.
   #define ADVANCED_PAUSE_PURGE_LENGTH         50  // (mm) Length to extrude after loading.
                                                   //   Set to 0 for manual extrusion.
@@ -2206,7 +2206,7 @@
   #define FILAMENT_CHANGE_ALERT_BEEPS         10  // Number of alert beeps to play when a response is needed.
   #define PAUSE_PARK_NO_STEPPER_TIMEOUT           // Enable for XYZ steppers to stay powered on during filament change.
 
-  //#define PARK_HEAD_ON_PAUSE                    // Park the nozzle during pause and filament change.
+  #define PARK_HEAD_ON_PAUSE                      // 20201221 Park the nozzle during pause and filament change. - memory issue ---------------------------------------------------
   //#define HOME_BEFORE_FILAMENT_CHANGE           // If needed, home before parking for filament change
 
   //#define FILAMENT_LOAD_UNLOAD_GCODES           // Add M701/M702 Load/Unload G-codes, plus Load/Unload in the LCD Prepare menu.
@@ -3157,16 +3157,6 @@
 #endif
 
 /**
- * Synchronous Laser Control with M106/M107
- *
- * By default M106 / M107 applies the new fan speed immediately. This is fine
- * for fans, but unsuitable for a PWM/TTL laser attached to the fan header.
- *
- * NOTE: This option sacrifices some cooling fan speed options.
- */
-//#define LASER_SYNCHRONOUS_M106_M107
-
-/**
  * Coolant Control
  *
  * Add the M7, M8, and M9 commands to turn mist or flood coolant on and off.
@@ -3366,9 +3356,9 @@
  * User-defined menu items to run custom G-code.
  * Up to 25 may be defined, but the actual number is LCD-dependent.
  */
-//#define CUSTOM_USER_MENUS
+#define CUSTOM_USER_MENUS  // 20210102 - enabled for testing ------------------------------------------------------------------------------------------------------------
 #if ENABLED(CUSTOM_USER_MENUS)
-  //#define CUSTOM_USER_MENU_TITLE "Custom Commands"
+  #define CUSTOM_USER_MENU_TITLE "Custom Commands"
   #define USER_SCRIPT_DONE "M117 User Script Done"
   #define USER_SCRIPT_AUDIBLE_FEEDBACK
   //#define USER_SCRIPT_RETURN  // Return to status screen after a script
@@ -3376,6 +3366,16 @@
   #define USER_DESC_1 "Home & UBL Info"
   #define USER_GCODE_1 "G28\nG29 W"
 
+  #define USER_DESC_2 "Extruder PID Autotune" // 20200107 broke Bed & Extruder PID autotune down into two tests for troubleshooting the crash / failure ----------------------
+  #define USER_GCODE_2 "M303 C10 E0 S205 U1\nG4 S1\nM303 C10 E-1 S60 U1" // 20210113 added 1s pause for testing (to see if this will resolve issue of beeping during bed PID)
+
+  #define USER_DESC_3 "Extrude 100mm filament"
+  #define USER_GCODE_3 "G21\nG90\nG92 E0\nM109 S205\nG1 E100 F100\nG92 E0\nM104 S0" // 20210113 added G21 (specify mm), G90 (use absolute), G92 E0 (zero extruer position)
+
+//  #define USER_DESC_4 "Probe bed (5m heat time)"  // 20200102 last updated
+//  #define USER_GCODE_4 "M118 E1 Starting bed probing routine\nM190 S60\nM117 Heating bed\nM117 Waiting 5 minutes for bed to heat evenly\nM118 E1 Waiting 5 minutes for bed to head\nG4 S300\nG28\nM117 Probing bed\nM118 E1 Probing bed\nG29 P1\nM104 S0\nG29 P3\nG29 F10\nG29 S1\nG29 A\nG29 L1\nM500\nM190 S0"
+
+/*
   #define USER_DESC_2 "Preheat for " PREHEAT_1_LABEL
   #define USER_GCODE_2 "M140 S" STRINGIFY(PREHEAT_1_TEMP_BED) "\nM104 S" STRINGIFY(PREHEAT_1_TEMP_HOTEND)
 
@@ -3387,6 +3387,8 @@
 
   #define USER_DESC_5 "Home & Info"
   #define USER_GCODE_5 "G28\nM503"
+  */
+
 #endif
 
 /**
