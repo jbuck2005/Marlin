@@ -103,14 +103,14 @@
  *
  * :[-1, 0, 1, 2, 3, 4, 5, 6, 7]
  */
-#define SERIAL_PORT -1 // 20210213 -1 = USB, 3 = UART, 6 = ESP-01 -------------------------------------------------------------------------------------------------------------------------------------
+#define SERIAL_PORT -1 // 20210214 default should be -1 which allows USB communication with SKR -------------------------------------------------------------------------------------------------------
 
 /**
  * Select a secondary serial port on the board to use for communication with the host.
  * Currently Ethernet (-2) is only supported on Teensy 4.1 boards.
  * :[-2, -1, 0, 1, 2, 3, 4, 5, 6, 7]
  */
-#define SERIAL_PORT_2 1 // 20210213 was 1 - set to 3 for pi -> SKR via RX3/TX3 ------------------------------------------------------------------------------------------------------------------------
+#define SERIAL_PORT_2 1 // 20210214 1 = TFT, and when set, allows USB communicatons with OctoPrint server ---------------------------------------------------------------------------------------------
 
 /**
  * This setting determines the communication speed of the printer.
@@ -121,7 +121,7 @@
  *
  * :[2400, 9600, 19200, 38400, 57600, 115200, 250000, 500000, 1000000]
  */
-#define BAUDRATE 115200
+#define BAUDRATE 115200 // 20210214 115200 is the maximum speed for an ESP-01S and perhaps a good default value (was working previously) --------------------------------------------------------------
 
 // Enable the Bluetooth serial interface on AT90USB devices
 //#define BLUETOOTH
@@ -132,7 +132,7 @@
 #endif
 
 // Name displayed in the LCD "Ready" message and Info menu
-#define CUSTOM_MACHINE_NAME "Mega Replicator v0.2.13" // 20210213 -------------------------------------------------------------------------------------------------------------------------------------
+#define CUSTOM_MACHINE_NAME "Mega Replicator v0.2.14" // 20210214 -------------------------------------------------------------------------------------------------------------------------------------
 
 // Printer's unique ID, used by some programs to differentiate between machines.
 // Choose your own or use a service like https://www.uuidgenerator.net/version4
@@ -1603,7 +1603,7 @@ M500
  *   M501 - Read settings from EEPROM. (i.e., Throw away unsaved changes)
  *   M502 - Revert settings to "factory" defaults. (Follow with M500 to init the EEPROM.)
  */
-//#define EEPROM_SETTINGS     // Persistent storage with M500 and M501 // 20210213 enabled --------------------------------------------------------------------------------------------------------------
+//#define EEPROM_SETTINGS     // Persistent storage with M500 and M501 // 20210213 could not enable as board does not have built-in EEPROM; still need to install and enable external EEPROM - endabling this breaks the communications to SKR
 //#define DISABLE_M503        // Saves ~2700 bytes of PROGMEM. Disable for release!
 #define EEPROM_CHITCHAT       // Give feedback on EEPROM commands. Disable to save PROGMEM.
 #define EEPROM_BOOT_SILENT    // Keep M503 quiet and only give errors during first load
@@ -1774,7 +1774,7 @@ M500
  *
  * View the current statistics with M78.
  */
-//#define PRINTCOUNTER // 20210213 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------------
+//#define PRINTCOUNTER // 20210213 enabled - cannot enable without EEPROM installed - breaks communications with OctoPrint ----------------------------------------------------------------------------
 #if ENABLED(PRINTCOUNTER)
   #define PRINTCOUNTER_SAVE_INTERVAL 120 // (minutes) EEPROM save interval during print // 20210213 changed from 60 to 120 ----------------------------------------------------------------------------
 #endif
