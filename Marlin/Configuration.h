@@ -416,7 +416,7 @@
 #define TEMP_SENSOR_5 0
 #define TEMP_SENSOR_6 0
 #define TEMP_SENSOR_7 0
-#define TEMP_SENSOR_BED 0 // 20210213 - bed (T0 ??) changed from 0 to 1 ---------------------------------------------------------------------------------------------------------------------------------------------
+#define TEMP_SENSOR_BED 1 // 20210213 - bed (T0 ??) changed from 0 to 1 ---------------------------------------------------------------------------------------------------------------------------------------------
 #define TEMP_SENSOR_PROBE 0
 #define TEMP_SENSOR_CHAMBER 0
 
