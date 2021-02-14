@@ -1614,15 +1614,15 @@ M500
  */
 
 #define I2C_EEPROM            // 20210214 - use external EEPROM Module (e.g. AT24C256) ------------------------------------------------
-#ifdef I2C_EEPROM
-  #undef E2END                // remove previous definition in Arduino Core STM32 to be used with EEPROM emulation since a real EEPROM will be used
-  #ifdef MARLIN_EEPROM_SIZE
-    #undef MARLIN_EEPROM_SIZE
-    #define MARLIN_EEPROM_SIZE 0x7FFF
-  #endif
-  #define USE_SHARED_EEPROM 1 // Use Platform-independent Arduino functions for I2C EEPROM
-  #define E2END 0x7FFF        // redefine EEPROM end address for AT24C256 (32kB) based on FLASH_PAGE_SIZE -1 would have been 0X800
-#endif
+//#ifdef I2C_EEPROM
+//  #undef E2END                // remove previous definition in Arduino Core STM32 to be used with EEPROM emulation since a real EEPROM will be used
+//  #ifdef MARLIN_EEPROM_SIZE
+//    #undef MARLIN_EEPROM_SIZE
+//    #define MARLIN_EEPROM_SIZE 0x7FFF
+//  #endif
+//  #define USE_SHARED_EEPROM 1 // Use Platform-independent Arduino functions for I2C EEPROM
+//  #define E2END 0x7FFF        // redefine EEPROM end address for AT24C256 (32kB) based on FLASH_PAGE_SIZE -1 would have been 0X800
+//#endif
 
 #define EEPROM_SETTINGS       // Persistent storage with M500 and M501 // 20210213 could not enable as board does not have built-in EEPROM; still need to install and enable external EEPROM - endabling this breaks the communications to SKR
 //#define DISABLE_M503        // Saves ~2700 bytes of PROGMEM. Disable for release!
