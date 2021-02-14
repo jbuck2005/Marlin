@@ -1621,7 +1621,7 @@ M500
     #define MARLIN_EEPROM_SIZE 0x7FFF
   #endif
   #define USE_SHARED_EEPROM 1 // Use Platform-independent Arduino functions for I2C EEPROM
-  #define E2END 0x7FFF        // redefine EEPROM end address for AT24C256 (32kB) based on page size -1 would have been 0X800
+  #define E2END 0x7FFF        // redefine EEPROM end address for AT24C256 (32kB) based on FLASH_PAGE_SIZE -1 would have been 0X800
 #endif
 
 #define EEPROM_SETTINGS       // Persistent storage with M500 and M501 // 20210213 could not enable as board does not have built-in EEPROM; still need to install and enable external EEPROM - endabling this breaks the communications to SKR
