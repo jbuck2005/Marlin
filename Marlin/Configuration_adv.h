@@ -377,7 +377,7 @@
  * Hotend Idle Timeout
  * Prevent filament in the nozzle from charring and causing a critical jam.
  */
-#define HOTEND_IDLE_TIMEOUT // 20210213 enabled -------------------------------------------------------------------------------------------------------------------------------------------------------
+//#define HOTEND_IDLE_TIMEOUT // 20210213 enabled -------------------------------------------------------------------------------------------------------------------------------------------------------
 #if ENABLED(HOTEND_IDLE_TIMEOUT)
   #define HOTEND_IDLE_TIMEOUT_SEC (5*60)    // (seconds) Time without extruder movement to trigger protection
   #define HOTEND_IDLE_MIN_TRIGGER   180     // (°C) Minimum temperature to enable hotend protection
@@ -419,7 +419,7 @@
 // When first starting the main fan, run it at full speed for the
 // given number of milliseconds.  This gets the fan spinning reliably
 // before setting a PWM value. (Does not work with software PWM for fan on Sanguinololu)
-#define FAN_KICKSTART_TIME 100 // 20210213 enabled ----------------------------------------------------------------------------------------------------------------------------------------------------
+//#define FAN_KICKSTART_TIME 100 // 20210213 enabled ----------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Some coolers may require a non-zero "off" state.
 //#define FAN_OFF_PWM  1
@@ -1096,7 +1096,7 @@
 
   // Add Probe Z Offset calibration to the Z Probe Offsets menu
   #if HAS_BED_PROBE
-    #define PROBE_OFFSET_WIZARD // 20210213 enabled ---------------------------------------------------------------------------------------------------------------------------------------------------
+//    #define PROBE_OFFSET_WIZARD // 20210213 enabled ---------------------------------------------------------------------------------------------------------------------------------------------------
     #if ENABLED(PROBE_OFFSET_WIZARD)
       //
       // Enable to init the Probe Z-Offset when starting the Wizard.
@@ -1106,7 +1106,7 @@
       //#define PROBE_OFFSET_WIZARD_START_Z -4.0
 
       // Set a convenient position to do the calibration (probing point and nozzle/bed-distance)
-      #define PROBE_OFFSET_WIZARD_XY_POS { X_CENTER, Y_CENTER } // 20210213 enabled -------------------------------------------------------------------------------------------------------------------
+//      #define PROBE_OFFSET_WIZARD_XY_POS { X_CENTER, Y_CENTER } // 20210213 enabled -------------------------------------------------------------------------------------------------------------------
     #endif
   #endif
 
@@ -1162,7 +1162,7 @@
   #endif
 
   // Scroll a longer status message into view
-  #define STATUS_MESSAGE_SCROLLING // 20210213 enabled ------------------------------------------------------------------------------------------------------------------------------------------------
+//  #define STATUS_MESSAGE_SCROLLING // 20210213 enabled ------------------------------------------------------------------------------------------------------------------------------------------------
 
   // On the Info Screen, display XY with one decimal place when possible
   //#define LCD_DECIMAL_SMALL_XY
@@ -1680,18 +1680,18 @@
  *
  * Warning: Does not respect endstops!
  */
-#define BABYSTEPPING // 20210213 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------------
+//#define BABYSTEPPING // 20210213 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------------
 #if ENABLED(BABYSTEPPING)
   //#define INTEGRATED_BABYSTEPPING         // EXPERIMENTAL integration of babystepping into the Stepper ISR
   //#define BABYSTEP_WITHOUT_HOMING
   #define BABYSTEP_ALWAYS_AVAILABLE       // Allow babystepping at all times (not just during movement). // 20210213 enabled --------------------------------------------------------------------------
   //#define BABYSTEP_XY                     // Also enable X/Y Babystepping. Not supported on DELTA!
   #define BABYSTEP_INVERT_Z false           // Change if Z babysteps should go the other way
-  #define BABYSTEP_MILLIMETER_UNITS       // Specify BABYSTEP_MULTIPLICATOR_(XY|Z) in mm instead of micro-steps // 20210213 enabled -------------------------------------------------------------------
-  #define BABYSTEP_MULTIPLICATOR_Z  0.0     // (steps or mm) Steps or millimeter distance for each Z babystep // 20210213 changed from 1 to 0.01 ------------------------------------------------------
+//  #define BABYSTEP_MILLIMETER_UNITS       // Specify BABYSTEP_MULTIPLICATOR_(XY|Z) in mm instead of micro-steps // 20210213 enabled -------------------------------------------------------------------
+//  #define BABYSTEP_MULTIPLICATOR_Z  0.0     // (steps or mm) Steps or millimeter distance for each Z babystep // 20210213 changed from 1 to 0.01 ------------------------------------------------------
   #define BABYSTEP_MULTIPLICATOR_XY 1       // (steps or mm) Steps or millimeter distance for each XY babystep
 
-  #define DOUBLECLICK_FOR_Z_BABYSTEPPING  // Double-click on the Status Screen for Z Babystepping. // 20210213 enabled --------------------------------------------------------------------------------
+//  #define DOUBLECLICK_FOR_Z_BABYSTEPPING  // Double-click on the Status Screen for Z Babystepping. // 20210213 enabled --------------------------------------------------------------------------------
   #if ENABLED(DOUBLECLICK_FOR_Z_BABYSTEPPING)
     #define DOUBLECLICK_MAX_INTERVAL 1250   // Maximum interval between clicks, in milliseconds.
                                             // Note: Extra time may be added to mitigate controller latency.
@@ -1703,7 +1703,7 @@
 
   //#define BABYSTEP_DISPLAY_TOTAL          // Display total babysteps since last G28
 
-  #define BABYSTEP_ZPROBE_OFFSET          // Combine M851 Z and Babystepping // 20210213 enabled ------------------------------------------------------------------------------------------------------
+//  #define BABYSTEP_ZPROBE_OFFSET          // Combine M851 Z and Babystepping // 20210213 enabled ------------------------------------------------------------------------------------------------------
   #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
     //#define BABYSTEP_HOTEND_Z_OFFSET      // For multiple hotends, babystep relative Z offsets
     //#define BABYSTEP_ZPROBE_GFX_OVERLAY   // Enable graphical overlay on Z-offset editor

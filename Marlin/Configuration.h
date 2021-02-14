@@ -416,7 +416,7 @@
 #define TEMP_SENSOR_5 0
 #define TEMP_SENSOR_6 0
 #define TEMP_SENSOR_7 0
-#define TEMP_SENSOR_BED 1 // 20210213 changed from 0 to 1 ---------------------------------------------------------------------------------------------------------------------------------------------
+#define TEMP_SENSOR_BED 0 // 20210213 changed from 0 to 1 ---------------------------------------------------------------------------------------------------------------------------------------------
 #define TEMP_SENSOR_PROBE 0
 #define TEMP_SENSOR_CHAMBER 0
 
@@ -474,14 +474,14 @@
 // PID Tuning Guide here: https://reprap.org/wiki/PID_Tuning
 
 // Comment the following line to disable PID and enable bang-bang.
-#define PIDTEMP
+//#define PIDTEMP	// 20210214 disabled in hopes of getting USB comms back up and running --------------------------------------------------------------------------------------------------------
 #define BANG_MAX 255     // Limits current to nozzle while in bang-bang mode; 255=full current
 #define PID_MAX BANG_MAX // Limits current to nozzle while PID is active (see PID_FUNCTIONAL_RANGE below); 255=full current
 #define PID_K1 0.95      // Smoothing factor within any PID loop
 
 #if ENABLED(PIDTEMP)
-  #define PID_EDIT_MENU         // Add PID editing to the "Advanced Settings" menu. (~700 bytes of PROGMEM) // 20210213 enabled -----------------------------------------------------------------------
-  #define PID_AUTOTUNE_MENU     // Add PID auto-tuning to the "Advanced Settings" menu. (~250 bytes of PROGMEM) // 20210213 enabled -------------------------------------------------------------------
+//  #define PID_EDIT_MENU         // Add PID editing to the "Advanced Settings" menu. (~700 bytes of PROGMEM) // 20210213 enabled -----------------------------------------------------------------------
+//  #define PID_AUTOTUNE_MENU     // Add PID auto-tuning to the "Advanced Settings" menu. (~250 bytes of PROGMEM) // 20210213 enabled -------------------------------------------------------------------
   //#define PID_PARAMS_PER_HOTEND // Uses separate PID parameters for each extruder (useful for mismatched extruders)
                                   // Set/get with gcode: M301 E[extruder number, 0-2]
 
@@ -515,7 +515,7 @@
  * heater. If your configuration is significantly different than this and you don't understand
  * the issues involved, don't use bed PID until someone else verifies that your hardware works.
  */
-#define PIDTEMPBED // 20210213 enabled ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+//#define PIDTEMPBED // 20210213 enabled ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 //#define BED_LIMIT_SWITCHING
 
@@ -615,7 +615,7 @@
 // extra connectors. Leave undefined any used for non-endstop and non-probe purposes.
 #define USE_XMIN_PLUG
 #define USE_YMIN_PLUG
-//#define USE_ZMIN_PLUG // 20210213 diabled as nothing is plugged in - may need to re-enable for filament sensing (sensor is plugged into E0 (3v3 GND PE15)
+#define USE_ZMIN_PLUG // 20210213 diabled as nothing is plugged in - may need to re-enable for filament sensing (sensor is plugged into E0 (3v3 GND PE15) - 20210214 reenabled in attempt to restore comms ------
 //#define USE_XMAX_PLUG
 //#define USE_YMAX_PLUG
 //#define USE_ZMAX_PLUG
@@ -673,15 +673,19 @@
  *          TMC5130, TMC5130_STANDALONE, TMC5160, TMC5160_STANDALONE
  * :['A4988', 'A5984', 'DRV8825', 'LV8729', 'L6470', 'L6474', 'POWERSTEP01', 'TB6560', 'TB6600', 'TMC2100', 'TMC2130', 'TMC2130_STANDALONE', 'TMC2160', 'TMC2160_STANDALONE', 'TMC2208', 'TMC2208_STANDALONE', 'TMC2209', 'TMC2209_STANDALONE', 'TMC26X', 'TMC26X_STANDALONE', 'TMC2660', 'TMC2660_STANDALONE', 'TMC5130', 'TMC5130_STANDALONE', 'TMC5160', 'TMC5160_STANDALONE']
  */
-#define X_DRIVER_TYPE  TMC2209 // 20210213 changed from A4988 to TMC2209 (which are set to UART mode) -------------------------------------------------------------------------------------------------
-#define Y_DRIVER_TYPE  TMC2209 // 20210213 changed from A4988 to TMC2209 (which are set to UART mode) -------------------------------------------------------------------------------------------------
-#define Z_DRIVER_TYPE  TMC2209 // 20210213 changed from A4988 to TMC2209 (which are set to UART mode) -------------------------------------------------------------------------------------------------
+//#define X_DRIVER_TYPE  TMC2209 // 20210213 changed from A4988 to TMC2209 (which are set to UART mode) -------------------------------------------------------------------------------------------------
+//#define Y_DRIVER_TYPE  TMC2209 // 20210213 changed from A4988 to TMC2209 (which are set to UART mode) -------------------------------------------------------------------------------------------------
+//#define Z_DRIVER_TYPE  TMC2209 // 20210213 changed from A4988 to TMC2209 (which are set to UART mode) -------------------------------------------------------------------------------------------------
+#define X_DRIVER_TYPE  A4988 // 20210214 set to A4988 in hopes of restoring USB comms with SKR board ----------------------------------------------------------------------------------------------------
+#define Y_DRIVER_TYPE  A4988 // 20210214 set to A4988 in hopes of restoring USB comms with SKR board ----------------------------------------------------------------------------------------------------
+#define Z_DRIVER_TYPE  A4988 // 20210214 set to A4988 in hopes of restoring USB comms with SKR board ----------------------------------------------------------------------------------------------------
 //#define X2_DRIVER_TYPE A4988
 //#define Y2_DRIVER_TYPE A4988
 //#define Z2_DRIVER_TYPE A4988
 //#define Z3_DRIVER_TYPE A4988
 //#define Z4_DRIVER_TYPE A4988
-#define E0_DRIVER_TYPE TMC2209 // 20210213 changed from A4988 to TMC2209 (which are set to UART mode) -------------------------------------------------------------------------------------------------
+//#define E0_DRIVER_TYPE TMC2209 // 20210213 changed from A4988 to TMC2209 (which are set to UART mode) -------------------------------------------------------------------------------------------------
+#define E0_DRIVER_TYPE A4988 // 20210214 set to A4988 in hopes of restoring USB comms with SKR board ----------------------------------------------------------------------------------------------------
 //#define E1_DRIVER_TYPE A4988
 //#define E2_DRIVER_TYPE A4988
 //#define E3_DRIVER_TYPE A4988
@@ -836,10 +840,10 @@
  * The probe replaces the Z-MIN endstop and is used for Z homing.
  * (Automatically enables USE_PROBE_FOR_Z_HOMING.)
  */
-//#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN // 20210213 diabled --------------------------------------------------------------------------------------------------------------------------------------
+#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN // 20210213 diabled --------------------------------------------------------------------------------------------------------------------------------------
 
 // Force the use of the probe for Z-axis homing
-#define USE_PROBE_FOR_Z_HOMING // 20210213 enabled ----------------------------------------------------------------------------------------------------------------------------------------------------
+//#define USE_PROBE_FOR_Z_HOMING // 20210213 enabled ----------------------------------------------------------------------------------------------------------------------------------------------------
 
 /**
  * Z_MIN_PROBE_PIN
@@ -900,7 +904,7 @@
 /**
  * The BLTouch probe uses a Hall effect sensor and emulates a servo.
  */
-#define BLTOUCH // 20210213 enabled -------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//#define BLTOUCH // 20210213 enabled -------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 /**
  * Touch-MI Probe by hotends.fr
@@ -1043,8 +1047,8 @@
  * A total of 2 does fast/slow probes with a weighted average.
  * A total of 3 or more adds more slow probes, taking the average.
  */
-#define MULTIPLE_PROBING 2 // 20210213 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------
-#define EXTRA_PROBING    1 // 20210213 enabled -------------------------------------------------------------------------------------------------------------------------------------------------------
+//#define MULTIPLE_PROBING 2 // 20210213 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------
+//#define EXTRA_PROBING    1 // 20210213 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 /**
  * Z probes require clearance when deploying, stowing, and moving between
@@ -1072,7 +1076,7 @@
 #define Z_PROBE_OFFSET_RANGE_MAX 20
 
 // Enable the M48 repeatability test to test probe accuracy
-#define Z_MIN_PROBE_REPEATABILITY_TEST // 20210213 enabled --------------------------------------------------------------------------------------------------------------------------------------------
+//#define Z_MIN_PROBE_REPEATABILITY_TEST // 20210213 enabled --------------------------------------------------------------------------------------------------------------------------------------------
 
 // Before deploy/stow pause for user confirmation
 //#define PAUSE_BEFORE_DEPLOY_STOW
@@ -1149,10 +1153,10 @@
 //#define HOME_AFTER_DEACTIVATE   // Require rehoming after steppers are deactivated. Also enable NO_MOTION_BEFORE_HOMING for extra safety.
 //#define UNKNOWN_Z_NO_RAISE      // Don't raise Z (lower the bed) if Z is "unknown." For beds that fall when Z is powered off.
 
-#define Z_HOMING_HEIGHT  10       // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ... // 20210213 enabled and changed from 4 to 10 --------------------------------
+//#define Z_HOMING_HEIGHT  10       // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ... // 20210213 enabled and changed from 4 to 10 --------------------------------
                                   // Be sure to have this much clearance over your Z_MAX_POS to prevent grinding.
 
-#define Z_AFTER_HOMING  10      // (mm) Height to move to after homing Z // 20210213 enabled ----------------------------------------------------------------------------------------------------------
+//#define Z_AFTER_HOMING  10      // (mm) Height to move to after homing Z // 20210213 enabled ----------------------------------------------------------------------------------------------------------
 
 // Direction of endstops when homing; 1=MAX, -1=MIN
 // :[-1,1]
@@ -1458,7 +1462,7 @@ M500
 #endif
 
 // Add a menu item to move between bed corners for manual bed adjustment
-#define LEVEL_BED_CORNERS //20210213 enabled ----------------------------------------------------------------------------------------------------------------------------------------------------------
+//#define LEVEL_BED_CORNERS //20210213 enabled ----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #if ENABLED(LEVEL_BED_CORNERS)
   #define LEVEL_CORNERS_INSET_LFRB { 30, 30, 30, 30 } // (mm) Left, Front, Right, Back insets
@@ -1518,7 +1522,7 @@ M500
 // - Move the Z probe (or nozzle) to a defined XY point before Z Homing.
 // - Prevent Z homing when the Z probe is outside bed area.
 //
-#define Z_SAFE_HOMING // 20210213 enabled -------------------------------------------------------------------------------------------------------------------------------------------------------------
+//#define Z_SAFE_HOMING // 20210213 enabled -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #if ENABLED(Z_SAFE_HOMING)
   #define Z_SAFE_HOMING_X_POINT X_CENTER  // X point for Z homing
@@ -1774,9 +1778,9 @@ M500
  *
  * View the current statistics with M78.
  */
-//#define PRINTCOUNTER // 20210213 enabled - cannot enable without EEPROM installed - breaks communications with OctoPrint ----------------------------------------------------------------------------
+//#define PRINTCOUNTER // 20210213 enabled - cannot enable without EEPROM installed - breaks communications with OctoPrint ------------------------------------------------------------------------------
 #if ENABLED(PRINTCOUNTER)
-  #define PRINTCOUNTER_SAVE_INTERVAL 120 // (minutes) EEPROM save interval during print // 20210213 changed from 60 to 120 ----------------------------------------------------------------------------
+//  #define PRINTCOUNTER_SAVE_INTERVAL 120 // (minutes) EEPROM save interval during print // 20210213 changed from 60 to 120 ----------------------------------------------------------------------------
 #endif
 
 /**
