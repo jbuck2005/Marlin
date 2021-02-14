@@ -696,7 +696,7 @@
 
 // Enable this feature if all enabled endstop pins are interrupt-capable.
 // This will remove the need to poll the interrupt pins, saving many CPU cycles.
-#define ENDSTOP_INTERRUPTS_FEATURE // 20210214 enabled for testing ------------------------------------------------------------------------------------------------------------------------------------
+#define ENDSTOP_INTERRUPTS_FEATURE // 20210214 enabled - seems to work with home when tested ----------------------------------------------------------------------------------------------------------
 
 /**
  * Endstop Noise Threshold
@@ -1607,6 +1607,10 @@ M500
  *   M501 - Read settings from EEPROM. (i.e., Throw away unsaved changes)
  *   M502 - Revert settings to "factory" defaults. (Follow with M500 to init the EEPROM.)
  */
+
+#define I2C_EEPROM            // 20210214 added to enable external EEPROM -------------------------------------------------------------
+#define E2END 0x7FFF          // 20210214 confirm correct size for AT24C256 -----------------------------------------------------------
+
 //#define EEPROM_SETTINGS     // Persistent storage with M500 and M501 // 20210213 could not enable as board does not have built-in EEPROM; still need to install and enable external EEPROM - endabling this breaks the communications to SKR
 //#define DISABLE_M503        // Saves ~2700 bytes of PROGMEM. Disable for release!
 #define EEPROM_CHITCHAT       // Give feedback on EEPROM commands. Disable to save PROGMEM.
