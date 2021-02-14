@@ -103,14 +103,14 @@
  *
  * :[-1, 0, 1, 2, 3, 4, 5, 6, 7]
  */
-#define SERIAL_PORT -1 // 20210214 default should be -1 which allows USB communication with SKR -------------------------------------------------------------------------------------------------------
+#define SERIAL_PORT 0 // 20210214 default should be -1 which allows USB communication with SKR -------------------------------------------------------------------------------------------------------
 
 /**
  * Select a secondary serial port on the board to use for communication with the host.
  * Currently Ethernet (-2) is only supported on Teensy 4.1 boards.
  * :[-2, -1, 0, 1, 2, 3, 4, 5, 6, 7]
  */
-#define SERIAL_PORT_2 1 // 20210214 1 = TFT, and when set, allows USB communicatons with OctoPrint server ---------------------------------------------------------------------------------------------
+#define SERIAL_PORT_2 -1 // 20210214 1 = TFT, and when set, allows USB communicatons with OctoPrint server ---------------------------------------------------------------------------------------------
 
 /**
  * This setting determines the communication speed of the printer.
