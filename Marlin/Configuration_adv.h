@@ -1248,7 +1248,7 @@
    * an option on the LCD screen to continue the print from the last-known
    * point in the file.
    */
-  #define POWER_LOSS_RECOVERY // 20210213 enabled -----------------------------------------------------------------------------------------------------------------------------------------------------
+//  #define POWER_LOSS_RECOVERY // 20210213 enabled -----------------------------------------------------------------------------------------------------------------------------------------------------
   #if ENABLED(POWER_LOSS_RECOVERY)
     #define PLR_ENABLED_DEFAULT   false // Power Loss Recovery enabled by default. (Set with 'M413 Sn' & M500)
     //#define BACKUP_POWER_SUPPLY       // Backup power / UPS to move the steppers on power loss
@@ -1322,7 +1322,7 @@
    * This feature must be enabled with "M540 S1" or from the LCD menu.
    * To have any effect, endstops must be enabled during SD printing.
    */
-  #define SD_ABORT_ON_ENDSTOP_HIT // 20210213 enabled - could be a way to add emergency stop button (in parallel to an end-stop!) ---------------------------------------------------------------------
+//  #define SD_ABORT_ON_ENDSTOP_HIT // 20210213 enabled - could be a way to add emergency stop button (in parallel to an end-stop!) ---------------------------------------------------------------------
 
   /**
    * This option makes it easier to print the same SD Card file again.
@@ -3366,7 +3366,7 @@
  * User-defined menu items to run custom G-code.
  * Up to 25 may be defined, but the actual number is LCD-dependent.
  */
-#define CUSTOM_USER_MENUS // 20210213 enabled ---------------------------------------------------------------------------------------------------------------------------------------------------------
+//#define CUSTOM_USER_MENUS // 20210213 enabled ---------------------------------------------------------------------------------------------------------------------------------------------------------
 #if ENABLED(CUSTOM_USER_MENUS)
   //#define CUSTOM_USER_MENU_TITLE "Custom Commands"
   #define USER_SCRIPT_DONE "M117 User Script Done"
