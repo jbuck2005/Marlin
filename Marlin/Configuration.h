@@ -408,10 +408,10 @@
  *   998 : Dummy Table that ALWAYS reads 25°C or the temperature defined below.
  *   999 : Dummy Table that ALWAYS reads 100°C or the temperature defined below.
  */
-#define TEMP_SENSOR_0 1
-#define TEMP_SENSOR_1 0 // 20210214 testing
-#define TEMP_SENSOR_2 0
-#define TEMP_SENSOR_3 0
+#define TEMP_SENSOR_0 1 // 20210214 - extruder - (T1)
+#define TEMP_SENSOR_1 1 // 20210214 testing
+#define TEMP_SENSOR_2 1
+#define TEMP_SENSOR_3 1
 #define TEMP_SENSOR_4 0
 #define TEMP_SENSOR_5 0
 #define TEMP_SENSOR_6 0
