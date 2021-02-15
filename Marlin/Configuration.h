@@ -1154,10 +1154,10 @@
 //#define HOME_AFTER_DEACTIVATE   // Require rehoming after steppers are deactivated. Also enable NO_MOTION_BEFORE_HOMING for extra safety.
 //#define UNKNOWN_Z_NO_RAISE      // Don't raise Z (lower the bed) if Z is "unknown." For beds that fall when Z is powered off.
 
-#define Z_HOMING_HEIGHT  10      // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ... 20210105 enabled and changed from default 4 to 10 -----------
+#define Z_HOMING_HEIGHT  10       // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ... 20210105 enabled and changed from default 4 to 10 ----------
                                   // Be sure to have this much clearance over your Z_MAX_POS to prevent grinding.
 
-#define Z_AFTER_HOMING  10      // (mm) Height to move to after homing Z 20210105 enabled --------------------------------------------------------------------------------------------
+#define Z_AFTER_HOMING  10        // (mm) Height to move to after homing Z 20210105 enabled ------------------------------------------------------------------------------------------
 
 // Direction of endstops when homing; 1=MAX, -1=MIN
 // :[-1,1]
@@ -1168,8 +1168,8 @@
 // @section machine
 
 // The size of the print bed
-#define X_BED_SIZE 220 // 20210105 changed from default 235 to 220 --------------------------------------------------------------------------------------------------------------------
-#define Y_BED_SIZE 220 // 20210105 changed from default 235 to 220 --------------------------------------------------------------------------------------------------------------------
+#define X_BED_SIZE 220 // 20210105 changed from default 235 to 220 -------------------------------------------------------------------------------------------------------------------
+#define Y_BED_SIZE 220 // 20210105 changed from default 235 to 220 -------------------------------------------------------------------------------------------------------------------
 
 // Travel limits (mm) after homing, corresponding to endstop positions.
 #define X_MIN_POS 0
@@ -1177,7 +1177,7 @@
 #define Z_MIN_POS 0
 #define X_MAX_POS X_BED_SIZE
 #define Y_MAX_POS Y_BED_SIZE
-#define Z_MAX_POS 240 // 20210105 changed from default 250 to to 240, should maybe be lower for direct drive --------------------------------------------------------------------------
+#define Z_MAX_POS 240 // 20210105 changed from default 250 to to 240, should maybe be lower for direct drive -------------------------------------------------------------------------
 
 /**
  * Software Endstops
@@ -1771,7 +1771,7 @@
  */
 #define PRINTCOUNTER // 20210105 enabled ---------------------------------------------------------------------------------------------------------------------------------------------
 #if ENABLED(PRINTCOUNTER)
-  #define PRINTCOUNTER_SAVE_INTERVAL 60 // (minutes) EEPROM save interval during print
+  #define PRINTCOUNTER_SAVE_INTERVAL 120 // (minutes) EEPROM save interval during print
 #endif
 
 /**
