@@ -115,6 +115,7 @@
  * :[-2, -1, 0, 1, 2, 3, 4, 5, 6, 7]
  */
 #define SERIAL_PORT_2 1 // 20210214 1 = TFT, and when set, allows USB communicatons with OctoPrint server ---------------------------------------------------------------------------------------------
+#define SERIAL_PORT_3 3 // 20210215 testing to see if additional UART is possible using (RX3/TX3) (PD9/PD8) respectively ------------------------------------------------------------------------------
 
 /**
  * This setting determines the communication speed of the printer.
@@ -125,18 +126,18 @@
  *
  * :[2400, 9600, 19200, 38400, 57600, 115200, 250000, 500000, 1000000]
  */
-#define BAUDRATE 115200 // 20210214 115200 is the maximum speed for an ESP-01S and perhaps a good default value (was working previously) --------------------------------------------------------------
+#define BAUDRATE 115200 // 20210214 115200 is the maximum speed for an ESP-01S and perhaps a good default value and works with OctoPrint --------------------------------------------------------------
 
 // Enable the Bluetooth serial interface on AT90USB devices
 //#define BLUETOOTH
 
 // Choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
-  #define MOTHERBOARD BOARD_BTT_SKR_PRO_V1_2 // 20210213 ----------------------------------------------------------------------------------------------------------------------------------------------
+  #define MOTHERBOARD BOARD_BTT_SKR_PRO_V1_2 // 20210215 ----------------------------------------------------------------------------------------------------------------------------------------------
 #endif
 
 // Name displayed in the LCD "Ready" message and Info menu
-#define CUSTOM_MACHINE_NAME "Mega Replicator v0.2.14" // 20210214 -------------------------------------------------------------------------------------------------------------------------------------
+#define CUSTOM_MACHINE_NAME "Mega Replicator v0.2.15" // 20210215 -------------------------------------------------------------------------------------------------------------------------------------
 
 // Printer's unique ID, used by some programs to differentiate between machines.
 // Choose your own or use a service like https://www.uuidgenerator.net/version4
@@ -412,15 +413,22 @@
  *   998 : Dummy Table that ALWAYS reads 25°C or the temperature defined below.
  *   999 : Dummy Table that ALWAYS reads 100°C or the temperature defined below.
  */
-#define TEMP_SENSOR_0 1   // 20210214 - T1 - extruder #1 ----------------------------------------------------------------------------------------------------------------------------------------------
-#define TEMP_SENSOR_1 0
-#define TEMP_SENSOR_2 0
+
+/*	20210215 ----- from ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h -----------------------------------------------------------------------------------------------------------------------
+	#define TEMP_0_PIN                          PF4   // T1 <-> E0
+	#define TEMP_1_PIN                          PF5   // T2 <-> E1
+	#define TEMP_2_PIN                          PF6   // T3 <-> E2
+	#define TEMP_BED_PIN                        PF3   // T0 <-> Bed
+*/
+#define TEMP_SENSOR_0 1   // 20210214 - T1 (PF4) - extruder #1 ----------------------------------------------------------------------------------------------------------------------------------------
+#define TEMP_SENSOR_1 0   // 20210215 - T2 (PF5) - (extruder #2 - future) -----------------------------------------------------------------------------------------------------------------------------
+#define TEMP_SENSOR_2 0   // 20210215 - T3 (PF6) - (extruder #3 - future) -----------------------------------------------------------------------------------------------------------------------------
 #define TEMP_SENSOR_3 0
 #define TEMP_SENSOR_4 0
 #define TEMP_SENSOR_5 0
 #define TEMP_SENSOR_6 0
 #define TEMP_SENSOR_7 0
-#define TEMP_SENSOR_BED 1 // 20210214 - T0 - bed ------------------------------------------------------------------------------------------------------------------------------------------------------
+#define TEMP_SENSOR_BED 1 // 20210214 - T0 (PF3) - bed ------------------------------------------------------------------------------------------------------------------------------------------------
 #define TEMP_SENSOR_PROBE 0
 #define TEMP_SENSOR_CHAMBER 0
 
@@ -446,6 +454,13 @@
 #define TEMP_BED_RESIDENCY_TIME 10  // (seconds) Time to wait for bed to "settle" in M190
 #define TEMP_BED_WINDOW          1  // (°C) Temperature proximity for the "temperature reached" timer
 #define TEMP_BED_HYSTERESIS      3  // (°C) Temperature proximity considered "close enough" to the target
+
+/*	20210215 ----- from ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h -----------------------------------------------------------------------------------------------------------------------
+	#define HEATER_0_PIN                        PB1   // Heater0
+	#define HEATER_1_PIN                        PD14  // Heater1
+	#define HEATER_2_PIN                        PB0   // Heater1
+	#define HEATER_BED_PIN                      PD12  // Hotbed
+*/
 
 // Below this temperature the heater will be switched off
 // because it probably indicates a broken thermistor wire.
@@ -1633,10 +1648,10 @@ M500
   */
 
 //  #define USE_SHARED_EEPROM 1  // 20210215 does not appear necessary - is defined in Marlin/src/HAL/STM32/inc/Conditionals_post.h when I2C_EEPROM is set
-//  #define E2END 0x7FFF         // 20210215 commented out - redefine EEPROM end address for AT24C256 (32kB) based on FLASH_PAGE_SIZE -1 would have been 0X800 ----------------------------------------
+//  #define E2END 0x7FFF         // 20210215 commented out - redefine EEPROM end address for FT24C256A (32kB) based on FLASH_PAGE_SIZE -1 would have been 0X800 ---------------------------------------
 #endif
 
-#define EEPROM_SETTINGS       // Persistent storage with M500 and M501 // 20210213 could not enable as board does not have built-in EEPROM; still need to install and enable external EEPROM - endabling this breaks the communications to SKR
+#define EEPROM_SETTINGS       // Persistent storage with M500 and M501 // 20210215 enabled and tested -------------------------------------------------------------------------------------------------
 //#define DISABLE_M503        // Saves ~2700 bytes of PROGMEM. Disable for release!
 #define EEPROM_CHITCHAT       // Give feedback on EEPROM commands. Disable to save PROGMEM.
 #define EEPROM_BOOT_SILENT    // Keep M503 quiet and only give errors during first load
@@ -2537,6 +2552,17 @@ M500
 //=============================================================================
 
 // @section extras
+
+/*	20210215 ----- from ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h -----------------------------------------------------------------------------------------------------------------------
+#define FAN_PIN                             PC8   // Fan0
+#define FAN1_PIN                            PE5   // Fan1
+#define FAN2_PIN                            PE6   // Fan2
+
+#ifndef E0_AUTO_FAN_PIN
+  #define E0_AUTO_FAN_PIN               FAN1_PIN
+  #endif
+
+*/
 
 // Set number of user-controlled fans. Disable to use all board-defined fans.
 // :[1,2,3,4,5,6,7,8]

@@ -401,16 +401,16 @@
  * The fan turns on automatically whenever any driver is enabled and turns
  * off (or reduces to idle speed) shortly after drivers are turned off.
  */
-//#define USE_CONTROLLER_FAN
+#define USE_CONTROLLER_FAN // 20210215 enabled to cool stepper motors ---------------------------------------------------------------------------------------------------------------------------------
 #if ENABLED(USE_CONTROLLER_FAN)
-  //#define CONTROLLER_FAN_PIN -1        // Set a custom pin for the controller fan
+  #define CONTROLLER_FAN_PIN FAN2_PIN    // Set a custom pin for the controller fan // 20210215 changed from -1 to FAN2_PIN (PE6) ---------------------------------------------------------------------
   //#define CONTROLLER_FAN_USE_Z_ONLY    // With this option only the Z axis is considered
   //#define CONTROLLER_FAN_IGNORE_Z      // Ignore Z stepper. Useful when stepper timeout is disabled.
   #define CONTROLLERFAN_SPEED_MIN      0 // (0-255) Minimum speed. (If set below this value the fan is turned off.)
   #define CONTROLLERFAN_SPEED_ACTIVE 255 // (0-255) Active speed, used when any motor is enabled
-  #define CONTROLLERFAN_SPEED_IDLE     0 // (0-255) Idle speed, used when motors are disabled
+  #define CONTROLLERFAN_SPEED_IDLE    96 // (0-255) Idle speed, used when motors are disabled // 20210215 changed from 0 to 96 to have fan running slowly when motors are disabled --------------------
   #define CONTROLLERFAN_IDLE_TIME     60 // (seconds) Extra time to keep the fan running after disabling motors
-  //#define CONTROLLER_FAN_EDITABLE      // Enable M710 configurable settings
+  #define CONTROLLER_FAN_EDITABLE        // Enable M710 configurable settings // 20210215 enabled feature to control via gcode & menu -----------------------------------------------------------------
   #if ENABLED(CONTROLLER_FAN_EDITABLE)
     #define CONTROLLER_FAN_MENU          // Enable the Controller Fan submenu
   #endif
@@ -419,7 +419,7 @@
 // When first starting the main fan, run it at full speed for the
 // given number of milliseconds.  This gets the fan spinning reliably
 // before setting a PWM value. (Does not work with software PWM for fan on Sanguinololu)
-//#define FAN_KICKSTART_TIME 100 // 20210213 enabled ----------------------------------------------------------------------------------------------------------------------------------------------------
+#define FAN_KICKSTART_TIME 100 // 20210215 enabled ----------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Some coolers may require a non-zero "off" state.
 //#define FAN_OFF_PWM  1
@@ -480,7 +480,7 @@
  * Multiple extruders can be assigned to the same pin in which case
  * the fan will turn on when any selected extruder is above the threshold.
  */
-#define E0_AUTO_FAN_PIN -1
+#define E0_AUTO_FAN_PIN	FAN_PIN  // 20210215 changed from -1 to FAN_PIN (PC8) ------------------------------------------------------------------------------------------------------------------------
 #define E1_AUTO_FAN_PIN -1
 #define E2_AUTO_FAN_PIN -1
 #define E3_AUTO_FAN_PIN -1
@@ -490,7 +490,7 @@
 #define E7_AUTO_FAN_PIN -1
 #define CHAMBER_AUTO_FAN_PIN -1
 
-#define EXTRUDER_AUTO_FAN_TEMPERATURE 50
+#define EXTRUDER_AUTO_FAN_TEMPERATURE 50 // 20210215 this sets the temperature at which the fan turns on/off ------------------------------------------------------------------------------------------
 #define EXTRUDER_AUTO_FAN_SPEED 255   // 255 == full speed
 #define CHAMBER_AUTO_FAN_TEMPERATURE 30
 #define CHAMBER_AUTO_FAN_SPEED 255
