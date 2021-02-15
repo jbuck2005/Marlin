@@ -473,4 +473,5 @@
 #define ESP_WIFI_MODULE_GPIO0_PIN           PF14
 #define ESP_WIFI_MODULE_GPIO2_PIN           PF15
 
+#undef FAN_COUNT
 #define FAN_COUNT	3	// 20210215 added definition to allow all 3 fans
