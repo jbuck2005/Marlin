@@ -1466,7 +1466,7 @@ M500
 #endif
 
 // Add a menu item to move between bed corners for manual bed adjustment
-//#define LEVEL_BED_CORNERS //20210213 enabled ----------------------------------------------------------------------------------------------------------------------------------------------------------
+//#define LEVEL_BED_CORNERS //20210213 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #if ENABLED(LEVEL_BED_CORNERS)
   #define LEVEL_CORNERS_INSET_LFRB { 30, 30, 30, 30 } // (mm) Left, Front, Right, Back insets
@@ -1613,19 +1613,27 @@ M500
  */
 
 /*
- *	Added 20120214 in an attempt to add external EEPROM to SKR PRO ----------------------------------------------------------------
- *	Information : https://github.com/MarlinFirmware/Marlin/issues/17799#issuecomment-623170239
+ *	Added 20120214 in an attempt to add external EEPROM to SKR PRO --------------------------------------------------------------------------------------------------------------------------------
+ *	Information : https://github.com/MarlinFirmware/Marlin/issues/17799#issuecomment-6231702309
+ *
+ *	Curently testing if definition of FLASH_PAGE_SIZE to 0x8000 here is enough to make this work
+ *	FLASH_PAGE_SIZE is not actually defined for SKR PRO anwhere so its definition here is important (I think)
  */
-
-#define I2C_EEPROM            // 20210214 - use external EEPROM Module (e.g. AT24C256) ------------------------------------------------
+#define I2C_EEPROM               // 20210214 - use external EEPROM Module (e.g. AT24C256) -------------------------------------------------------------------------------------------------------------
 #ifdef I2C_EEPROM
-  #undef E2END                // remove previous definition in Arduino Core STM32 to be used with EEPROM emulation since a real EEPROM will be used
-  #ifdef MARLIN_EEPROM_SIZE
+//  #undef E2END                 // remove previous definition in Arduino Core STM32 to be used with EEPROM emulation since a real EEPROM will be used
+  #undef FLASH_PAGE_SIZE         // 20210215 setting FLASH_PAGE_SIZE here instead of redefining E2END does not throw warnings on compile
+  #define FLASH_PAGE_SIZE 0x8000 // 0X8000 is reduced by 1 in E2END definition, thereby setting size to 0x7FFF - is this definition even necessary ???
+
+/* 20210215 commented out to test - it appears that MARLIN_EEPROM_SIZE is defined elsewhere
+  #ifdef MARLIN_EEPROM_SIZE      // 20210215 MARLIN_EEPROM_SIZE seems to be important too ... 
     #undef MARLIN_EEPROM_SIZE
     #define MARLIN_EEPROM_SIZE 0x7FFF
   #endif
-  #define USE_SHARED_EEPROM 1 // Use Platform-independent Arduino functions for I2C EEPROM
-  #define E2END 0x7FFF        // redefine EEPROM end address for AT24C256 (32kB) based on FLASH_PAGE_SIZE -1 would have been 0X800
+  */
+
+//  #define USE_SHARED_EEPROM 1  // 20210215 does not appear necessary - is defined in Marlin/src/HAL/STM32/inc/Conditionals_post.h when I2C_EEPROM is set
+//  #define E2END 0x7FFF         // 20210215 commented out - redefine EEPROM end address for AT24C256 (32kB) based on FLASH_PAGE_SIZE -1 would have been 0X800 ----------------------------------------
 #endif
 
 #define EEPROM_SETTINGS       // Persistent storage with M500 and M501 // 20210213 could not enable as board does not have built-in EEPROM; still need to install and enable external EEPROM - endabling this breaks the communications to SKR
