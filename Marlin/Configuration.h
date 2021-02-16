@@ -2584,7 +2584,7 @@ M500
 //#undef FAN_COUNT
 //#define FAN_COUNT       1       // 20210215 added definition to allow all 3 fans --------------------------------------------------------------------------------------------------------------------
 
-#define NUM_M106_FANS 1 // 20210216 changed from 1 to 0 - unsuccessful; will need to find where to add FAN_COUNT --------------------------------------------------------------------------------------
+#define NUM_M106_FANS 3 // 20210216 changed from 1 to 0 - unsuccessful; will need to find where to add FAN_COUNT --------------------------------------------------------------------------------------
 
 // Increase the FAN PWM frequency. Removes the PWM noise but increases heating in the FET/Arduino
 //#define FAST_PWM_FAN
