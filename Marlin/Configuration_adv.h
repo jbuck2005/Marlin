@@ -2621,7 +2621,7 @@
    * STEALTHCHOP_(XY|Z|E) must be enabled to use HYBRID_THRESHOLD.
    * M913 X/Y/Z/E to live tune the setting
    */
-  #define HYBRID_THRESHOLD // 20210216 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------
+//  #define HYBRID_THRESHOLD // 20210216 enabled - was super loud / obnoxious; may need to tune values --------------------------------------------------------------------------------------------------
 
   #define X_HYBRID_THRESHOLD     200  // [mm/s] // 20210216 changed from 100 to 200 -------------------------------------------------------------------------------------------------------------------
   #define X2_HYBRID_THRESHOLD    100
