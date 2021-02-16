@@ -752,7 +752,7 @@
  * following movement settings. If fewer factors are given than the
  * total number of extruders, the last value applies to the rest.
  */
-//#define DISTINCT_E_FACTORS
+//#define DISTINCT_E_FACTORS // 20210216 enable for multiple extruders --------------------------------------------------------------------------------------------------------------------------------
 
 /**
  * Default Axis Steps Per Unit (steps/mm)
@@ -1022,13 +1022,13 @@
 #define PROBING_MARGIN 10
 
 // X and Y axis travel speed (mm/min) between probes
-#define XY_PROBE_SPEED (133*60)
+#define XY_PROBE_SPEED (150*60) // 20210216 changed default from 133 to 150 ---------------------------------------------------------------------------------------------------------------------------
 
 // Feedrate (mm/min) for the first approach when double-probing (MULTIPLE_PROBING == 2)
-#define Z_PROBE_SPEED_FAST (4*60)
+#define Z_PROBE_SPEED_FAST (12*60) // 20210216 changed from 4 to 12 -----------------------------------------------------------------------------------------------------------------------------------
 
 // Feedrate (mm/min) for the "accurate" probe of each point
-#define Z_PROBE_SPEED_SLOW (Z_PROBE_SPEED_FAST / 2)
+#define Z_PROBE_SPEED_SLOW (Z_PROBE_SPEED_FAST / 6) // 20210216 changed from 2 to 6 to respect original ratio (4*60)/2 = 120 thus, (12*60)/6 = 120 ----------------------------------------------------
 
 /**
  * Probe Activation Switch
@@ -1410,7 +1410,7 @@ M500
   /**
    * Enable the G26 Mesh Validation Pattern tool.
    */
-  //#define G26_MESH_VALIDATION
+  #define G26_MESH_VALIDATION // 20210216 enabled -----------------------------------------------------------------------------------------------------------------------------------------------------
   #if ENABLED(G26_MESH_VALIDATION)
     #define MESH_TEST_NOZZLE_SIZE    0.4  // (mm) Diameter of primary nozzle.
     #define MESH_TEST_LAYER_HEIGHT   0.2  // (mm) Default layer height for G26.
@@ -1495,14 +1495,14 @@ M500
 #endif
 
 // Add a menu item to move between bed corners for manual bed adjustment
-//#define LEVEL_BED_CORNERS // 20210216 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------
+#define LEVEL_BED_CORNERS // 20210216 enabled ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #if ENABLED(LEVEL_BED_CORNERS)
-  #define LEVEL_CORNERS_INSET_LFRB { 30, 30, 30, 30 } // (mm) Left, Front, Right, Back insets
+  #define LEVEL_CORNERS_INSET_LFRB { 30, 30, 30, 30 } // (mm) Left, Front, Right, Back insets // 20210216 need to confirm values with dial indicator installed ----------------------------------------
   #define LEVEL_CORNERS_HEIGHT      0.0   // (mm) Z height of nozzle at leveling points
   #define LEVEL_CORNERS_Z_HOP       4.0   // (mm) Z height of nozzle between leveling points
   //#define LEVEL_CENTER_TOO              // Move to the center after the last corner
-  //#define LEVEL_CORNERS_USE_PROBE
+  //#define LEVEL_CORNERS_USE_PROBE // 20210216 invesitage this feature when LCD screen installed; could improve corner leveling at machine -------------------------------------------------------------
   #if ENABLED(LEVEL_CORNERS_USE_PROBE)
     #define LEVEL_CORNERS_PROBE_TOLERANCE 0.1
     #define LEVEL_CORNERS_VERIFY_RAISED   // After adjustment triggers the probe, re-probe to verify
@@ -1563,7 +1563,7 @@ M500
 #endif
 
 // Homing speeds (mm/min)
-#define HOMING_FEEDRATE_MM_M { (80*60), (80*60), (10*60) } // 20210216 default is 50,50,4 - changed to 80,80,10 ---------------------------------------------------------------------------------------
+#define HOMING_FEEDRATE_MM_M { (120*60), (120*60), (10*60) } // 20210216 default is 50,50,4 - changed to 120,120,10 -----------------------------------------------------------------------------------
 
 // Validate that endstops are triggered on homing moves
 #define VALIDATE_HOMING_ENDSTOPS
@@ -1699,8 +1699,8 @@ M500
 // Preheat Constants - Up to 5 are supported without changes
 //
 #define PREHEAT_1_LABEL       "PLA"
-#define PREHEAT_1_TEMP_HOTEND 180
-#define PREHEAT_1_TEMP_BED     70
+#define PREHEAT_1_TEMP_HOTEND 205 // 20210216 changed from 180 to preferred 205 -----------------------------------------------------------------------------------------------------------------------
+#define PREHEAT_1_TEMP_BED     60 // 20210216 changed from 70 to preferred 60 -------------------------------------------------------------------------------------------------------------------------
 #define PREHEAT_1_FAN_SPEED     0 // Value from 0 to 255
 
 #define PREHEAT_2_LABEL       "ABS"
@@ -1719,7 +1719,7 @@ M500
  *    P1  Raise the nozzle always to Z-park height.
  *    P2  Raise the nozzle by Z-park amount, limited to Z_MAX_POS.
  */
-//#define NOZZLE_PARK_FEATURE
+#define NOZZLE_PARK_FEATURE // 20210216 enabled -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #if ENABLED(NOZZLE_PARK_FEATURE)
   // Specify a park position as { X, Y, Z_raise }
