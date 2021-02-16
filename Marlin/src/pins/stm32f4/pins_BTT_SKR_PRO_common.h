@@ -473,5 +473,5 @@
 #define ESP_WIFI_MODULE_GPIO0_PIN           PF14
 #define ESP_WIFI_MODULE_GPIO2_PIN           PF15
 
-#undef FAN1_PIN	     // 20210216 added undef to allow extruder fan control in Configuration_adv.h -----------------------------------------------------------------------------------------------------
-#define FAN1_PIN -1  // 20210216 added -1 definition to allow extruder fan control in Configuration_adv.h ---------------------------------------------------------------------------------------------
+//#undef FAN1_PIN	     // 20210216 added undef to allow extruder fan control in Configuration_adv.h -----------------------------------------------------------------------------------------------------
+//#define FAN1_PIN -1  // 20210216 added -1 definition to allow extruder fan control in Configuration_adv.h ---------------------------------------------------------------------------------------------

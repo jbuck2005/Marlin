@@ -2574,7 +2574,7 @@ M500
 */
 
   #ifndef E0_AUTO_FAN_PIN // 20210216 declared this in Configuration.h because it is processed before the pins.h file ---------------------------------------------------------------------------------
-    #define E0_AUTO_FAN_PIN               FAN1_PIN
+    #define E0_AUTO_FAN_PIN               PE5
   #endif
   #undef FAN1_PIN	// 20210216 redefined to disable the always on feature - also found in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h ----------------------------------------------------
   #define FAN1_PIN -1	// 20210216 redefined to disable the always on feature - also found in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h ----------------------------------------------------
@@ -2582,9 +2582,9 @@ M500
 // Set number of user-controlled fans. Disable to use all board-defined fans.
 // :[1,2,3,4,5,6,7,8]
 //#undef FAN_COUNT
-//#define FAN_COUNT       1       // 20210215 added definition to allow all 3 fans ----------------------------------------------------------------------------------------------------------------------
+//#define FAN_COUNT       1       // 20210215 added definition to allow all 3 fans --------------------------------------------------------------------------------------------------------------------
 
-#define NUM_M106_FANS 1 // 20210216 changed from 1 to 0 - unsuccessful; will need to find where to add FAN_COUNT ----------------------------------------------------------------------------------------
+#define NUM_M106_FANS 0 // 20210216 changed from 1 to 0 - unsuccessful; will need to find where to add FAN_COUNT --------------------------------------------------------------------------------------
 
 // Increase the FAN PWM frequency. Removes the PWM noise but increases heating in the FET/Arduino
 //#define FAST_PWM_FAN
@@ -2592,7 +2592,7 @@ M500
 // Use software PWM to drive the fan, as for the heaters. This uses a very low frequency
 // which is not as annoying as with the hardware PWM. On the other hand, if this frequency
 // is too low, you should also increment SOFT_PWM_SCALE.
-//#define FAN_SOFT_PWM // 20210215 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------------
+#define FAN_SOFT_PWM // 20210215 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Incrementing this by 1 will double the software PWM frequency,
 // affecting heaters, and the fan if FAN_SOFT_PWM is enabled.
