@@ -2576,8 +2576,8 @@ M500
   #ifndef E0_AUTO_FAN_PIN // 20210216 declared this in Configuration.h because it is processed before the pins.h file ---------------------------------------------------------------------------------
     #define E0_AUTO_FAN_PIN               FAN1_PIN
   #endif
-  #undef FAN_PIN
-  #define FAN_PIN -1
+  #undef FAN1_PIN	// 20210216 redefined to disable the always on feature - also found in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h ----------------------------------------------------
+  #define FAN1_PIN -1	// 20210216 redefined to disable the always on feature - also found in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h ----------------------------------------------------
 
 // Set number of user-controlled fans. Disable to use all board-defined fans.
 // :[1,2,3,4,5,6,7,8]
