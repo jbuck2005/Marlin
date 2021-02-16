@@ -137,7 +137,7 @@
 #endif
 
 // Name displayed in the LCD "Ready" message and Info menu
-#define CUSTOM_MACHINE_NAME "Mega Replicator v0.2.15" // 20210215 -------------------------------------------------------------------------------------------------------------------------------------
+#define CUSTOM_MACHINE_NAME "Mega Replicator v0.2.16" // 20210216 -------------------------------------------------------------------------------------------------------------------------------------
 
 // Printer's unique ID, used by some programs to differentiate between machines.
 // Choose your own or use a service like https://www.uuidgenerator.net/version4
@@ -695,16 +695,12 @@
 #define X_DRIVER_TYPE  TMC2209 // 20210214 changed from A4988 to TMC2209 (which are set to UART mode) -------------------------------------------------------------------------------------------------
 #define Y_DRIVER_TYPE  TMC2209 // 20210214 changed from A4988 to TMC2209 (which are set to UART mode) -------------------------------------------------------------------------------------------------
 #define Z_DRIVER_TYPE  TMC2209 // 20210214 changed from A4988 to TMC2209 (which are set to UART mode) -------------------------------------------------------------------------------------------------
-//#define X_DRIVER_TYPE  A4988 // 20210214 set to A4988 in hopes of restoring USB comms with SKR board ----------------------------------------------------------------------------------------------------
-//#define Y_DRIVER_TYPE  A4988 // 20210214 set to A4988 in hopes of restoring USB comms with SKR board ----------------------------------------------------------------------------------------------------
-//#define Z_DRIVER_TYPE  A4988 // 20210214 set to A4988 in hopes of restoring USB comms with SKR board ----------------------------------------------------------------------------------------------------
 //#define X2_DRIVER_TYPE A4988
 //#define Y2_DRIVER_TYPE A4988
 //#define Z2_DRIVER_TYPE A4988
 //#define Z3_DRIVER_TYPE A4988
 //#define Z4_DRIVER_TYPE A4988
 #define E0_DRIVER_TYPE TMC2209 // 20210214 changed from A4988 to TMC2209 (which are set to UART mode) -------------------------------------------------------------------------------------------------
-//#define E0_DRIVER_TYPE A4988 // 20210214 set to A4988 in hopes of restoring USB comms with SKR board ----------------------------------------------------------------------------------------------------
 //#define E1_DRIVER_TYPE A4988
 //#define E2_DRIVER_TYPE A4988
 //#define E3_DRIVER_TYPE A4988
@@ -1563,7 +1559,7 @@ M500
 #endif
 
 // Homing speeds (mm/min)
-#define HOMING_FEEDRATE_MM_M { (120*60), (120*60), (10*60) } // 20210216 default is 50,50,4 - changed to 120,120,10 -----------------------------------------------------------------------------------
+#define HOMING_FEEDRATE_MM_M { (120*60), (120*60), (16*60) } // 20210216 default is 50,50,4 - changed to 120,120,16 -----------------------------------------------------------------------------------
 
 // Validate that endstops are triggered on homing moves
 #define VALIDATE_HOMING_ENDSTOPS
@@ -1836,9 +1832,9 @@ M500
  *
  * View the current statistics with M78.
  */
-//#define PRINTCOUNTER // 20210216 enabled - cannot enable without EEPROM installed - breaks communications with OctoPrint ------------------------------------------------------------------------------
+#define PRINTCOUNTER // 20210216 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------------
 #if ENABLED(PRINTCOUNTER)
-//  #define PRINTCOUNTER_SAVE_INTERVAL 120 // (minutes) EEPROM save interval during print // 20210216 changed from 60 to 120 ----------------------------------------------------------------------------
+  #define PRINTCOUNTER_SAVE_INTERVAL 120 // (minutes) EEPROM save interval during print // 20210216 changed from 60 to 120 ----------------------------------------------------------------------------
 #endif
 
 /**
@@ -2576,6 +2572,10 @@ M500
   #define E0_AUTO_FAN_PIN               FAN1_PIN
   #endif
 */
+
+#ifndef E0_AUTO_FAN_PIN
+  #define E0_AUTO_FAN_PIN               FAN1_PIN
+  #endif
 
 // Set number of user-controlled fans. Disable to use all board-defined fans.
 // :[1,2,3,4,5,6,7,8]
