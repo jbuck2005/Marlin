@@ -2573,9 +2573,9 @@ M500
   #endif
 */
 
-  #ifndef E0_AUTO_FAN_PIN // 20210216 declared this in Configuration.h because it is processed before the pins.h file ---------------------------------------------------------------------------------
-    #define E0_AUTO_FAN_PIN               PE5
-  #endif
+//  #ifndef E0_AUTO_FAN_PIN // 20210216 declared this in Configuration.h because it is processed before the pins.h file ---------------------------------------------------------------------------------
+//    #define E0_AUTO_FAN_PIN               PE5
+//  #endif
   #undef FAN1_PIN	// 20210216 redefined to disable the always on feature - also found in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h ----------------------------------------------------
   #define FAN1_PIN -1	// 20210216 redefined to disable the always on feature - also found in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h ----------------------------------------------------
 
