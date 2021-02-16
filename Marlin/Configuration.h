@@ -74,7 +74,7 @@
 // @section info
 
 // Author info of this build printed to the host during boot and M115
-#define STRING_CONFIG_H_AUTHOR "(james, CR10 MAX SKR)" // 20210213 ------------------------------------------------------------------------------------------------------------------------------------
+#define STRING_CONFIG_H_AUTHOR "(james, CR10 MAX SKR)" // 20210216 ------------------------------------------------------------------------------------------------------------------------------------
 //#define CUSTOM_VERSION_FILE Version.h // Path from the root directory (no quotes)
 
 /**
@@ -859,7 +859,7 @@
  * The probe replaces the Z-MIN endstop and is used for Z homing.
  * (Automatically enables USE_PROBE_FOR_Z_HOMING.)
  */
-//#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN // 20210213 diabled --------------------------------------------------------------------------------------------------------------------------------------
+//#define Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN // 20210213 disabled -------------------------------------------------------------------------------------------------------------------------------------
 
 // Force the use of the probe for Z-axis homing
 #define USE_PROBE_FOR_Z_HOMING // 20210214 enabled ----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1066,8 +1066,8 @@
  * A total of 2 does fast/slow probes with a weighted average.
  * A total of 3 or more adds more slow probes, taking the average.
  */
-//#define MULTIPLE_PROBING 2 // 20210213 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------
-//#define EXTRA_PROBING    1 // 20210213 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------
+#define MULTIPLE_PROBING 2 // 20210216 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------
+#define EXTRA_PROBING    1 // 20210216 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 /**
  * Z probes require clearance when deploying, stowing, and moving between
@@ -1086,7 +1086,7 @@
 #define Z_CLEARANCE_DEPLOY_PROBE   10 // Z Clearance for Deploy/Stow
 #define Z_CLEARANCE_BETWEEN_PROBES  5 // Z Clearance between probe points
 #define Z_CLEARANCE_MULTI_PROBE     5 // Z Clearance between multiple probes
-//#define Z_AFTER_PROBING           5 // Z position after probing is done
+#define Z_AFTER_PROBING             5 // Z position after probing is done // 20210216 enabled with default setting of 5 -------------------------------------------------------------------------------
 
 #define Z_PROBE_LOW_POINT          -2 // Farthest distance below the trigger-point to go before stopping
 
@@ -1095,7 +1095,7 @@
 #define Z_PROBE_OFFSET_RANGE_MAX 20
 
 // Enable the M48 repeatability test to test probe accuracy
-//#define Z_MIN_PROBE_REPEATABILITY_TEST // 20210213 enabled --------------------------------------------------------------------------------------------------------------------------------------------
+#define Z_MIN_PROBE_REPEATABILITY_TEST // 20210216 enabled --------------------------------------------------------------------------------------------------------------------------------------------
 
 // Before deploy/stow pause for user confirmation
 //#define PAUSE_BEFORE_DEPLOY_STOW
@@ -1172,10 +1172,10 @@
 //#define HOME_AFTER_DEACTIVATE   // Require rehoming after steppers are deactivated. Also enable NO_MOTION_BEFORE_HOMING for extra safety.
 //#define UNKNOWN_Z_NO_RAISE      // Don't raise Z (lower the bed) if Z is "unknown." For beds that fall when Z is powered off.
 
-//#define Z_HOMING_HEIGHT  10       // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ... // 20210213 enabled and changed from 4 to 10 --------------------------------
+#define Z_HOMING_HEIGHT  10       // (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ... // 20210216 enabled and changed from 4 to 10 --------------------------------
                                   // Be sure to have this much clearance over your Z_MAX_POS to prevent grinding.
 
-//#define Z_AFTER_HOMING  10      // (mm) Height to move to after homing Z // 20210213 enabled ----------------------------------------------------------------------------------------------------------
+#define Z_AFTER_HOMING  10        // (mm) Height to move to after homing Z // 20210216 enabled --------------------------------------------------------------------------------------------------------
 
 // Direction of endstops when homing; 1=MAX, -1=MIN
 // :[-1,1]
@@ -1223,7 +1223,7 @@
 #endif
 
 #if EITHER(MIN_SOFTWARE_ENDSTOPS, MAX_SOFTWARE_ENDSTOPS)
-  //#define SOFT_ENDSTOPS_MENU_ITEM  // Enable/Disable software endstops from the LCD
+  #define SOFT_ENDSTOPS_MENU_ITEM  // Enable/Disable software endstops from the LCD // 20210216 enabled -----------------------------------------------------------------------------------------------
 #endif
 
 /**
@@ -1239,8 +1239,22 @@
  * RAMPS-based boards use SERVO3_PIN for the first runout sensor.
  * For other boards you may need to define FIL_RUNOUT_PIN, FIL_RUNOUT2_PIN, etc.
  */
+
+/*	20210216 ----- from ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h -----------------------------------------------------------------------------------------------------------------------
+	#ifndef FIL_RUNOUT_PIN
+	  #define FIL_RUNOUT_PIN                    PE15 (E0 pin 3)
+	#endif
+	#ifndef FIL_RUNOUT2_PIN
+	  #define FIL_RUNOUT2_PIN                   PE10 (E1)
+	#endif
+	#ifndef FIL_RUNOUT3_PIN
+	  #define FIL_RUNOUT3_PIN                   PG5 (E2)
+	#endif
+
+*/
+
 //#define FILAMENT_RUNOUT_SENSOR
-#if ENABLED(FILAMENT_RUNOUT_SENSOR)
+#if ENABLED(FILAMENT_RUNOUT_SENSOR)	  // 20210216 pins_BTT_SKR_PRO_common.h defines FIL_RUNOUT_PIN as PE15
   #define FIL_RUNOUT_ENABLED_DEFAULT true // Enable the sensor on startup. Override with M412 followed by M500.
   #define NUM_RUNOUT_SENSORS   1          // Number of sensors, up to one per extruder. Define a FIL_RUNOUT#_PIN for each.
 
@@ -1288,7 +1302,7 @@
   // After a runout is detected, continue printing this length of filament
   // before executing the runout script. Useful for a sensor at the end of
   // a feed tube. Requires 4 bytes SRAM per sensor, plus 4 bytes overhead.
-  //#define FILAMENT_RUNOUT_DISTANCE_MM 25
+  #define FILAMENT_RUNOUT_DISTANCE_MM 35 // 20210216 enabled and set to measured value of 35mm (closer to 40mm) ---------------------------------------------------------------------------------------
 
   #ifdef FILAMENT_RUNOUT_DISTANCE_MM
     // Enable this option to use an encoder disc that toggles the runout pin
@@ -1339,7 +1353,7 @@
 //#define AUTO_BED_LEVELING_3POINT
 //#define AUTO_BED_LEVELING_LINEAR
 //#define AUTO_BED_LEVELING_BILINEAR
-//#define AUTO_BED_LEVELING_UBL // 20210213 enabled -----------------------------------------------------------------------------------------------------------------------------------------------------
+//#define AUTO_BED_LEVELING_UBL // 20210216 enabled -----------------------------------------------------------------------------------------------------------------------------------------------------
 //#define MESH_BED_LEVELING
 
 /*  GCode to start prints (taken from https://www.3dmakerengineering.com/blogs/3d-printing/unified-bed-leveling-marlin)  20201220 -----------------------------------------------
@@ -1359,7 +1373,7 @@ M500
  * these options to restore the prior leveling state or to always enable
  * leveling immediately after G28.
  */
-//#define RESTORE_LEVELING_AFTER_G28 // 20210213 enabled ------------------------------------------------------------------------------------------------------------------------------------------------
+//#define RESTORE_LEVELING_AFTER_G28 // 20210216 enabled ------------------------------------------------------------------------------------------------------------------------------------------------
 //#define ENABLE_LEVELING_AFTER_G28
 
 /**
@@ -1481,7 +1495,7 @@ M500
 #endif
 
 // Add a menu item to move between bed corners for manual bed adjustment
-//#define LEVEL_BED_CORNERS //20210213 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------
+//#define LEVEL_BED_CORNERS // 20210216 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 #if ENABLED(LEVEL_BED_CORNERS)
   #define LEVEL_CORNERS_INSET_LFRB { 30, 30, 30, 30 } // (mm) Left, Front, Right, Back insets
@@ -1549,7 +1563,7 @@ M500
 #endif
 
 // Homing speeds (mm/min)
-#define HOMING_FEEDRATE_MM_M { (50*60), (50*60), (4*60) }
+#define HOMING_FEEDRATE_MM_M { (80*60), (80*60), (10*60) } // 20210216 default is 50,50,4 - changed to 80,80,10 ---------------------------------------------------------------------------------------
 
 // Validate that endstops are triggered on homing moves
 #define VALIDATE_HOMING_ENDSTOPS
@@ -1822,9 +1836,9 @@ M500
  *
  * View the current statistics with M78.
  */
-//#define PRINTCOUNTER // 20210213 enabled - cannot enable without EEPROM installed - breaks communications with OctoPrint ------------------------------------------------------------------------------
+//#define PRINTCOUNTER // 20210216 enabled - cannot enable without EEPROM installed - breaks communications with OctoPrint ------------------------------------------------------------------------------
 #if ENABLED(PRINTCOUNTER)
-//  #define PRINTCOUNTER_SAVE_INTERVAL 120 // (minutes) EEPROM save interval during print // 20210213 changed from 60 to 120 ----------------------------------------------------------------------------
+//  #define PRINTCOUNTER_SAVE_INTERVAL 120 // (minutes) EEPROM save interval during print // 20210216 changed from 60 to 120 ----------------------------------------------------------------------------
 #endif
 
 /**
