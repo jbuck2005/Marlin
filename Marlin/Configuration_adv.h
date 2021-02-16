@@ -401,7 +401,7 @@
  * The fan turns on automatically whenever any driver is enabled and turns
  * off (or reduces to idle speed) shortly after drivers are turned off.
  */
-//#define USE_CONTROLLER_FAN // 20210215 enabled to cool stepper motors ---------------------------------------------------------------------------------------------------------------------------------
+#define USE_CONTROLLER_FAN // 20210215 enabled to cool stepper motors ---------------------------------------------------------------------------------------------------------------------------------
 #if ENABLED(USE_CONTROLLER_FAN)
   #define CONTROLLER_FAN_PIN FAN_PIN     // Set a custom pin for the controller fan // 20210215 changed from -1 to FAN2_PIN (PE6) which is wired to the stepper controller cooling fan ----------------
   					 // was working with FAN2_PIN and stepper fan connected to FAN2
@@ -481,7 +481,7 @@
  * Multiple extruders can be assigned to the same pin in which case
  * the fan will turn on when any selected extruder is above the threshold.
  */
-#define E0_AUTO_FAN_PIN	-1 //FAN1_PIN  // 20210216 changed from -1 to FAN2_PIN (PE6) which is hooked up to the hot-end fan ---------------------------------------------------------------------------------
+#define E0_AUTO_FAN_PIN	FAN1_PIN // 20210216 changed from -1 to FAN2_PIN (PE6) which is hooked up to the hot-end fan ----------------------------------------------------------------------------------
 #define E1_AUTO_FAN_PIN -1
 #define E2_AUTO_FAN_PIN -1
 #define E3_AUTO_FAN_PIN -1
