@@ -2563,10 +2563,12 @@ M500
 
 // @section extras
 
-/*	20210215 ----- from ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h -----------------------------------------------------------------------------------------------------------------------
-#define FAN_PIN                             PC8   // Fan0 wired to parts cooling fan
+/*	20210216 ----- from ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h -----------------------------------------------------------------------------------------------------------------------
+
+#define FAN_PIN                              -1   // this was redefined to -1 in the pins_BTT_SKR_PRO_common.h file to allow control of FAN0 on the board
 #define FAN1_PIN                            PE5   // Fan1 wired to extruder fan for temperature control
 #define FAN2_PIN                            PE6   // Fan2 wired to stepper motor cooling fan for automatic on/off
+#define FAN3_PIN                            PC8   // Fan0 wired to parts stepper motor cooling fan - to be used as CONTROLLER_FAN_PIN in Configuration_adv.h
 
 #ifndef E0_AUTO_FAN_PIN
   #define E0_AUTO_FAN_PIN               FAN1_PIN
