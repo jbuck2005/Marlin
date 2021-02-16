@@ -2623,11 +2623,11 @@
    */
   #define HYBRID_THRESHOLD // 20210216 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------
 
-  #define X_HYBRID_THRESHOLD     100  // [mm/s]
+  #define X_HYBRID_THRESHOLD     200  // [mm/s] // 20210216 changed from 100 to 200 -------------------------------------------------------------------------------------------------------------------
   #define X2_HYBRID_THRESHOLD    100
-  #define Y_HYBRID_THRESHOLD     100
+  #define Y_HYBRID_THRESHOLD     200            // 20210216 changed from 100 to 200 -------------------------------------------------------------------------------------------------------------------
   #define Y2_HYBRID_THRESHOLD    100
-  #define Z_HYBRID_THRESHOLD       3
+  #define Z_HYBRID_THRESHOLD      16		// 20210216 changed from 3 to 16 ----------------------------------------------------------------------------------------------------------------------
   #define Z2_HYBRID_THRESHOLD      3
   #define Z3_HYBRID_THRESHOLD      3
   #define Z4_HYBRID_THRESHOLD      3
