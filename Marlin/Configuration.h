@@ -1,4 +1,4 @@
-/**
+/*
  * Marlin 3D Printer Firmware
  * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
@@ -1646,7 +1646,7 @@ M500
  */
 #define I2C_EEPROM               // 20210214 - use external EEPROM Module (e.g. AT24C256) -------------------------------------------------------------------------------------------------------------
 #ifdef I2C_EEPROM
-//  #undef E2END                 // remove previous definition in Arduino Core STM32 to be used with EEPROM emulation since a real EEPROM will be used
+//  #undef E2END                 // (does not appear to be necessary)remove previous definition in Arduino Core STM32 to be used with EEPROM emulation since a real EEPROM will be used
   #undef FLASH_PAGE_SIZE         // 20210215 setting FLASH_PAGE_SIZE here instead of redefining E2END does not throw warnings on compile
   #define FLASH_PAGE_SIZE 0x8000 // 0X8000 is reduced by 1 in E2END definition, thereby setting size to 0x7FFF - is this definition even necessary ???
 
@@ -2571,19 +2571,14 @@ M500
 #ifndef E0_AUTO_FAN_PIN
   #define E0_AUTO_FAN_PIN               FAN1_PIN
   #endif
-*/
+*///	-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-//  #ifndef E0_AUTO_FAN_PIN // 20210216 declared this in Configuration.h because it is processed before the pins.h file ---------------------------------------------------------------------------------
+//  #ifndef E0_AUTO_FAN_PIN // 20210216 can be redeclared this in Configuration.h because it is processed before the pins.h file ----------------------------------------------------------------------
 //    #define E0_AUTO_FAN_PIN               PE5
 //  #endif
-//  #undef FAN1_PIN	// 20210216 redefined to disable the always on feature - also found in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h ----------------------------------------------------
-//  #define FAN1_PIN -1	// 20210216 redefined to disable the always on feature - also found in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h ----------------------------------------------------
 
 // Set number of user-controlled fans. Disable to use all board-defined fans.
 // :[1,2,3,4,5,6,7,8]
-//#undef FAN_COUNT
-//#define FAN_COUNT       1       // 20210215 added definition to allow all 3 fans --------------------------------------------------------------------------------------------------------------------
-
 #define NUM_M106_FANS 3 // 20210216 changed from 1 to 0 - unsuccessful; will need to find where to add FAN_COUNT --------------------------------------------------------------------------------------
 
 // Increase the FAN PWM frequency. Removes the PWM noise but increases heating in the FET/Arduino
