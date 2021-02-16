@@ -2573,9 +2573,11 @@ M500
   #endif
 */
 
-#ifndef E0_AUTO_FAN_PIN
-  #define E0_AUTO_FAN_PIN               FAN1_PIN
+  #ifndef E0_AUTO_FAN_PIN // 20210216 declared this in Configuration.h because it is processed before the pins.h file ---------------------------------------------------------------------------------
+    #define E0_AUTO_FAN_PIN               FAN1_PIN
   #endif
+  #undef FAN_PIN
+  #define FAN_PIN -1
 
 // Set number of user-controlled fans. Disable to use all board-defined fans.
 // :[1,2,3,4,5,6,7,8]

@@ -480,7 +480,7 @@
  * Multiple extruders can be assigned to the same pin in which case
  * the fan will turn on when any selected extruder is above the threshold.
  */
-#define E0_AUTO_FAN_PIN	FAN1_PIN  // 20210215 changed from -1 to FAN1_PIN (PE5) which is hooked up to the hot-end fan ---------------------------------------------------------------------------------
+#define E0_AUTO_FAN_PIN	PE5  // 20210216 changed from -1 to FAN1_PIN (PE5) which is hooked up to the hot-end fan --------------------------------------------------------------------------------------
 #define E1_AUTO_FAN_PIN -1
 #define E2_AUTO_FAN_PIN -1
 #define E3_AUTO_FAN_PIN -1
@@ -1096,7 +1096,7 @@
 
   // Add Probe Z Offset calibration to the Z Probe Offsets menu
   #if HAS_BED_PROBE
-//    #define PROBE_OFFSET_WIZARD // 20210213 enabled ---------------------------------------------------------------------------------------------------------------------------------------------------
+    #define PROBE_OFFSET_WIZARD // 20210216 enabled ---------------------------------------------------------------------------------------------------------------------------------------------------
     #if ENABLED(PROBE_OFFSET_WIZARD)
       //
       // Enable to init the Probe Z-Offset when starting the Wizard.
@@ -1106,7 +1106,7 @@
       //#define PROBE_OFFSET_WIZARD_START_Z -4.0
 
       // Set a convenient position to do the calibration (probing point and nozzle/bed-distance)
-//      #define PROBE_OFFSET_WIZARD_XY_POS { X_CENTER, Y_CENTER } // 20210213 enabled -------------------------------------------------------------------------------------------------------------------
+      #define PROBE_OFFSET_WIZARD_XY_POS { X_CENTER, Y_CENTER } // 20210216 enabled -------------------------------------------------------------------------------------------------------------------
     #endif
   #endif
 
@@ -1162,7 +1162,7 @@
   #endif
 
   // Scroll a longer status message into view
-//  #define STATUS_MESSAGE_SCROLLING // 20210213 enabled ------------------------------------------------------------------------------------------------------------------------------------------------
+  #define STATUS_MESSAGE_SCROLLING // 20210213 enabled ------------------------------------------------------------------------------------------------------------------------------------------------
 
   // On the Info Screen, display XY with one decimal place when possible
   //#define LCD_DECIMAL_SMALL_XY
