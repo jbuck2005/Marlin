@@ -137,7 +137,7 @@
 #endif
 
 // Name displayed in the LCD "Ready" message and Info menu
-#define CUSTOM_MACHINE_NAME "Mega Replicator v0.2.16" // 20210216 -------------------------------------------------------------------------------------------------------------------------------------
+#define CUSTOM_MACHINE_NAME "Mega Replicator v0.2.17" // 20210216 -------------------------------------------------------------------------------------------------------------------------------------
 
 // Printer's unique ID, used by some programs to differentiate between machines.
 // Choose your own or use a service like https://www.uuidgenerator.net/version4
@@ -1062,7 +1062,7 @@
  * A total of 2 does fast/slow probes with a weighted average.
  * A total of 3 or more adds more slow probes, taking the average.
  */
-#define MULTIPLE_PROBING 2 // 20210216 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------
+#define MULTIPLE_PROBING 1 // 20210217 enabled and changed to 1 ---------------------------------------------------------------------------------------------------------------------------------------
 #define EXTRA_PROBING    1 // 20210216 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------
 
 /**
@@ -1349,7 +1349,7 @@
 //#define AUTO_BED_LEVELING_3POINT
 //#define AUTO_BED_LEVELING_LINEAR
 //#define AUTO_BED_LEVELING_BILINEAR
-//#define AUTO_BED_LEVELING_UBL // 20210216 enabled -----------------------------------------------------------------------------------------------------------------------------------------------------
+#define AUTO_BED_LEVELING_UBL // 20210217 enabled -----------------------------------------------------------------------------------------------------------------------------------------------------
 //#define MESH_BED_LEVELING
 
 /*  GCode to start prints (taken from https://www.3dmakerengineering.com/blogs/3d-printing/unified-bed-leveling-marlin)  20201220 -----------------------------------------------
@@ -1369,7 +1369,7 @@ M500
  * these options to restore the prior leveling state or to always enable
  * leveling immediately after G28.
  */
-//#define RESTORE_LEVELING_AFTER_G28 // 20210216 enabled ------------------------------------------------------------------------------------------------------------------------------------------------
+#define RESTORE_LEVELING_AFTER_G28 // 20210217 enabled ------------------------------------------------------------------------------------------------------------------------------------------------
 //#define ENABLE_LEVELING_AFTER_G28
 
 /**
@@ -1657,8 +1657,6 @@ M500
   #endif
   */
 
-//  #define USE_SHARED_EEPROM 1  // 20210215 does not appear necessary - is defined in Marlin/src/HAL/STM32/inc/Conditionals_post.h when I2C_EEPROM is set
-//  #define E2END 0x7FFF         // 20210215 commented out - redefine EEPROM end address for FT24C256A (32kB) based on FLASH_PAGE_SIZE -1 would have been 0X800 ---------------------------------------
 #endif
 
 #define EEPROM_SETTINGS       // Persistent storage with M500 and M501 // 20210215 enabled and tested -------------------------------------------------------------------------------------------------
@@ -2587,9 +2585,11 @@ M500
 //    #define E0_AUTO_FAN_PIN               PE5
 //  #endif
 
+#define FAN3_PIN PC8    // 20210217 originally defined this in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h but trying it in Configuration.h instead to leave pins file untouched
+
 // Set number of user-controlled fans. Disable to use all board-defined fans.
 // :[1,2,3,4,5,6,7,8]
-#define NUM_M106_FANS 3 // 20210216 changed from 1 to 0 - unsuccessful; will need to find where to add FAN_COUNT --------------------------------------------------------------------------------------
+#define NUM_M106_FANS 2 // 20210217 changed from 1 to 2 -- 3 was tested and works with new FAN3 definition --------------------------------------------------------------------------------------------
 
 // Increase the FAN PWM frequency. Removes the PWM noise but increases heating in the FET/Arduino
 //#define FAST_PWM_FAN
