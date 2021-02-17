@@ -244,10 +244,7 @@
 #define FAN_PIN                             -1    // place holder for non-existant fan - frees up FAN0 for AUTO_FAN_PIN or CONTROLLER_FAN_PIN declaration
 #define FAN1_PIN                            PE5   // Fan1
 #define FAN2_PIN                            PE6   // Fan2
-<<<<<<< HEAD
 #define FAN3_PIN                            PC8	  // Fan0
-=======
->>>>>>> fd455be55cca886d5518ff7efeaee007802abbe1
 
 #ifndef E0_AUTO_FAN_PIN
   #define E0_AUTO_FAN_PIN               FAN1_PIN
