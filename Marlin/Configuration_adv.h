@@ -480,7 +480,7 @@
  * Multiple extruders can be assigned to the same pin in which case
  * the fan will turn on when any selected extruder is above the threshold.
  */
-//#define E0_AUTO_FAN_PIN	FAN1_PIN // 20210216 disabled as this is declared in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h --------------------------------------------------------------
+#define E0_AUTO_FAN_PIN	FAN1_PIN // 20210218 enabled by changing from -1 to FAN1_PIN (defined as PE6 in Configuration.h) ----------------------------------------------------------------------
 #define E0_AUTO_FAN_PIN -1
 #define E1_AUTO_FAN_PIN -1
 #define E2_AUTO_FAN_PIN -1
