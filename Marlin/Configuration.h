@@ -2592,6 +2592,7 @@ M500
 
 // Set number of user-controlled fans. Disable to use all board-defined fans.
 // :[1,2,3,4,5,6,7,8]
+#define FAN_COUNT 1
 #define NUM_M106_FANS 2 // 20210218 had to reduce from 2 to 0 because with FAN1 set as E0_AUTO there is only 1 fan that can be "controlled" now (FAN3 for parts cooling) ------------------------------
 
 // Increase the FAN PWM frequency. Removes the PWM noise but increases heating in the FET/Arduino
