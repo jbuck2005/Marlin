@@ -242,7 +242,7 @@
 #define HEATER_2_PIN                        PB0   // Heater1
 #define HEATER_BED_PIN                      PD12  // Hotbed
 //#define FAN_PIN                             -1    // 20210218 defined as -1 in order to allow PC8 (to be defined as FAN3_PIN which is FAN0 on SKR PRO) to be used as CONTROLLER_FAN_PIN
-#define FAN_PIN                             PB0    // 20210218 defined as -1 in order to allow PC8 (to be defined as FAN3_PIN which is FAN0 on SKR PRO) to be used as CONTROLLER_FAN_PIN
+#define FAN_PIN                             PG5    // 20210218 defined as -1 in order to allow PC8 (to be defined as FAN3_PIN which is FAN0 on SKR PRO) to be used as CONTROLLER_FAN_PIN
 #define FAN1_PIN                            PE5   // Fan1
 #define FAN2_PIN                            PE6   // Fan2
 #define FAN3_PIN                            PC8
