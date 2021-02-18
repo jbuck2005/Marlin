@@ -2581,11 +2581,11 @@ M500
   #endif
 *///	-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-//  #ifndef E0_AUTO_FAN_PIN // 20210216 can be redeclared this in Configuration.h because it is processed before the pins.h file ----------------------------------------------------------------------
+//  #ifndef E0_AUTO_FAN_PIN // 20210216 can be redeclared here if needed because Configuration.h is processed before pins_BTT_SKR_PRO_common.h --------------------------------------------------------
 //    #define E0_AUTO_FAN_PIN               PE5
 //  #endif
 
-#define FAN3_PIN PC8    // 20210217 originally defined this in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h but trying it in Configuration.h instead to leave pins file untouched
+#define FAN3_PIN PC8    // 20210217 originally defined this in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h - this fan turns on/off automatically with steppers  -------------------------------
 
 // Set number of user-controlled fans. Disable to use all board-defined fans.
 // :[1,2,3,4,5,6,7,8]
