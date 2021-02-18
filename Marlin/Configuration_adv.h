@@ -403,7 +403,7 @@
  */
 #define USE_CONTROLLER_FAN // 20210215 enabled to cool stepper motors ---------------------------------------------------------------------------------------------------------------------------------
 #if ENABLED(USE_CONTROLLER_FAN)
-  #define CONTROLLER_FAN_PIN FAN3_PIN    // Set a custom pin for the controller fan // 20210215 changed from -1 to FAN3_PIN (PC8) which is wired to the stepper controller cooling fan ----------------
+  #define CONTROLLER_FAN_PIN FAN2_PIN    // Set a custom pin for the controller fan // 20210218 changed from -1 to FAN2_PIN (PE6) which is wired to the stepper controller cooling fan ----------------
   //#define CONTROLLER_FAN_USE_Z_ONLY    // With this option only the Z axis is considered
   //#define CONTROLLER_FAN_IGNORE_Z      // Ignore Z stepper. Useful when stepper timeout is disabled.
   #define CONTROLLERFAN_SPEED_MIN    100 // (0-255) Minimum speed. (If set below this value the fan is turned off.) // 20210215 changed from 0 to 100 to test fan turn off ----------------------------

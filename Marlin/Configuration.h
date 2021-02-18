@@ -2586,11 +2586,13 @@ M500
 //  #endif
 
 //#define FAN3_PIN PC8    // 20210217 originally defined this in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h - this fan turns on/off automatically with steppers  -----------------------------
-#define FAN2_PIN PE6
+#define FAN1_PIN PE6 // extruder
+#define FAN2_PIN PE5 // part cooling
+#define FAN3_PIN PC8 // stepper
 
 // Set number of user-controlled fans. Disable to use all board-defined fans.
 // :[1,2,3,4,5,6,7,8]
-//#define NUM_M106_FANS 1 // 20210218 had to reduce from 2 to 0 because with FAN1 set as E0_AUTO there is only 1 fan that can be "controlled" now (FAN3 for parts cooling) ------------------------------
+#define NUM_M106_FANS 1 // 20210218 had to reduce from 2 to 0 because with FAN1 set as E0_AUTO there is only 1 fan that can be "controlled" now (FAN3 for parts cooling) ------------------------------
 
 // Increase the FAN PWM frequency. Removes the PWM noise but increases heating in the FET/Arduino
 //#define FAST_PWM_FAN
