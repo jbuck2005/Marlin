@@ -401,7 +401,7 @@
  * The fan turns on automatically whenever any driver is enabled and turns
  * off (or reduces to idle speed) shortly after drivers are turned off.
  */
-//#define USE_CONTROLLER_FAN // 20210215 enabled to cool stepper motors ---------------------------------------------------------------------------------------------------------------------------------
+#define USE_CONTROLLER_FAN // 20210215 enabled to cool stepper motors ---------------------------------------------------------------------------------------------------------------------------------
 #if ENABLED(USE_CONTROLLER_FAN)
   #define CONTROLLER_FAN_PIN FAN3_PIN    // 20210218 changed to FAN3_PIN (PC8) which is FAN0 on the board & wired to the stepper controller cooling fan -----------------------------------------------
   //#define CONTROLLER_FAN_USE_Z_ONLY    // With this option only the Z axis is considered
