@@ -2571,25 +2571,36 @@ M500
 
 /*	20210216 ----- from ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h -----------------------------------------------------------------------------------------------------------------------
 
-#define FAN_PIN                              -1   // this was redefined to -1 in the pins_BTT_SKR_PRO_common.h file to allow control of FAN0 on the board
+#define FAN_PIN                             PC8   // Fan0 wired to stepper motor cooling fan - needs to be redefined to -1 in order to allow control of FAN0 on the board
 #define FAN1_PIN                            PE5   // Fan1 wired to extruder fan for temperature controlled on/off state
 #define FAN2_PIN                            PE6   // Fan2 wired to part cooling fan
-#define FAN3_PIN                            PC8   // Fan0 wired to stepper motor cooling fan - to be used as CONTROLLER_FAN_PIN in Configuration_adv.h
 
 #ifndef E0_AUTO_FAN_PIN
   #define E0_AUTO_FAN_PIN               FAN1_PIN
   #endif
+
+	NOTE: FAN pin and E0_AUTO_FAN_PIN declarations can be redefined here if needed because Configuration.h is processed before pins_BTT_SKR_PRO_common.h
+
+	Board layout w/ pin names:
+	board names:		FAN0			FAN1			FAN2
+	MCU pin names:		PC8			PE5			PE6
+	fan function:		stepper motors		extruder cooler		part cooling
+	Marlin definitions:	FAN3			FAN1			FAN2
+
 *///	-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-//  #ifndef E0_AUTO_FAN_PIN // 20210216 can be redeclared here if needed because Configuration.h is processed before pins_BTT_SKR_PRO_common.h --------------------------------------------------------
-//    #define E0_AUTO_FAN_PIN               PE5
-//  #endif
-
-//#define FAN3_PIN PC8    // 20210217 originally defined this in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h - this fan turns on/off automatically with steppers  -----------------------------
+// 20210218 - redefine FAN pins here since Configuration.h can override ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h ---------------------------------------------------------------------------
+#undef FAN_PIN		    // 20210218 take no chances and undefine values before redefinition -------------------------------------------------------------------------------------------------------
+#undef FAN1_PIN		    // 20210218 take no chances and undefine values before redefinition -------------------------------------------------------------------------------------------------------
+#undef FAN2_PIN		    // 20210218 take no chances and undefine values before redefinition -------------------------------------------------------------------------------------------------------
+#define FAN_PIN		-1  // 20210218 - set to -1 to define a null fan, allowing code to compile - will not compile without an "auto" fan which I don't want or need --------------------------------
+#define FAN1_PIN	PE5 // 20210218 - PE5 = FAN1 on SKR PRO board - E0_AUTO_FAN_PIN    - this is wired to the extruder cooling fan ----------------------------------------------------------------
+#define FAN2_PIN	PE6 // 20210218 - PE6 = FAN2 on SKR PRO board - M106 fan           - this is wired to the part cooling fan --------------------------------------------------------------------
+#define FAN3_PIN	PC8 // 20210218 - PC8 = FAN0 on SKR PRO board - CONTROLLER_FAN_PIN - this is wired to the stepper motor cooling fan -----------------------------------------------------------
 
 // Set number of user-controlled fans. Disable to use all board-defined fans.
 // :[1,2,3,4,5,6,7,8]
-#define NUM_M106_FANS 0 // 20210218 had to reduce from 2 to 0 because with FAN1 set as E0_AUTO there is only 1 fan that can be "controlled" now (FAN3 for parts cooling) ------------------------------
+#define NUM_M106_FANS 1 // 20210218 only 1 fan that can be "controlled" (FAN2 for parts cooling) ------------------------------------------------------------------------------------------------------
 
 // Increase the FAN PWM frequency. Removes the PWM noise but increases heating in the FET/Arduino
 //#define FAST_PWM_FAN
