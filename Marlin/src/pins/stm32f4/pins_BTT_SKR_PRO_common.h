@@ -244,6 +244,7 @@
 #define FAN_PIN                             -1    // 20210218 defined as -1 in order to allow PC8 (to be defined as FAN3_PIN which is FAN0 on SKR PRO) to be used as CONTROLLER_FAN_PIN
 #define FAN1_PIN                            PE5   // Fan1
 #define FAN2_PIN                            PE6   // Fan2
+#define FEN3_PIN                            PC8
 
 #ifndef E0_AUTO_FAN_PIN
   #define E0_AUTO_FAN_PIN               FAN1_PIN
