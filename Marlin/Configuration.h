@@ -2595,7 +2595,7 @@ M500
 *///	-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // 20210218 - tried to redefine FAN pins here but failed to compile so I had to make changes to ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h - namely set FAN_PIN to -1 ------------------------
-#define FAN3_PIN	PC8 // 20210218 - PC8 = FAN0 on SKR PRO board - CONTROLLER_FAN_PIN - this is wired to the stepper motor cooling fan -----------------------------------------------------------
+//#define FAN3_PIN	PC8 // 20210218 - PC8 = FAN0 on SKR PRO board - CONTROLLER_FAN_PIN - this is wired to the stepper motor cooling fan -----------------------------------------------------------
 
 // Set number of user-controlled fans. Disable to use all board-defined fans.
 // :[1,2,3,4,5,6,7,8]
