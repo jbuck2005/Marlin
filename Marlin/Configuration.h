@@ -2585,7 +2585,8 @@ M500
 //    #define E0_AUTO_FAN_PIN               PE5
 //  #endif
 
-//#define FAN3_PIN PC8    // 20210217 originally defined this in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h - this fan turns on/off automatically with steppers  -------------------------------
+//#define FAN3_PIN PC8    // 20210217 originally defined this in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h - this fan turns on/off automatically with steppers  -----------------------------
+#define FAN2_PIN PE6
 
 // Set number of user-controlled fans. Disable to use all board-defined fans.
 // :[1,2,3,4,5,6,7,8]
