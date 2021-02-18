@@ -2569,7 +2569,7 @@ M500
 
 // @section extras
 
-/*	20210216 ----- from ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h -----------------------------------------------------------------------------------------------------------------------
+/*	20210216 ----- from ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h - changes made to orginal file on 20210218 to declare FAN_PIN as -1 ---------------------------------------------------
 
 #define FAN_PIN                             PC8   // Fan0 wired to stepper motor cooling fan - needs to be redefined to -1 in order to allow control of FAN0 on the board
 #define FAN1_PIN                            PE5   // Fan1 wired to extruder fan for temperature controlled on/off state
@@ -2599,7 +2599,7 @@ M500
 
 // Set number of user-controlled fans. Disable to use all board-defined fans.
 // :[1,2,3,4,5,6,7,8]
-#define NUM_M106_FANS 1 // 20210218 only 1 fan that can be "controlled" (FAN2 for parts cooling) ------------------------------------------------------------------------------------------------------
+#define NUM_M106_FANS 2 // 20210218 only 1 fan that can be "controlled" (FAN2 for parts cooling) ------------------------------------------------------------------------------------------------------
 
 // Increase the FAN PWM frequency. Removes the PWM noise but increases heating in the FET/Arduino
 //#define FAST_PWM_FAN
