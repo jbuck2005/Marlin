@@ -2572,9 +2572,9 @@ M500
 /*	20210216 ----- from ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h -----------------------------------------------------------------------------------------------------------------------
 
 #define FAN_PIN                              -1   // this was redefined to -1 in the pins_BTT_SKR_PRO_common.h file to allow control of FAN0 on the board
-#define FAN1_PIN                            PE5   // Fan1 wired to extruder fan for temperature control
-#define FAN2_PIN                            PE6   // Fan2 wired to stepper motor cooling fan for automatic on/off
-#define FAN3_PIN                            PC8   // Fan0 wired to parts stepper motor cooling fan - to be used as CONTROLLER_FAN_PIN in Configuration_adv.h
+#define FAN1_PIN                            PE5   // Fan1 wired to extruder fan for temperature controlled on/off state
+#define FAN2_PIN                            PE6   // Fan2 wired to part cooling fan
+#define FAN3_PIN                            PC8   // Fan0 wired to stepper motor cooling fan - to be used as CONTROLLER_FAN_PIN in Configuration_adv.h
 
 #ifndef E0_AUTO_FAN_PIN
   #define E0_AUTO_FAN_PIN               FAN1_PIN
@@ -2585,11 +2585,11 @@ M500
 //    #define E0_AUTO_FAN_PIN               PE5
 //  #endif
 
-#define FAN3_PIN PC8    // 20210217 originally defined this in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h - this fan turns on/off automatically with steppers  -------------------------------
+//#define FAN3_PIN PC8    // 20210217 originally defined this in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h - this fan turns on/off automatically with steppers  -------------------------------
 
 // Set number of user-controlled fans. Disable to use all board-defined fans.
 // :[1,2,3,4,5,6,7,8]
-#define NUM_M106_FANS 0 // 20210218 had to reduce from 2 to 0 because with FAN1 set as E0_AUTO there is only 1 fan that can be "controlled" now (FAN3 for parts cooling) ------------------------------
+#define NUM_M106_FANS 1 // 20210218 had to reduce from 2 to 0 because with FAN1 set as E0_AUTO there is only 1 fan that can be "controlled" now (FAN3 for parts cooling) ------------------------------
 
 // Increase the FAN PWM frequency. Removes the PWM noise but increases heating in the FET/Arduino
 //#define FAST_PWM_FAN
