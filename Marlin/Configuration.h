@@ -2579,23 +2579,22 @@ M500
   #define E0_AUTO_FAN_PIN               FAN1_PIN
   #endif
 
-	NOTE: FAN pin and E0_AUTO_FAN_PIN declarations can be redefined here if needed because Configuration.h is processed before pins_BTT_SKR_PRO_common.h
+	NOTE: FAN pin and E0_AUTO_FAN_PIN declarations can allegedly be redefined here if needed because Configuration.h is processed before pins_BTT_SKR_PRO_common.h
+		- 20210218 tested this and was NOT successful
 
 	Board layout w/ pin names:
-	board names:		FAN0			FAN1			FAN2
-	MCU pin names:		PC8			PE5			PE6
-	fan function:		stepper motors		extruder cooler		part cooling
-	Marlin definitions:	FAN3			FAN1			FAN2
+	------------------------------------------------------------------------------------
+ 		  board names:	FAN0			FAN1			FAN2
+		MCU pin names:	PC8			PE5			PE6
+		 fan function:	stepper motors		extruder cooler		part cooling
+	intended control mode:	CONTROLLER_FAN_PIN	E0_AUTO_FAN_PIN		M106
+	   Marlin definitions:	FAN3			FAN1			FAN2
+
+	FAN_PIN was defined as -1 in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h
 
 *///	-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-// 20210218 - redefine FAN pins here since Configuration.h can override ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h ---------------------------------------------------------------------------
-#undef FAN_PIN		    // 20210218 take no chances and undefine values before redefinition -------------------------------------------------------------------------------------------------------
-#undef FAN1_PIN		    // 20210218 take no chances and undefine values before redefinition -------------------------------------------------------------------------------------------------------
-#undef FAN2_PIN		    // 20210218 take no chances and undefine values before redefinition -------------------------------------------------------------------------------------------------------
-#define FAN_PIN		-1  // 20210218 - set to -1 to define a null fan, allowing code to compile - will not compile without an "auto" fan which I don't want or need --------------------------------
-#define FAN1_PIN	PE5 // 20210218 - PE5 = FAN1 on SKR PRO board - E0_AUTO_FAN_PIN    - this is wired to the extruder cooling fan ----------------------------------------------------------------
-#define FAN2_PIN	PE6 // 20210218 - PE6 = FAN2 on SKR PRO board - M106 fan           - this is wired to the part cooling fan --------------------------------------------------------------------
+// 20210218 - tried to redefine FAN pins here but failed to compile so I had to make changes to ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h - namely set FAN_PIN to -1 ------------------------
 #define FAN3_PIN	PC8 // 20210218 - PC8 = FAN0 on SKR PRO board - CONTROLLER_FAN_PIN - this is wired to the stepper motor cooling fan -----------------------------------------------------------
 
 // Set number of user-controlled fans. Disable to use all board-defined fans.
