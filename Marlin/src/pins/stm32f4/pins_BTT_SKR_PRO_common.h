@@ -241,11 +241,10 @@
 #define HEATER_1_PIN                        PD14  // Heater1
 #define HEATER_2_PIN                        PB0   // Heater1
 #define HEATER_BED_PIN                      PD12  // Hotbed
-#define FAN_PIN                             -1    // 20210218 defined as -1 in order to allow PC8 (to be defined as FAN3_PIN which is FAN0 on SKR PRO) to be used as CONTROLLER_FAN_PIN
+#define FAN_PIN                             PC8   // Fan0
 //#define FAN_PIN                             PF6   // 20210218 defined as PF6 (T3) on SKR BOARD as a placeholder in order to allow code to compile - must have hard-coded FAN0
 #define FAN1_PIN                            PE5   // Fan1 - CONTROLLER_FAN_PIN	- extruder cooling fan		- FAN1
 #define FAN2_PIN                            PE6   // Fan2 - M106		- part cooling fan		- FAN2
-#define FAN3_PIN                            PC8	  // Fan3 - CONTROLLER_FAN_PIN	- stepper motor cooling fan	- FAN0
 
 #ifndef E0_AUTO_FAN_PIN
   #define E0_AUTO_FAN_PIN               FAN1_PIN

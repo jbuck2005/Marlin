@@ -2590,19 +2590,20 @@ M500
 	intended control mode:	CONTROLLER_FAN_PIN	E0_AUTO_FAN_PIN		M106
 	   Marlin definitions:	FAN3			FAN1			FAN2
 
-	FAN_PIN was defined as -1 in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h
+	FAN_PIN was previouslt redefined as -1 in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h
 
 *///	-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // 20210218 - tried to redefine FAN pins here but failed to compile so I had to make changes to ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h - namely set FAN_PIN to -1 ------------------------
-//#define FAN3_PIN	PC8 // 20210218 - PC8 = FAN0 on SKR PRO board - CONTROLLER_FAN_PIN - this is wired to the stepper motor cooling fan -----------------------------------------------------------
-#undef FAN_PIN
-#define FAN_PIN -1     // Fan -
-#define FAN3_PIN PC8   // Fan3 - CONTROLLER_FAN_PIN  - stepper motor cooling fan     - FAN0
+#undef FAN_PIN         // 20210219 need to undefine before re-defining FAN pin to prevent compile time warnings ---------------------------------------------------------------------------------------
+#define FAN_PIN -1     // 20210219 define FAN_PIN as -1 to allow PC8 (FAN0 on SKR) to be re-purposed as CONTROLLER_FAN_PIN under the pin name FAN3 for stepper motor cooling --------------------------
+     // FAN1_PIN PE5      20210219 Fan1 - E0_AUTO_FAN_PIN	- extruder cooling fan		- FAN1 on SKR PRO v1.2 --------------------------------------------------------------------------------
+     // FAN2_PIN PE6      20210219 Fan2 - M106			- part cooling fan		- FAN2 on SKR PRO v1.2 --------------------------------------------------------------------------------
+#define FAN3_PIN PC8   // 20210219 Fan3 - CONTROLLER_FAN_PIN	- stepper motor cooling fan     - FAN0 on SKR PRO v1.2 --------------------------------------------------------------------------------
 
 // Set number of user-controlled fans. Disable to use all board-defined fans.
 // :[1,2,3,4,5,6,7,8]
-#define NUM_M106_FANS 3 // 20210218 only 1 fan that can be "controlled" (FAN2 for parts cooling) ------------------------------------------------------------------------------------------------------
+#define NUM_M106_FANS 3 // 20210219 needs to be defined as 3 so that code will compile, despite only 1 fan intending to be M106 controlled (FAN2) -----------------------------------------------------
 
 // Increase the FAN PWM frequency. Removes the PWM noise but increases heating in the FET/Arduino
 //#define FAST_PWM_FAN
