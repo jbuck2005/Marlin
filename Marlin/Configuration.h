@@ -2595,8 +2595,8 @@ M500
 *///	-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // 20210218 - tried to redefine FAN pins here but failed to compile so I had to make changes to ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h - namely set FAN_PIN to -1 ------------------------
-#undef FAN_PIN         // 20210219 need to undefine before re-defining FAN pin to prevent compile time warnings ---------------------------------------------------------------------------------------
-#define FAN_PIN -1     // 20210219 define FAN_PIN as -1 to allow PC8 (FAN0 on SKR) to be re-purposed as CONTROLLER_FAN_PIN under the pin name FAN3 for stepper motor cooling --------------------------
+//#undef FAN_PIN         // 20210219 need to undefine before re-defining FAN pin to prevent compile time warnings ---------------------------------------------------------------------------------------
+//#define FAN_PIN -1     // 20210219 define FAN_PIN as -1 to allow PC8 (FAN0 on SKR) to be re-purposed as CONTROLLER_FAN_PIN under the pin name FAN3 for stepper motor cooling --------------------------
      // FAN1_PIN PE5      20210219 Fan1 - E0_AUTO_FAN_PIN	- extruder cooling fan		- FAN1 on SKR PRO v1.2 --------------------------------------------------------------------------------
      // FAN2_PIN PE6      20210219 Fan2 - M106			- part cooling fan		- FAN2 on SKR PRO v1.2 --------------------------------------------------------------------------------
 #define FAN3_PIN PC8   // 20210219 Fan3 - CONTROLLER_FAN_PIN	- stepper motor cooling fan     - FAN0 on SKR PRO v1.2 --------------------------------------------------------------------------------
