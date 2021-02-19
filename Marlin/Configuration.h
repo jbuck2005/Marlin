@@ -1646,17 +1646,8 @@ M500
  */
 #define I2C_EEPROM               // 20210214 - use external EEPROM Module (e.g. AT24C256) -------------------------------------------------------------------------------------------------------------
 #ifdef I2C_EEPROM
-//  #undef E2END                 // (does not appear to be necessary)remove previous definition in Arduino Core STM32 to be used with EEPROM emulation since a real EEPROM will be used
   #undef FLASH_PAGE_SIZE         // 20210215 setting FLASH_PAGE_SIZE here instead of redefining E2END does not throw warnings on compile
   #define FLASH_PAGE_SIZE 0x8000 // 0X8000 is reduced by 1 in E2END definition, thereby setting size to 0x7FFF - is this definition even necessary ???
-
-/* 20210215 commented out to test - it appears that MARLIN_EEPROM_SIZE is defined elsewhere
-  #ifdef MARLIN_EEPROM_SIZE      // 20210215 MARLIN_EEPROM_SIZE seems to be important too ... 
-    #undef MARLIN_EEPROM_SIZE
-    #define MARLIN_EEPROM_SIZE 0x7FFF
-  #endif
-  */
-
 #endif
 
 #define EEPROM_SETTINGS       // Persistent storage with M500 and M501 // 20210215 enabled and tested -------------------------------------------------------------------------------------------------
