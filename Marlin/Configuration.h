@@ -92,10 +92,10 @@
 #define SHOW_BOOTSCREEN
 
 // Show the bitmap in Marlin/_Bootscreen.h on startup.
-#define SHOW_CUSTOM_BOOTSCREEN // 20210219 enabled ----------------------------------------------------------------------------------------------------------------------------------------------------
+//#define SHOW_CUSTOM_BOOTSCREEN // 20210219 tested but inelligible due to graphic LCD ----------------------------------------------------------------------------------------------------------------
 
 // Show the bitmap in Marlin/_Statusscreen.h on the status screen.
-#define CUSTOM_STATUS_SCREEN_IMAGE // 20210219 enabled ------------------------------------------------------------------------------------------------------------------------------------------------
+//#define CUSTOM_STATUS_SCREEN_IMAGE // 20210219 tested but inelligible due to graphic LCD --------------------------------------------------------------------------------------------------------------
 
 // @section machine
 
