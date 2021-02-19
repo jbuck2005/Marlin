@@ -1103,10 +1103,11 @@
       // Use a height slightly above the estimated nozzle-to-probe Z offset.
       // For example, with an offset of -5, consider a starting height of -4.
       //
-      //#define PROBE_OFFSET_WIZARD_START_Z -4.0
+      #define PROBE_OFFSET_WIZARD_START_Z -2.0 // 20210219 enabled and changed from -4.0 to -2.0 which is close to the pre-measured -1.7mm offset -----------------------------------------------------
 
       // Set a convenient position to do the calibration (probing point and nozzle/bed-distance)
-      #define PROBE_OFFSET_WIZARD_XY_POS { X_CENTER, Y_CENTER } // 20210216 enabled -------------------------------------------------------------------------------------------------------------------
+      //#define PROBE_OFFSET_WIZARD_XY_POS { X_CENTER, Y_CENTER } // 20210216 enabled -------------------------------------------------------------------------------------------------------------------
+      #define PROBE_OFFSET_WIZARD_XY_POS { X_CENTER, 0 } // 20210219 enabled and changed Y_CENTER to 0 to enable measuring at the front of the large bed ---------------------------------------i------
     #endif
   #endif
 
@@ -1248,7 +1249,7 @@
    * an option on the LCD screen to continue the print from the last-known
    * point in the file.
    */
-//  #define POWER_LOSS_RECOVERY // 20210213 enabled -----------------------------------------------------------------------------------------------------------------------------------------------------
+  #define POWER_LOSS_RECOVERY // 20210219 enabled -----------------------------------------------------------------------------------------------------------------------------------------------------
   #if ENABLED(POWER_LOSS_RECOVERY)
     #define PLR_ENABLED_DEFAULT   false // Power Loss Recovery enabled by default. (Set with 'M413 Sn' & M500)
     //#define BACKUP_POWER_SUPPLY       // Backup power / UPS to move the steppers on power loss
@@ -1680,15 +1681,15 @@
  *
  * Warning: Does not respect endstops!
  */
-//#define BABYSTEPPING // 20210213 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------------
+#define BABYSTEPPING // 20210219 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------------
 #if ENABLED(BABYSTEPPING)
   //#define INTEGRATED_BABYSTEPPING         // EXPERIMENTAL integration of babystepping into the Stepper ISR
   //#define BABYSTEP_WITHOUT_HOMING
-  #define BABYSTEP_ALWAYS_AVAILABLE       // Allow babystepping at all times (not just during movement). // 20210213 enabled --------------------------------------------------------------------------
+  #define BABYSTEP_ALWAYS_AVAILABLE       // Allow babystepping at all times (not just during movement). // 20210219 enabled --------------------------------------------------------------------------
   //#define BABYSTEP_XY                     // Also enable X/Y Babystepping. Not supported on DELTA!
   #define BABYSTEP_INVERT_Z false           // Change if Z babysteps should go the other way
-//  #define BABYSTEP_MILLIMETER_UNITS       // Specify BABYSTEP_MULTIPLICATOR_(XY|Z) in mm instead of micro-steps // 20210213 enabled -------------------------------------------------------------------
-//  #define BABYSTEP_MULTIPLICATOR_Z  0.0     // (steps or mm) Steps or millimeter distance for each Z babystep // 20210213 changed from 1 to 0.01 ------------------------------------------------------
+  #define BABYSTEP_MILLIMETER_UNITS       // Specify BABYSTEP_MULTIPLICATOR_(XY|Z) in mm instead of micro-steps // 20210219 enabled -------------------------------------------------------------------
+  #define BABYSTEP_MULTIPLICATOR_Z  0.0     // (steps or mm) Steps or millimeter distance for each Z babystep // 20210219 changed from 1 to 0.01 ------------------------------------------------------
   #define BABYSTEP_MULTIPLICATOR_XY 1       // (steps or mm) Steps or millimeter distance for each XY babystep
 
 //  #define DOUBLECLICK_FOR_Z_BABYSTEPPING  // Double-click on the Status Screen for Z Babystepping. // 20210213 enabled --------------------------------------------------------------------------------
@@ -1703,7 +1704,7 @@
 
   //#define BABYSTEP_DISPLAY_TOTAL          // Display total babysteps since last G28
 
-//  #define BABYSTEP_ZPROBE_OFFSET          // Combine M851 Z and Babystepping // 20210213 enabled ------------------------------------------------------------------------------------------------------
+  #define BABYSTEP_ZPROBE_OFFSET            // Combine M851 Z and Babystepping // 20210219 enabled ----------------------------------------------------------------------------------------------------
   #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
     //#define BABYSTEP_HOTEND_Z_OFFSET      // For multiple hotends, babystep relative Z offsets
     //#define BABYSTEP_ZPROBE_GFX_OVERLAY   // Enable graphical overlay on Z-offset editor
@@ -2209,7 +2210,7 @@
   //#define PARK_HEAD_ON_PAUSE                    // Park the nozzle during pause and filament change.
   //#define HOME_BEFORE_FILAMENT_CHANGE           // If needed, home before parking for filament change
 
-  //#define FILAMENT_LOAD_UNLOAD_GCODES           // Add M701/M702 Load/Unload G-codes, plus Load/Unload in the LCD Prepare menu.
+  #define FILAMENT_LOAD_UNLOAD_GCODES           // Add M701/M702 Load/Unload G-codes, plus Load/Unload in the LCD Prepare menu. // 20210219 enabled ---------------------------------------------------
   //#define FILAMENT_UNLOAD_ALL_EXTRUDERS         // Allow M702 to unload all extruders above a minimum target temp (as set by M302)
 #endif
 
@@ -2576,7 +2577,7 @@
    * Define your own with:
    * { <off_time[1..15]>, <hysteresis_end[-3..12]>, hysteresis_start[1..8] }
    */
-  #define CHOPPER_TIMING CHOPPER_DEFAULT_12V        // All axes (override below)
+  #define CHOPPER_TIMING CHOPPER_DEFAULT_24V        // All axes (override below) // 20210219 changed from _12V to _24V since board and motors run on 24v ----------------------------------------------
   //#define CHOPPER_TIMING_X  CHOPPER_DEFAULT_12V   // For X Axes (override below)
   //#define CHOPPER_TIMING_X2 CHOPPER_DEFAULT_12V
   //#define CHOPPER_TIMING_Y  CHOPPER_DEFAULT_12V   // For Y Axes (override below)
@@ -2696,7 +2697,7 @@
    * Beta feature!
    * Create a 50/50 square wave step pulse optimal for stepper drivers.
    */
-  //#define SQUARE_WAVE_STEPPING
+  //#define SQUARE_WAVE_STEPPING // 20210219 should test this feature -----------------------------------------------------------------------------------------------------------------------------------
 
   /**
    * Enable M122 debugging command for TMC stepper drivers.
@@ -3348,7 +3349,7 @@
  *
  * Execute certain G-code commands immediately after power-on.
  */
-//#define STARTUP_COMMANDS "M17 Z"
+//#define STARTUP_COMMANDS "M17 Z" // 20210219 could be useful ------------------------------------------------------------------------------------------------------------------------------------------
 
 /**
  * G-code Macros
@@ -3366,7 +3367,7 @@
  * User-defined menu items to run custom G-code.
  * Up to 25 may be defined, but the actual number is LCD-dependent.
  */
-//#define CUSTOM_USER_MENUS // 20210213 enabled ---------------------------------------------------------------------------------------------------------------------------------------------------------
+#define CUSTOM_USER_MENUS // 20210213 enabled ---------------------------------------------------------------------------------------------------------------------------------------------------------
 #if ENABLED(CUSTOM_USER_MENUS)
   //#define CUSTOM_USER_MENU_TITLE "Custom Commands"
   #define USER_SCRIPT_DONE "M117 User Script Done"
