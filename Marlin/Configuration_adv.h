@@ -401,7 +401,7 @@
  * The fan turns on automatically whenever any driver is enabled and turns
  * off (or reduces to idle speed) shortly after drivers are turned off.
  */
-//#define USE_CONTROLLER_FAN // 20210215 enabled to cool stepper motors ---------------------------------------------------------------------------------------------------------------------------------
+#define USE_CONTROLLER_FAN // 20210215 enabled to cool stepper motors ---------------------------------------------------------------------------------------------------------------------------------
 #if ENABLED(USE_CONTROLLER_FAN)
   #define CONTROLLER_FAN_PIN FAN3_PIN    // 20210218 changed to FAN3_PIN (PC8) which is FAN0 on the board & wired to the stepper controller cooling fan -----------------------------------------------
   //#define CONTROLLER_FAN_USE_Z_ONLY    // With this option only the Z axis is considered
@@ -480,7 +480,7 @@
  * Multiple extruders can be assigned to the same pin in which case
  * the fan will turn on when any selected extruder is above the threshold.
  */
-#define E0_AUTO_FAN_PIN -1 //FAN1_PIN // 20210218 disabled here to allow for definition as FAN1_PIN (PE5) in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h ---------------------------
+//#define E0_AUTO_FAN_PIN -1 //FAN1_PIN // 20210218 disabled here to allow for definition as FAN1_PIN (PE5) in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h ---------------------------
 #define E1_AUTO_FAN_PIN -1
 #define E2_AUTO_FAN_PIN -1
 #define E3_AUTO_FAN_PIN -1

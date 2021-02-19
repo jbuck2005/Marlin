@@ -2591,7 +2591,7 @@ M500
 
      // FAN1_PIN PE5      20210219 Fan1 - E0_AUTO_FAN_PIN	- extruder cooling fan		- FAN1 on SKR PRO v1.2 --------------------------------------------------------------------------------
      // FAN2_PIN PE6      20210219 Fan2 - M106			- part cooling fan		- FAN2 on SKR PRO v1.2 --------------------------------------------------------------------------------
-//#define FAN3_PIN PC8   // 20210219 Fan3 - CONTROLLER_FAN_PIN	- stepper motor cooling fan     - FAN0 on SKR PRO v1.2 --------------------------------------------------------------------------------
+#define FAN3_PIN PC8   // 20210219 Fan3 - CONTROLLER_FAN_PIN	- stepper motor cooling fan     - FAN0 on SKR PRO v1.2 --------------------------------------------------------------------------------
 
 // Set number of user-controlled fans. Disable to use all board-defined fans.
 // :[1,2,3,4,5,6,7,8]
@@ -2603,7 +2603,7 @@ M500
 // Use software PWM to drive the fan, as for the heaters. This uses a very low frequency
 // which is not as annoying as with the hardware PWM. On the other hand, if this frequency
 // is too low, you should also increment SOFT_PWM_SCALE.
-//#define FAN_SOFT_PWM // 20210215 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------------
+#define FAN_SOFT_PWM // 20210215 enabled --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Incrementing this by 1 will double the software PWM frequency,
 // affecting heaters, and the fan if FAN_SOFT_PWM is enabled.
