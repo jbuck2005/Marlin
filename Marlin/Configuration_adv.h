@@ -1721,11 +1721,12 @@
  * print acceleration will be reduced during the affected moves to keep within the limit.
  *
  * See https://marlinfw.org/docs/features/lin_advance.html for full instructions.
+   https://marlinfw.org/tools/lin_advance/k-factor.html
  */
-//#define LIN_ADVANCE
+#define LIN_ADVANCE // 20210219 enabled ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 #if ENABLED(LIN_ADVANCE)
   //#define EXTRA_LIN_ADVANCE_K // Enable for second linear advance constants
-  #define LIN_ADVANCE_K 0.22    // Unit: mm compression per 1mm/s extruder speed
+  #define LIN_ADVANCE_K 1.80    // Unit: mm compression per 1mm/s extruder speed // 20210219 changed from 0.22 to 1.8 as was measured using enderkfactor.gcode ----------------------------------------
   //#define LA_DEBUG            // If enabled, this will generate debug information output over USB.
   //#define EXPERIMENTAL_SCURVE // Enable this option to permit S-Curve Acceleration
 #endif
