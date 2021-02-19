@@ -136,7 +136,7 @@
 #endif
 
 // Name displayed in the LCD "Ready" message and Info menu
-#define CUSTOM_MACHINE_NAME "Dad's Build-o-matic v2.1b" // 20210215 --------------------------------------------------------------------------------------------------
+#define CUSTOM_MACHINE_NAME "Dad's CR6 v2.19a" // 20210219 --------------------------------------------------------------------------------------------------
 
 // Printer's unique ID, used by some programs to differentiate between machines.
 // Choose your own or use a service like https://www.uuidgenerator.net/version4
