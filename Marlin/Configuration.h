@@ -137,7 +137,7 @@
 #endif
 
 // Name displayed in the LCD "Ready" message and Info menu
-#define CUSTOM_MACHINE_NAME "Mega Replicator v0.2.17" // 20210216 -------------------------------------------------------------------------------------------------------------------------------------
+#define CUSTOM_MACHINE_NAME "Mega Replicator v0.2.19" // 20210219 -------------------------------------------------------------------------------------------------------------------------------------
 
 // Printer's unique ID, used by some programs to differentiate between machines.
 // Choose your own or use a service like https://www.uuidgenerator.net/version4
@@ -1011,7 +1011,7 @@
  *     |    [-]    |
  *     O-- FRONT --+
  */
-#define NOZZLE_TO_PROBE_OFFSET { 10, 10, 0 }
+#define NOZZLE_TO_PROBE_OFFSET { -26.2, -0.8, -1.7 } // 20210219 done by iterative M851 Z-1.7 then G28 Z followed by G1 X225 Y225 Z0 and using a 0.08" feeler gauge - feels like a good start ---------
 
 // Most probes should stay away from the edges of the bed, but
 // with NOZZLE_AS_PROBE this can be negative for a wider probing area.
@@ -1249,8 +1249,8 @@
 
 */
 
-//#define FILAMENT_RUNOUT_SENSOR
-#if ENABLED(FILAMENT_RUNOUT_SENSOR)	  // 20210216 pins_BTT_SKR_PRO_common.h defines FIL_RUNOUT_PIN as PE15
+#define FILAMENT_RUNOUT_SENSOR		  // 20210219 enabled -----------------------------------------------------------------------------------------------------------------------------------------
+#if ENABLED(FILAMENT_RUNOUT_SENSOR)	  // 20210216 pins_BTT_SKR_PRO_common.h defines FIL_RUNOUT_PIN as PE15 which is E0 on the board
   #define FIL_RUNOUT_ENABLED_DEFAULT true // Enable the sensor on startup. Override with M412 followed by M500.
   #define NUM_RUNOUT_SENSORS   1          // Number of sensors, up to one per extruder. Define a FIL_RUNOUT#_PIN for each.
 
@@ -1498,7 +1498,7 @@ M500
   #define LEVEL_CORNERS_HEIGHT      0.0   // (mm) Z height of nozzle at leveling points
   #define LEVEL_CORNERS_Z_HOP       4.0   // (mm) Z height of nozzle between leveling points
   //#define LEVEL_CENTER_TOO              // Move to the center after the last corner
-  //#define LEVEL_CORNERS_USE_PROBE // 20210216 invesitage this feature when LCD screen installed; could improve corner leveling at machine -------------------------------------------------------------
+  //#define LEVEL_CORNERS_USE_PROBE // 20210216 investigate this feature when LCD screen installed; could improve corner leveling at machine -------------------------------------------------------------
   #if ENABLED(LEVEL_CORNERS_USE_PROBE)
     #define LEVEL_CORNERS_PROBE_TOLERANCE 0.1
     #define LEVEL_CORNERS_VERIFY_RAISED   // After adjustment triggers the probe, re-probe to verify
@@ -2586,6 +2586,8 @@ M500
 		 fan function:	stepper motors		extruder cooler		part cooling
 	intended control mode:	CONTROLLER_FAN_PIN	E0_AUTO_FAN_PIN		M106
 	   Marlin definitions:	FAN3			FAN1			FAN2
+
+	   IMPORTANT !!! M106 command NEEDS a speed value - ie:  M106 P2 S128
 
 *///	-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -401,9 +401,9 @@
  * The fan turns on automatically whenever any driver is enabled and turns
  * off (or reduces to idle speed) shortly after drivers are turned off.
  */
-#define USE_CONTROLLER_FAN // 20210215 enabled to cool stepper motors ---------------------------------------------------------------------------------------------------------------------------------
+#define USE_CONTROLLER_FAN // 20210219 enabled to cool stepper motors ---------------------------------------------------------------------------------------------------------------------------------
 #if ENABLED(USE_CONTROLLER_FAN)
-  #define CONTROLLER_FAN_PIN FAN3_PIN    // 20210218 changed to FAN3_PIN (PC8) which is FAN0 on the board & wired to the stepper controller cooling fan -----------------------------------------------
+  #define CONTROLLER_FAN_PIN FAN3_PIN    // 20210219 changed to FAN3_PIN (PC8) which is FAN0 on the board & wired to the stepper controller cooling fan -----------------------------------------------
   //#define CONTROLLER_FAN_USE_Z_ONLY    // With this option only the Z axis is considered
   //#define CONTROLLER_FAN_IGNORE_Z      // Ignore Z stepper. Useful when stepper timeout is disabled.
   #define CONTROLLERFAN_SPEED_MIN    100 // (0-255) Minimum speed. (If set below this value the fan is turned off.) // 20210215 changed from 0 to 100 to test fan turn off ----------------------------
@@ -419,7 +419,7 @@
 // When first starting the main fan, run it at full speed for the
 // given number of milliseconds.  This gets the fan spinning reliably
 // before setting a PWM value. (Does not work with software PWM for fan on Sanguinololu)
-//#define FAN_KICKSTART_TIME 100 // 20210215 enabled ----------------------------------------------------------------------------------------------------------------------------------------------------
+#define FAN_KICKSTART_TIME 100 // 20210219 enabled ----------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Some coolers may require a non-zero "off" state.
 //#define FAN_OFF_PWM  1
@@ -480,7 +480,7 @@
  * Multiple extruders can be assigned to the same pin in which case
  * the fan will turn on when any selected extruder is above the threshold.
  */
-//#define E0_AUTO_FAN_PIN -1 //FAN1_PIN // 20210218 disabled here to allow for definition as FAN1_PIN (PE5) in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h ---------------------------
+//#define E0_AUTO_FAN_PIN -1 //FAN1_PIN // 20210219 disabled here to allow for definition as FAN1_PIN (PE5) in ./Marlin/src/pins/stm32f4/pins_BTT_SKR_PRO_common.h ---------------------------
 #define E1_AUTO_FAN_PIN -1
 #define E2_AUTO_FAN_PIN -1
 #define E3_AUTO_FAN_PIN -1
@@ -677,7 +677,7 @@
 
 //#define HOMING_BACKOFF_POST_MM { 2, 2, 2 }  // (mm) Backoff from endstops after homing
 
-//#define QUICK_HOME                          // If G28 contains XY do a diagonal move first
+#define QUICK_HOME                          // If G28 contains XY do a diagonal move first // 20210219 enabled ----------------------------------------------------------------------------------------
 //#define HOME_Y_BEFORE_X                     // If G28 contains XY home Y before X
 //#define HOME_Z_FIRST                        // Home Z first. Requires a Z-MIN endstop (not a probe).
 //#define CODEPENDENT_XY_HOMING               // If X/Y can't home without homing Y/X first
@@ -2168,7 +2168,7 @@
  * Requires NOZZLE_PARK_FEATURE.
  * This feature is required for the default FILAMENT_RUNOUT_SCRIPT.
  */
-//#define ADVANCED_PAUSE_FEATURE
+#define ADVANCED_PAUSE_FEATURE // 20210219 enabled for filament runout feature ------------------------------------------------------------------------------------------------------------------------
 #if ENABLED(ADVANCED_PAUSE_FEATURE)
   #define PAUSE_PARK_RETRACT_FEEDRATE         60  // (mm/s) Initial retract feedrate.
   #define PAUSE_PARK_RETRACT_LENGTH            2  // (mm) Initial retract.

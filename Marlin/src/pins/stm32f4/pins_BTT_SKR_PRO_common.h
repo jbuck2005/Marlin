@@ -241,8 +241,7 @@
 #define HEATER_1_PIN                        PD14  // Heater1
 #define HEATER_2_PIN                        PB0   // Heater1
 #define HEATER_BED_PIN                      PD12  // Hotbed
-#define FAN_PIN                              -1   // 20210219 changed from PC8 to -1 in order to allow PC8 to be used as FAN3
-//#define FAN_PIN                             PC8   // 20210219 changed from PC8 to -1 in order to allow PC8 to be used as FAN3
+#define FAN_PIN                              -1   // 20210219 changed from PC8 to -1 in order to allow PC8 to be defined as FAN3_PIN in Configuration.h
 #define FAN1_PIN                            PE5   // Fan1 - CONTROLLER_FAN_PIN	- extruder cooling fan		- FAN1
 #define FAN2_PIN                            PE6   // Fan2 - M106		- part cooling fan		- FAN2
 
