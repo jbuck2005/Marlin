@@ -15,7 +15,7 @@ For example, you would need to rename:<br>
     <li>Windows-R</li>
     <li>type in cmd</li>
     <li>press enter</li>
-    <li>format /q <b>g</b>:/fs:fat32/a:4096  <b>(note: use correct drive ID)</b></li>
+    <li>format /Q <font color=red><b>X:<b></font> /FS:FAT32 /A:4096  <b>(note: use correct drive ID)</b></li>
   </ul>
   <li>Insert the microSD card into the LCD screen's microSD card slot and power the printer on</li>
   <li>turn on printer</li>
