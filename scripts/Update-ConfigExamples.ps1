@@ -7,10 +7,7 @@ Refreshes the configuration examples based on the current base configuration cha
 [CmdletBinding()]
 Param(
     [Switch]
-    $Pause,
-
-    [Switch]
-    $InteractiveResolve
+    $Pause
 )
 
 # Include common scripts
@@ -26,7 +23,7 @@ foreach ($ConfigName in $Configs) {
         Read-Host -Prompt "Pausing for $ConfigName - press any key to continue"
     }
 
-    .\scripts\Generate-ConfigExample.ps1 -Name $ConfigName -InteractiveResolve:$InteractiveResolve
+    .\scripts\Generate-ConfigExample.ps1 -Name $ConfigName
     
     if ($LASTEXITCODE -ne 0) {
         Write-FatalError "Unable to generate configuration example for $ConfigName"

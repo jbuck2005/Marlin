@@ -23,7 +23,7 @@
 
 /* DGUS implementation written by Sebastiaan Dammann in 2020 for Marlin */
 
-#include "DGUSVPVariable.h"
+#include "../dgus/DGUSVPVariable.h"
 
 #include <stdint.h>
 

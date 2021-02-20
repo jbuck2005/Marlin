@@ -321,8 +321,7 @@
     // Check for commands that require the printer to be homed
     if (may_move) {
       planner.synchronize();
-      // Send 'N' to force homing before G29 (internal only)
-      if (axes_should_home() || parser.seen('N')) gcode.home_all_axes();
+      if (axes_should_home()) gcode.home_all_axes();
       TERN_(HAS_MULTI_HOTEND, if (active_extruder) tool_change(0));
     }
 
@@ -544,7 +543,7 @@
           }
           else {
             const float cvf = parser.value_float();
-            switch ((int)TRUNC(cvf * 10.0f) - 30) {   // 3.1 -> 1
+            switch ((int)truncf(cvf * 10.0f) - 30) {   // 3.1 -> 1
               #if ENABLED(UBL_G29_P31)
                 case 1: {
 
@@ -742,7 +741,7 @@
         if (do_ubl_mesh_map) display_map(g29_map_type);
 
         const int point_num = (GRID_MAX_POINTS) - count + 1;
-        SERIAL_ECHOLNPAIR("Probing mesh point ", point_num, "/", GRID_MAX_POINTS, ".");
+        SERIAL_ECHOLNPAIR("\nProbing mesh point ", point_num, "/", int(GRID_MAX_POINTS), ".\n");
         TERN_(HAS_DISPLAY, ui.status_printf_P(0, PSTR(S_FMT " %i/%i"), GET_TEXT(MSG_PROBING_MESH), point_num, int(GRID_MAX_POINTS)));
 
         #if HAS_LCD_MENU
@@ -1694,7 +1693,7 @@
       SERIAL_EOL();
 
       #if HAS_KILL
-        SERIAL_ECHOLNPAIR("Kill pin on :", KILL_PIN, "  state:", kill_state());
+        SERIAL_ECHOLNPAIR("Kill pin on :", int(KILL_PIN), "  state:", int(kill_state()));
       #endif
 
       SERIAL_EOL();
@@ -1707,8 +1706,8 @@
         SERIAL_ECHOLNPAIR("Meshes go from ", hex_address((void*)settings.meshes_start_index()), " to ", hex_address((void*)settings.meshes_end_index()));
         serial_delay(50);
 
-        SERIAL_ECHOLNPAIR("sizeof(ubl) :  ", sizeof(ubl));         SERIAL_EOL();
-        SERIAL_ECHOLNPAIR("z_value[][] size: ", sizeof(z_values)); SERIAL_EOL();
+        SERIAL_ECHOLNPAIR("sizeof(ubl) :  ", (int)sizeof(ubl));         SERIAL_EOL();
+        SERIAL_ECHOLNPAIR("z_value[][] size: ", (int)sizeof(z_values)); SERIAL_EOL();
         serial_delay(25);
 
         SERIAL_ECHOLNPAIR("EEPROM free for UBL: ", hex_address((void*)(settings.meshes_end_index() - settings.meshes_start_index())));

@@ -10,10 +10,7 @@ Name of the configuration example. Must be a valid path name.
 [CmdletBinding()]
 Param(
     [Parameter(Mandatory=$true)]
-    $Name,
-
-    [Switch]
-    $InteractiveResolve
+    $Name
 )
 
 # Include common scripts
@@ -81,13 +78,6 @@ foreach ($FilePath in $FilesPathsToDiff) {
             Write-Host "Updating example..."
             Write-Host "... applying $ExampleDiffFilePath"
             git apply --verbose --ignore-space-change --ignore-whitespace --3way $ExampleDiffFilePath
-
-            if ($InteractiveResolve -and $LASTEXITCODE -eq 0) {
-                Write-Warning "Failed to apply diff file for $FilePath"
-                Write-Host "... opening merge tool"
-                
-                git mergetool
-            }
 
             if ($LASTEXITCODE -ne 0) {
                 Write-FatalError "Failed to apply diff file for $FilePath"

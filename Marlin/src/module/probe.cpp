@@ -38,7 +38,7 @@
 #include "../gcode/gcode.h"
 #include "../lcd/marlinui.h"
 
-#include "../MarlinCore.h" // for stop(), disable_e_steppers(), wait_for_user_response()
+#include "../MarlinCore.h" // for stop(), disable_e_steppers
 
 #if HAS_LEVELING
   #include "../feature/bedlevel/bedlevel.h"
@@ -87,10 +87,6 @@
 Probe probe;
 
 xyz_pos_t Probe::offset; // Initialized by settings.load()
-
-#if HAS_PROBE_SETTINGS
-probe_settings_t Probe::settings;  // Initialized by settings.load()
-#endif
 
 #if HAS_PROBE_XY_OFFSET
   const xy_pos_t &Probe::offset_xy = Probe::offset;
@@ -243,30 +239,19 @@ probe_settings_t Probe::settings;  // Initialized by settings.load()
 #if HAS_QUIET_PROBING
 
   void Probe::set_probing_paused(const bool p) {
-    #if ENABLED(PROBING_HEATERS_OFF)
-    if (TERN1(HAS_PROBE_SETTINGS, settings.turn_heaters_off)) { thermalManager.pause(p); }
-    #endif
-
+    TERN_(PROBING_HEATERS_OFF, thermalManager.pause(p));
     TERN_(PROBING_FANS_OFF, thermalManager.set_fans_paused(p));
-
     #if ENABLED(PROBING_STEPPERS_OFF)
       disable_e_steppers();
       #if NONE(DELTA, HOME_AFTER_DEACTIVATE)
         DISABLE_AXIS_X(); DISABLE_AXIS_Y();
       #endif
     #endif
-
     if (p) safe_delay(25
       #if DELAY_BEFORE_PROBING > 25
         - 25 + DELAY_BEFORE_PROBING
       #endif
     );
-
-#if ENABLED(PROBE_TARE)
-    if (p) {
-      tare();
-    }
-#endif
   }
 
 #endif // HAS_QUIET_PROBING
@@ -343,28 +328,29 @@ FORCE_INLINE void probe_specific_action(const bool deploy) {
 #if EITHER(PREHEAT_BEFORE_PROBING, PREHEAT_BEFORE_LEVELING)
 
   /**
-   * Do preheating as required before leveling or probing.
-   *  - If a preheat input is higher than the current target, raise the target temperature.
-   *  - If a preheat input is higher than the current temperature, wait for stabilization.
+   * Do preheating as required before leveling or probing
    */
   void Probe::preheat_for_probing(const uint16_t hotend_temp, const uint16_t bed_temp) {
-    // Temperatures is MAX(current_target, settings_temp)
-    const uint16_t hotendPreheat = thermalManager.degTargetHotend(0) < hotend_temp ? hotend_temp : thermalManager.degTargetHotend(0),
-                      bedPreheat = thermalManager.degTargetBed()     < bed_temp    ? bed_temp    : thermalManager.degTargetBed();
-    
+    #if PROBING_NOZZLE_TEMP || LEVELING_NOZZLE_TEMP
+      #define WAIT_FOR_NOZZLE_HEAT
+    #endif
+    #if PROBING_BED_TEMP || LEVELING_BED_TEMP
+      #define WAIT_FOR_BED_HEAT
+    #endif
+    const uint16_t hotendPreheat = TERN0(WAIT_FOR_NOZZLE_HEAT, thermalManager.degHotend(0) < hotend_temp) ? hotend_temp : 0,
+                      bedPreheat = TERN0(WAIT_FOR_BED_HEAT,    thermalManager.degBed()     < bed_temp)    ? bed_temp    : 0;
     DEBUG_ECHOPGM("Preheating ");
     if (hotendPreheat) {
       DEBUG_ECHOPAIR("hotend (", hotendPreheat, ") ");
+      if (bedPreheat) DEBUG_ECHOPGM("and ");
     }
+    if (bedPreheat) DEBUG_ECHOPAIR("bed (", bedPreheat, ") ");
     DEBUG_EOL();
 
-    // Set temperatures if set
-    if (hotendPreheat) thermalManager.setTargetHotend(hotendPreheat, 0);
-    if (bedPreheat)    thermalManager.setTargetBed(bedPreheat);
-
-    // Wait for temperatures to be reached if we aren't near the preheat temps
-    if (!thermalManager.degHotendNear(0, hotendPreheat)) thermalManager.wait_for_hotend(0);
-    if (!thermalManager.degBedNear(bedPreheat)) thermalManager.wait_for_bed_heating();
+    TERN_(WAIT_FOR_NOZZLE_HEAT, if (hotendPreheat) thermalManager.setTargetHotend(hotendPreheat, 0));
+    TERN_(WAIT_FOR_BED_HEAT,    if (bedPreheat)    thermalManager.setTargetBed(bedPreheat));
+    TERN_(WAIT_FOR_NOZZLE_HEAT, if (hotendPreheat) thermalManager.wait_for_hotend(0));
+    TERN_(WAIT_FOR_BED_HEAT,    if (bedPreheat)    thermalManager.wait_for_bed_heating());
   }
 
 #endif
@@ -387,19 +373,19 @@ bool Probe::set_deployed(const bool deploy) {
   // Fix-mounted probe should only raise for deploy
   // unless PAUSE_BEFORE_DEPLOY_STOW is enabled
   #if EITHER(FIX_MOUNTED_PROBE, NOZZLE_AS_PROBE) && DISABLED(PAUSE_BEFORE_DEPLOY_STOW)
-    const bool z_raise_wanted = deploy;
+    const bool deploy_stow_condition = deploy;
   #else
-    constexpr bool z_raise_wanted = true;
+    constexpr bool deploy_stow_condition = true;
   #endif
 
   // For beds that fall when Z is powered off only raise for trusted Z
   #if ENABLED(UNKNOWN_Z_NO_RAISE)
-    const bool z_is_trusted = axis_is_trusted(Z_AXIS);
+    const bool unknown_condition = axis_is_trusted(Z_AXIS);
   #else
-    constexpr float z_is_trusted = true;
+    constexpr float unknown_condition = true;
   #endif
 
-  if (z_is_trusted && z_raise_wanted)
+  if (deploy_stow_condition && unknown_condition)
     do_z_raise(_MAX(Z_CLEARANCE_BETWEEN_PROBES, Z_CLEARANCE_DEPLOY_PROBE));
 
   #if EITHER(Z_PROBE_SLED, Z_PROBE_ALLEN_KEY)
@@ -437,7 +423,7 @@ bool Probe::set_deployed(const bool deploy) {
   #endif
 
   // If preheating is required before any probing...
-  TERN_(PREHEAT_BEFORE_PROBING, if (deploy) probe.preheat_for_probing(settings.preheat_hotend_temp, settings.preheat_bed_temp));
+  TERN_(PREHEAT_BEFORE_PROBING, if (deploy) preheat_for_probing(PROBING_NOZZLE_TEMP, PROBING_BED_TEMP));
 
   do_blocking_move_to(old_xy);
   endstops.enable_z_probe(deploy);
@@ -469,7 +455,9 @@ bool Probe::probe_down_to_z(const float z, const feedRate_t fr_mm_s) {
     thermalManager.wait_for_bed_heating();
   #endif
 
-  if (TERN0(BLTOUCH_SLOW_MODE, bltouch.deploy())) return true; // Deploy in LOW SPEED MODE on every probe action
+  #if ENABLED(BLTOUCH) && DISABLED(BLTOUCH_HS_MODE)
+    if (bltouch.deploy()) return true; // DEPLOY in LOW SPEED MODE on every probe action
+  #endif
 
   // Disable stealthChop if used. Enable diag1 pin on driver.
   #if ENABLED(SENSORLESS_PROBING)
@@ -482,8 +470,9 @@ bool Probe::probe_down_to_z(const float z, const feedRate_t fr_mm_s) {
     endstops.enable(true);
   #endif
 
+  TERN_(HAS_QUIET_PROBING, set_probing_paused(true));
+
   // Move down until the probe is triggered
-  SERIAL_ECHOLN("probe_down_to_z: do_blocking_move_to_z");
   do_blocking_move_to_z(z, fr_mm_s);
 
   // Check to see if the probe was triggered
@@ -507,8 +496,9 @@ bool Probe::probe_down_to_z(const float z, const feedRate_t fr_mm_s) {
     tmc_disable_stallguard(stepperZ, stealth_states.z);
   #endif
 
-  if (probe_triggered && TERN0(BLTOUCH_SLOW_MODE, bltouch.stow())) // Stow in LOW SPEED MODE on every trigger
-    return true;
+  #if ENABLED(BLTOUCH) && DISABLED(BLTOUCH_HS_MODE)
+    if (probe_triggered && bltouch.stow()) return true; // STOW in LOW SPEED MODE on trigger on every probe action
+  #endif
 
   // Clear endstop flags
   endstops.hit_on_purpose();
@@ -523,16 +513,6 @@ bool Probe::probe_down_to_z(const float z, const feedRate_t fr_mm_s) {
 }
 
 #if ENABLED(PROBE_TARE)
-
-  /**
-   * @brief Init the tare pin
-   *
-   * @details Init tare pin to ON state for a strain gauge, otherwise OFF
-   */
-  void Probe::tare_init() {
-    OUT_WRITE(PROBE_TARE_PIN, PROBE_TARE_STATE == LOW ? HIGH : LOW);
-  }
-
   /**
    * @brief Tare the Z probe
    *
@@ -541,37 +521,20 @@ bool Probe::probe_down_to_z(const float z, const feedRate_t fr_mm_s) {
    * @return TRUE if the tare cold not be completed
    */
   bool Probe::tare() {
-    #if ENABLED(PROBE_ONCE)
-      static bool has_probed = false;
-
-      if (has_probed) {
-        return false;
-      }
-
-      has_probed = true;
-    #endif
-
     #if BOTH(PROBE_ACTIVATION_SWITCH, PROBE_TARE_ONLY_WHILE_INACTIVE)
-      if (endstops.probe_switch_activated()) {
+      if (READ(PROBE_ACTIVATION_SWITCH_PIN) == PROBE_ACTIVATION_SWITCH_STATE) {
         SERIAL_ECHOLNPGM("Cannot tare an active probe");
         return true;
       }
     #endif
 
-    IF_ENABLED(PROBE_TARE_BUZZ, buzzer.tone(200, 1200));
-
     SERIAL_ECHOLNPGM("Taring probe");
-    WRITE(PROBE_TARE_PIN, PROBE_TARE_STATE);
+    OUT_WRITE(PROBE_TARE_PIN, PROBE_TARE_STATE);
     delay(PROBE_TARE_TIME);
-
-    endstops.resync();
-
-    IF_ENABLED(PROBE_TARE_BUZZ, buzzer.tone(200, 1200));
-    WRITE(PROBE_TARE_PIN, PROBE_TARE_STATE == LOW ? HIGH : LOW);
+    OUT_WRITE(PROBE_TARE_PIN, !PROBE_TARE_STATE);
     delay(PROBE_TARE_DELAY);
 
-    endstops.resync();
-    
+    endstops.hit_on_purpose();
     return false;
   }
 #endif
@@ -588,14 +551,10 @@ float Probe::run_z_probe(const bool sanity_check/*=true*/) {
   DEBUG_SECTION(log_probe, "Probe::run_z_probe", DEBUGGING(LEVELING));
 
   auto try_to_probe = [&](PGM_P const plbl, const float &z_probe_low_point, const feedRate_t fr_mm_s, const bool scheck, const float clearance) -> bool {
-    // Tare the probe, if supported
-    #if ENABLED(PROBE_TARE)
-    TERN(HAS_QUIET_PROBING, set_probing_paused(true), tare());
-
-    endstops.hit_on_purpose();
-    #endif
-    
     // Do a first probe at the fast speed
+
+    if (TERN0(PROBE_TARE, tare())) return true;
+
     const bool probe_fail = probe_down_to_z(z_probe_low_point, fr_mm_s),            // No probe trigger?
                early_fail = (scheck && current_position.z > -offset.z + clearance); // Probe triggered too high?
     #if ENABLED(DEBUG_LEVELING_FEATURE)
@@ -619,10 +578,9 @@ float Probe::run_z_probe(const bool sanity_check/*=true*/) {
   // Double-probing does a fast probe followed by a slow probe
   #if TOTAL_PROBING == 2
 
-    // Attempt to tare the probe
+    // Do a first probe at the fast speed
     if (TERN0(PROBE_TARE, tare())) return NAN;
 
-    // Do a first probe at the fast speed
     if (try_to_probe(PSTR("FAST"), z_probe_low_point, z_probe_fast_mm_s,
                      sanity_check, Z_CLEARANCE_BETWEEN_PROBES) ) return NAN;
 
@@ -753,7 +711,7 @@ float Probe::probe_at_point(const float &rx, const float &ry, const ProbePtRaise
     DEBUG_ECHOLNPAIR(
       "...(", LOGICAL_X_POSITION(rx), ", ", LOGICAL_Y_POSITION(ry),
       ", ", raise_after == PROBE_PT_RAISE ? "raise" : raise_after == PROBE_PT_STOW ? "stow" : "none",
-      ", ", verbose_level,
+      ", ", int(verbose_level),
       ", ", probe_relative ? "probe" : "nozzle", "_relative)"
     );
     DEBUG_POS("", current_position);

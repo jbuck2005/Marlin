@@ -28,7 +28,7 @@
 
 #include "DGUSScreenHandler.h"
 #include "DGUSDisplay.h"
-#include "DGUSVPVariable.h"
+#include "../dgus/DGUSVPVariable.h"
 #include "DGUSDisplayDef.h"
 
 #include "../../ui_api.h"
@@ -62,17 +62,21 @@ DGUSLCD_Screens DGUSScreenHandler::past_screens[NUM_PAST_SCREENS] = {DGUSLCD_SCR
 uint8_t DGUSScreenHandler::update_ptr;
 uint16_t DGUSScreenHandler::skipVP;
 bool DGUSScreenHandler::ScreenComplete;
-bool DGUSScreenHandler::SaveSettingsRequested;
-bool DGUSScreenHandler::HasSynchronousOperation;
-bool DGUSScreenHandler::HasScreenVersionMismatch;
 uint8_t DGUSScreenHandler::MeshLevelIndex = -1;
-uint8_t DGUSScreenHandler::MeshLevelIconIndex = -1;
 float DGUSScreenHandler::feed_amount = 100;
-bool DGUSScreenHandler::fwretract_available = TERN(FWRETRACT,  true, false);
 
-static_assert(GRID_MAX_POINTS_X == GRID_MAX_POINTS_Y, "Assuming bed leveling points is square");
+// Hardcoded limits
+constexpr uint8_t DGUS_GRID_VISUALIZATION_START_ID = GRID_MAX_POINTS > (4*4) ? 30 : 1;
 
-constexpr uint16_t SkipMeshPoint = GRID_MAX_POINTS_X > MESH_LEVEL_EDGE_MAX_POINTS ? ((GRID_MAX_POINTS_X - 1) / (GRID_MAX_POINTS_X - MESH_LEVEL_EDGE_MAX_POINTS)) : 1;
+static_assert(
+  (GRID_MAX_POINTS == 16 && DGUS_GRID_VISUALIZATION_START_ID == 1)||  // CR-6 SE
+  (GRID_MAX_POINTS == 49 && DGUS_GRID_VISUALIZATION_START_ID == 30) || // CR-6 MAX
+  (GRID_MAX_POINTS != 16 && GRID_MAX_POINTS != 49),                    // Custom Leveling
+  "Incorrect offset selected for leveling config"
+);
+
+// endianness swap
+uint16_t swap16(const uint16_t value) { return (value & 0xffU) << 8U | (value >> 8U); }
 
 void DGUSScreenHandler::sendinfoscreen(const char* line1, const char* line2, const char* line3, const char* line4, bool l1inflash, bool l2inflash, bool l3inflash, bool l4inflash) {
   DGUS_VP_Variable ramcopy;
@@ -92,15 +96,6 @@ void DGUSScreenHandler::sendinfoscreen(const char* line1, const char* line2, con
   //  ramcopy.memadr = (void*) line4;
   //  l4inflash ? DGUSScreenHandler::DGUSLCD_SendStringToDisplayPGM(ramcopy) : DGUSScreenHandler::DGUSLCD_SendStringToDisplay(ramcopy);
   //}
-}
-
-
-void DGUSScreenHandler::Init() {
-  dgusdisplay.InitDisplay();
-}
-
-void DGUSScreenHandler::RequestSaveSettings() {
-  SaveSettingsRequested = true;
 }
 
 void DGUSScreenHandler::DefaultSettings() {
@@ -186,69 +181,18 @@ void DGUSScreenHandler::HandleUserConfirmationPopUp(uint16_t VP, const char* lin
   ScreenHandler.GotoScreen(DGUSLCD_SCREEN_CONFIRM);
 }
 
-void DGUSScreenHandler::HandleDevelopmentTestButton(DGUS_VP_Variable &var, void *val_ptr) {
-  // Handle the button press only after 3 taps, so that a regular user won't tap it by accident
-  static uint8_t tap_count = 0;
-
-  if (++tap_count <= 3) return;
-
-  // Get button value
-  uint16_t button_value = swap16(*static_cast<uint16_t*>(val_ptr));
-
-  // Act on it
-  switch (button_value) {
-    case VP_DEVELOPMENT_HELPER_BUTTON_ACTION_FIRMWARE_UPDATE:
-      ExtUI::injectCommands_P(PSTR("M997"));
-    break;
-
-    case VP_DEVELOPMENT_HELPER_BUTTON_ACTION_TO_MAIN_MENU:
-      setstatusmessagePGM(PSTR("Dev action: main menu"));
-      GotoScreen(DGUSLCD_SCREEN_MAIN, false);
-    break;
-
-    case VP_DEVELOPMENT_HELPER_BUTTON_ACTION_RESET_DISPLAY:
-      setstatusmessagePGM(PSTR("Dev action: reset DGUS"));
-      dgusdisplay.ResetDisplay();
-    break;
-
-    default:
-      setstatusmessagePGM(PSTR("Dev action: unknown"));
-    break;
-  }
-}
-
 void DGUSScreenHandler::setstatusmessage(const char *msg) {
-  const bool needs_scrolling = strlen_P(msg) > M117_STATIC_DISPLAY_LEN;
-
   DGUS_VP_Variable ramcopy;
-
-  // Update static message to either NULL or the value
-  if (populate_VPVar(VP_M117_STATIC, &ramcopy)) {
-    ramcopy.memadr = (void*) (needs_scrolling ? NUL_STR : msg);
-    DGUSLCD_SendStringToDisplay(ramcopy);
-  }
-
-  // Update scrolling message to either NULL or the value
   if (populate_VPVar(VP_M117, &ramcopy)) {
-    ramcopy.memadr = (void*) (needs_scrolling ? msg : NUL_STR);
+    ramcopy.memadr = (void*) msg;
     DGUSLCD_SendStringToDisplay(ramcopy);
   }
 }
 
 void DGUSScreenHandler::setstatusmessagePGM(PGM_P const msg) {
-  const bool needs_scrolling = strlen_P(msg) > M117_STATIC_DISPLAY_LEN;
-
   DGUS_VP_Variable ramcopy;
-
-   // Update static message to either NULL or the value
-  if (populate_VPVar(VP_M117_STATIC, &ramcopy)) {
-    ramcopy.memadr = (void*) (needs_scrolling ? nullptr : msg);
-    DGUSLCD_SendStringToDisplayPGM(ramcopy);
-  }
-  
-  // Update scrolling message to either NULL or the value
   if (populate_VPVar(VP_M117, &ramcopy)) {
-    ramcopy.memadr = (void*) (needs_scrolling ? msg : nullptr);
+    ramcopy.memadr = (void*) msg;
     DGUSLCD_SendStringToDisplayPGM(ramcopy);
   }
 }
@@ -278,7 +222,9 @@ void DGUSScreenHandler::DGUSLCD_SendPercentageToDisplay(DGUS_VP_Variable &var) {
 
 // Send the current print progress to the display.
 void DGUSScreenHandler::DGUSLCD_SendPrintProgressToDisplay(DGUS_VP_Variable &var) {
+  //DEBUG_ECHOPAIR(" DGUSLCD_SendPrintProgressToDisplay ", var.VP);
   uint16_t tmp = ExtUI::getProgress_percent();
+  //DEBUG_ECHOLNPAIR(" data ", tmp);
   dgusdisplay.WriteVariable(var.VP, tmp);
 }
 
@@ -557,7 +503,7 @@ void DGUSScreenHandler::DGUSLCD_SendHeaterStatusToDisplay(DGUS_VP_Variable &var)
     if (current_screen == DGUSLCD_SCREEN_SDFILELIST
         || (current_screen == DGUSLCD_SCREEN_CONFIRM && (ConfirmVP == VP_SD_AbortPrintConfirmed || ConfirmVP == VP_SD_FileSelectConfirm))
         || current_screen == DGUSLCD_SCREEN_SDPRINTMANIPULATION
-    ) ScreenHandler.GotoScreen(DGUSLCD_SCREEN_MAIN, false);
+    ) ScreenHandler.GotoScreen(DGUSLCD_SCREEN_MAIN);
   }
 
   void DGUSScreenHandler::SDCardError() {
@@ -596,7 +542,7 @@ bool DGUSScreenHandler::HandlePendingUserConfirmation() {
   }
 
   // Switch to the resume screen
-  ScreenHandler.GotoScreen(DGUSLCD_SCREEN_PRINT_RUNNING, false);
+  ScreenHandler.GotoScreen(DGUSLCD_SCREEN_PRINT_RUNNING);
 
   // We might be re-entrant here
   ExtUI::setUserConfirmed();
@@ -604,32 +550,16 @@ bool DGUSScreenHandler::HandlePendingUserConfirmation() {
   return true;
 }
 
-void DGUSScreenHandler::SetSynchronousOperationStart() {
-  HasSynchronousOperation = true;
-  ForceCompleteUpdate();
-}
-
-void DGUSScreenHandler::SetSynchronousOperationFinish() {
-  HasSynchronousOperation = false;
-}
-
-void DGUSScreenHandler::SendBusyState(DGUS_VP_Variable &var) {
-  dgusdisplay.WriteVariable(VP_BACK_BUTTON_STATE, HasSynchronousOperation ? ICON_BACK_BUTTON_DISABLED : ICON_BACK_BUTTON_ENABLED);
-  dgusdisplay.WriteVariable(VP_BUSY_ANIM_STATE, HasSynchronousOperation ? ICON_THROBBER_ANIM_ON : ICON_THROBBER_ANIM_OFF);
-}
-
 void DGUSScreenHandler::OnHomingStart() {
-  ScreenHandler.SetSynchronousOperationStart();
   ScreenHandler.GotoScreen(DGUSLCD_SCREEN_AUTOHOME);
 }
 
 void DGUSScreenHandler::OnHomingComplete() {
-  ScreenHandler.SetSynchronousOperationFinish();
   ScreenHandler.PopToOldScreen();
 }
 
 void DGUSScreenHandler::OnPrintFinished() {
-  ScreenHandler.GotoScreen(DGUSLCD_SCREEN_PRINT_FINISH, false);
+  ScreenHandler.GotoScreen(DGUSLCD_SCREEN_PRINT_FINISH);
 }
 
 void DGUSScreenHandler::ScreenConfirmedOK(DGUS_VP_Variable &var, void *val_ptr) {
@@ -644,188 +574,37 @@ void DGUSScreenHandler::HandleZoffsetChange(DGUS_VP_Variable &var, void *val_ptr
 
 void DGUSScreenHandler::OnMeshLevelingStart() {
   GotoScreen(DGUSLCD_SCREEN_LEVELING);
-  dgusdisplay.WriteVariable(VP_MESH_SCREEN_MESSAGE_ICON, static_cast<uint16_t>(MESH_SCREEN_MESSAGE_ICON_LEVELING));
-
-  ResetMeshValues();
-  SetSynchronousOperationStart();
 
   MeshLevelIndex = 0;
-  MeshLevelIconIndex = 0;
+
+  dgusdisplay.WriteVariable(VP_MESH_LEVEL_STATUS, static_cast<uint16_t>(DGUS_GRID_VISUALIZATION_START_ID));
 }
 
-void DGUSScreenHandler::OnMeshLevelingUpdate(const int8_t x, const int8_t y, const float z) {
-  SERIAL_ECHOPAIR("X: ", x);
-  SERIAL_ECHOPAIR("; Y: ", y);
-  SERIAL_ECHOPAIR("; Index ", MeshLevelIndex);
-  SERIAL_ECHOLNPAIR("; Icon ", MeshLevelIconIndex);
-
-  UpdateMeshValue(x, y, z);
-
+void DGUSScreenHandler::OnMeshLevelingUpdate(const int8_t xpos, const int8_t ypos) {
   if (MeshLevelIndex < 0) {
     // We're not leveling
     return;
   }
 
   MeshLevelIndex++;
-  MeshLevelIconIndex++;
+
+  SERIAL_ECHOLNPAIR("Mesh level index: ", MeshLevelIndex);
 
   // Update icon
-  dgusdisplay.WriteVariable(VP_MESH_LEVEL_STATUS, static_cast<uint16_t>(MeshLevelIconIndex + DGUS_GRID_VISUALIZATION_START_ID));
+  dgusdisplay.WriteVariable(VP_MESH_LEVEL_STATUS, static_cast<uint16_t>(MeshLevelIndex + DGUS_GRID_VISUALIZATION_START_ID));
 
   if (MeshLevelIndex == GRID_MAX_POINTS) {
     // Done
     MeshLevelIndex = -1;
 
-    RequestSaveSettings();
+    settings.save();
 
     PopToOldScreen();
-    SetSynchronousOperationFinish();
 
-    // If the user is in the leveling workflow (not printing), get that hotend out of the way
-    if (current_screen == DGUSLCD_SCREEN_ZOFFSET_LEVEL) {
-      char gcodeBuffer[50] = {0};
-      sprintf_P(gcodeBuffer, PSTR("G0 F2500 X%d Y%d Z%d"), (X_BED_SIZE / 2), (Y_BED_SIZE / 2), 35);
-      queue.inject(gcodeBuffer);
-    }
+    dgusdisplay.WriteVariable(VP_MESH_LEVEL_STATUS, static_cast<uint16_t>(DGUS_GRID_VISUALIZATION_START_ID));
   } else {
     // We've already updated the icon, so nothing left
   }
-}
-
-void DGUSScreenHandler::InitMeshValues() {
-  if (ExtUI::getMeshValid()) {
-    for (uint8_t x = 0; x < GRID_MAX_POINTS_X; x++) {
-      for (uint8_t y = 0; y < GRID_MAX_POINTS_Y; y++) {
-          float z = ExtUI::getMeshPoint({ x, y });
-          UpdateMeshValue(x, y, z);
-      }
-
-      safe_delay(100);
-    }
-
-    dgusdisplay.WriteVariable(VP_MESH_LEVEL_STATUS, static_cast<uint16_t>(DGUS_GRID_VISUALIZATION_START_ID + MESH_LEVEL_MAX_POINTS));
-  } else {
-    ResetMeshValues();
-  }
-}
-
-void DGUSScreenHandler::ResetMeshValues() {
-  for (uint8_t x = 0; x < GRID_MAX_POINTS_X; x++) {
-    for (uint8_t y = 0; y < GRID_MAX_POINTS_Y; y++) {
-        UpdateMeshValue(x, y, 0);
-    }
-
-    safe_delay(100);
-  }
-
-  dgusdisplay.WriteVariable(VP_MESH_LEVEL_STATUS, static_cast<uint16_t>(DGUS_GRID_VISUALIZATION_START_ID));
-}
-
-uint16_t CreateRgb(double h, double s, double v) {
-    struct {
-      double h;       // angle in degrees
-      double s;       // a fraction between 0 and 1
-      double v;       // a fraction between 0 and 1
-    } in = { h, s, v};
-
-    double      hh, p, q, t, ff;
-    long        i;
-    struct {
-      double r;       // a fraction between 0 and 1
-      double g;       // a fraction between 0 and 1
-      double b;       // a fraction between 0 and 1
-      } out;
-
-    if(in.s <= 0.0) {       // < is bogus, just shuts up warnings
-        out.r = in.v;
-        out.g = in.v;
-        out.b = in.v;
-        return 0;
-    }
-
-    hh = in.h;
-    if(hh >= 360.0) hh = 0.0;
-    hh /= 60.0;
-    i = (long)hh;
-    ff = hh - i;
-    p = in.v * (1.0 - in.s);
-    q = in.v * (1.0 - (in.s * ff));
-    t = in.v * (1.0 - (in.s * (1.0 - ff)));
-
-    switch(i) {
-    case 0:
-        out.r = in.v;
-        out.g = t;
-        out.b = p;
-        break;
-    case 1:
-        out.r = q;
-        out.g = in.v;
-        out.b = p;
-        break;
-    case 2:
-        out.r = p;
-        out.g = in.v;
-        out.b = t;
-        break;
-
-    case 3:
-        out.r = p;
-        out.g = q;
-        out.b = in.v;
-        break;
-    case 4:
-        out.r = t;
-        out.g = p;
-        out.b = in.v;
-        break;
-    case 5:
-    default:
-        out.r = in.v;
-        out.g = p;
-        out.b = q;
-        break;
-    }
-  
-  return (((static_cast<uint8_t>(out.r * 255) & 0xf8)<<8) + ((static_cast<uint8_t>(out.g * 255) & 0xfc)<<3) + (static_cast<uint8_t>(out.b * 255)>>3));
-}
-
-
-void DGUSScreenHandler::UpdateMeshValue(const int8_t x, const int8_t y, const float z) {
-  SERIAL_ECHOPAIR("X", x);
-  SERIAL_ECHOPAIR(" Y", y);
-  SERIAL_ECHOPAIR_F_P(" Z", z);
-  SERIAL_ECHOLN("");
-
-  // Determine the screen X and Y value
-  if (x % SkipMeshPoint != 0 || y % SkipMeshPoint != 0) {
-    // Skip this point
-    return;
-  }
-
-  const uint8_t scrX = x / SkipMeshPoint;
-  const uint8_t scrY = y / SkipMeshPoint;
-
-  // Each Y is a full edge of X values
-  const uint16_t vpAddr = VP_MESH_LEVEL_X0_Y0 + (scrY * MESH_LEVEL_VP_SIZE) + (scrX * MESH_LEVEL_VP_EDGE_SIZE);
-  dgusdisplay.WriteVariable(vpAddr, z);
-
-  // Set color
-  const uint16_t spAddr = SP_MESH_LEVEL_X0_Y0 + (scrY * MESH_LEVEL_SP_SIZE) + (scrX * MESH_LEVEL_SP_EDGE_SIZE);
-
-  uint16_t color = MESH_COLOR_NOT_MEASURED;
-
-  // ... Only calculate if set
-  if (abs(z) > MESH_UNSET_EPSILON) {
-    // Determine color scale
-    float clampedZ = max(min(z, 0.5f),-0.5f) * -1;
-    float h = (clampedZ + 0.5f) * 240;
-
-    // Convert to RGB
-    color = CreateRgb(h, 1, 0.75);
-  }
-
-  dgusdisplay.SetVariableDisplayColor(spAddr, color);
 }
 
 const uint16_t* DGUSLCD_FindScreenVPMapList(uint8_t screen) {
@@ -985,67 +764,27 @@ void DGUSScreenHandler::HandleMotorLockUnlock(DGUS_VP_Variable &var, void *val_p
     uint16_t value = swap16(*(uint16_t*)val_ptr);
     if (value) {
       queue.inject_P(PSTR("M1000"));
-      ScreenHandler.GotoScreen(DGUSLCD_SCREEN_SDPRINTMANIPULATION, false);
+      ScreenHandler.GotoScreen(DGUSLCD_SCREEN_SDPRINTMANIPULATION);
     }
     else {
       recovery.cancel();
-      ScreenHandler.GotoScreen(DGUSLCD_SCREEN_MAIN, false);
+      ScreenHandler.GotoScreen(DGUSLCD_SCREEN_MAIN);
     }
   }
 
 #endif
 
-
-
-void DGUSScreenHandler::HandleScreenVersion(DGUS_VP_Variable &var, void *val_ptr) {
-  DEBUG_ECHOLNPGM("HandleScreenVersion");
-  
-  uint16_t actualScreenVersion = swap16(*(uint16_t*)val_ptr);
-
-  SERIAL_ECHOLNPAIR("DWIN version received: ", actualScreenVersion);
-  SERIAL_ECHOLNPAIR("We expected DWIN version: ", EXPECTED_UI_VERSION_MAJOR);
-
-  if (actualScreenVersion == EXPECTED_UI_VERSION_MAJOR) {
-    SERIAL_ECHOLN("Screen version check passed.");
-    return;
-  }
-
-  // Dump error to serial
-  SERIAL_ECHOLN("WARNING: Your screen is not flashed correctly.");
-
-  SERIAL_ECHOPAIR("We received version ", actualScreenVersion);
-  SERIAL_ECHOLN("from the display");
-
-  SERIAL_ECHOLNPAIR("This firmware needs screen version ", actualScreenVersion);
-  SERIAL_ECHOLN("Please follow the release notes for flashing instructions.");
-
-  // Will cause flashing in the loop()
-  HasScreenVersionMismatch = true;
-
-  // Show on display if user has M117 message
-  char buffer[VP_M117_LEN] = {0};
-  sprintf_P(buffer, "TFT version mismatch: v%d", actualScreenVersion);
-  setstatusmessage(buffer);
-
-  // Audio buzzer
-  Buzzer(500, 500);
-  for (int times=0;times<VERSION_MISMATCH_BUZZ_AMOUNT;times++) {
-    safe_delay(750);
-    Buzzer(500, 500);
-  }
-}
-
-void DGUSScreenHandler::HandleScreenVersionMismatchLEDFlash() {
-  if (!HasScreenVersionMismatch) return;
-
-  const millis_t ms = millis();
-  static millis_t next_event_ms = 0;
-
-  if (ELAPSED(ms, next_event_ms)) {
-    next_event_ms = ms + VERSION_MISMATCH_LED_FLASH_DELAY;
-
-    caselight.on = !caselight.on;
-    caselight.update(caselight.on);
+void DGUSScreenHandler::HandleSettings(DGUS_VP_Variable &var, void *val_ptr) {
+  DEBUG_ECHOLNPGM("HandleSettings");
+  uint16_t value = swap16(*(uint16_t*)val_ptr);
+  switch (value) {
+    default: break;
+    case 1:
+      TERN_(PRINTCOUNTER, print_job_timer.initStats());
+      queue.inject_P(PSTR("M502\nM500"));
+      break;
+    case 2: queue.inject_P(PSTR("M501")); break;
+    case 3: queue.inject_P(PSTR("M500")); break;
   }
 }
 
@@ -1210,11 +949,22 @@ void DGUSScreenHandler::HandleLiveAdjustZ(DGUS_VP_Variable &var, void *val_ptr) 
   float existingAmount = ExtUI::getZOffset_mm();
   float difference = (absoluteAmount - existingAmount) < 0 ? -0.01 : 0.01;
 
+  SERIAL_ECHO("- Absolute: ");
+  SERIAL_ECHO_F(absoluteAmount);
+  SERIAL_ECHO("- Existing: ");
+  SERIAL_ECHO_F(existingAmount);
+  SERIAL_ECHO(" - Difference: ");
+  SERIAL_ECHO_F(difference);
+
   int16_t steps = ExtUI::mmToWholeSteps(difference, ExtUI::axis_t::Z);
+
+  SERIAL_ECHO(" - Steps: ");
+  SERIAL_ECHO_F(steps);
+  SERIAL_ECHOLN(";");
 
   ExtUI::smartAdjustAxis_steps(steps, ExtUI::axis_t::Z, true);
 
-  RequestSaveSettings();
+  settings.save();
   
   ScreenHandler.ForceCompleteUpdate();
   ScreenHandler.skipVP = var.VP; // don't overwrite value the next update time as the display might autoincrement in parallel
@@ -1367,7 +1117,7 @@ void DGUSScreenHandler::HandleLEDToggle() {
   caselight.on = newState;
   caselight.update(newState);
 
-  RequestSaveSettings();
+  settings.save();
   ForceCompleteUpdate();
 }
 
@@ -1375,31 +1125,11 @@ void DGUSScreenHandler::HandleToggleTouchScreenMute(DGUS_VP_Variable &var, void 
   Settings.display_sound = !Settings.display_sound;
   ScreenHandler.SetTouchScreenConfiguration();
 
-  RequestSaveSettings();
+  settings.save();
   ForceCompleteUpdate();
 
   ScreenHandler.skipVP = var.VP; // don't overwrite value the next update time as the display might autoincrement in parallel
 }
-
-#if HAS_PROBE_SETTINGS
-void DGUSScreenHandler::HandleToggleProbeHeaters(DGUS_VP_Variable &var, void *val_ptr) {
-  probe.settings.turn_heaters_off = !probe.settings.turn_heaters_off;
-
-  RequestSaveSettings();
-}
-
-void DGUSScreenHandler::HandleToggleProbeTemperatureStabilization(DGUS_VP_Variable &var, void *val_ptr) {
-  probe.settings.stabilize_temperatures_after_probing = !probe.settings.stabilize_temperatures_after_probing;
-
-  RequestSaveSettings();
-}
-
-void DGUSScreenHandler::HandleToggleProbePreheatTemp(DGUS_VP_Variable &var, void *val_ptr) {
-  ScreenHandler.DGUSLCD_SetValueDirectly<uint16_t>(var, val_ptr);
-
-  RequestSaveSettings();
-} 
-#endif
 
 void DGUSScreenHandler::HandleTouchScreenStandbyBrightnessSetting(DGUS_VP_Variable &var, void *val_ptr) {
   uint16_t newvalue = swap16(*(uint16_t*)val_ptr);
@@ -1408,7 +1138,7 @@ void DGUSScreenHandler::HandleTouchScreenStandbyBrightnessSetting(DGUS_VP_Variab
   Settings.standby_screen_brightness = newvalue;
   ScreenHandler.SetTouchScreenConfiguration();
 
-  RequestSaveSettings();
+  settings.save();
   ForceCompleteUpdate();
 }
 
@@ -1416,7 +1146,7 @@ void DGUSScreenHandler::HandleToggleTouchScreenStandbySetting(DGUS_VP_Variable &
   Settings.display_standby = !Settings.display_standby;
   ScreenHandler.SetTouchScreenConfiguration();
 
-  RequestSaveSettings();
+  settings.save();
   ForceCompleteUpdate();
 }
 
@@ -1453,16 +1183,6 @@ void DGUSScreenHandler::PopToOldScreen() {
     } else {
       GotoScreen(DGUSLCD_SCREEN_MAIN, false);
     }
-  }
-}
-
-void DGUSScreenHandler::OnBackButton(DGUS_VP_Variable &var, void *val_ptr) {
-  uint16_t button_value = uInt16Value(val_ptr);
-
-  PopToOldScreen();
-
-  if (button_value == GENERIC_BACK_BUTTON_NEED_SAVE) {
-    RequestSaveSettings();
   }
 }
 
@@ -1533,15 +1253,14 @@ void DGUSScreenHandler::GotoScreen(DGUSLCD_Screens screen, bool save_current_scr
 bool DGUSScreenHandler::loop() {
   dgusdisplay.loop();
 
-  HandleScreenVersionMismatchLEDFlash();
-
   const millis_t ms = millis();
   static millis_t next_event_ms = 0;
 
-  if (ELAPSED(ms, next_event_ms) && SaveSettingsRequested) {
-    // Only save settings so many times in a second - otherwise the EEPROM chip gets overloaded and the watchdog reboots the CPU
-    settings.save();
-    SaveSettingsRequested = false;
+  if (ExtUI::isWaitingOnUser() && current_screen != DGUSLCD_SCREEN_POPUP) {
+    // In some occassions the display needs more time to handle a screen change, for instance,
+    // with ADVANCED_PAUSE_FEATURE, the calls to ExtUI::onUserConfirmRequired are quite fast
+    DEBUG_ECHOLN("Nudging the display to update the current screen...");
+    GotoScreen(DGUSLCD_SCREEN_PRINT_PAUSED, true);
   }
 
   if (!IsScreenComplete() || ELAPSED(ms, next_event_ms)) {
@@ -1572,20 +1291,10 @@ bool DGUSScreenHandler::loop() {
 
     if (!booted && ELAPSED(ms, BOOTSCREEN_TIMEOUT)) {
       booted = true;
+
+      // Set initial leveling icon
+      dgusdisplay.WriteVariable(VP_MESH_LEVEL_STATUS, static_cast<uint16_t>(DGUS_GRID_VISUALIZATION_START_ID));
       
-      // Ensure to pick up the settings
-      SetTouchScreenConfiguration();
-
-      // Set initial leveling status
-      InitMeshValues();
-
-      // No disabled back button
-      ScreenHandler.SetSynchronousOperationFinish();
-
-      // Ask for the screen version - HandleScreenVersion will act
-      dgusdisplay.ReadVariable(VP_UI_VERSION_MAJOR);
-
-      // Main menu
       GotoScreen(DGUSLCD_SCREEN_MAIN);
     }
   }

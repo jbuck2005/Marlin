@@ -38,7 +38,7 @@
   #include "../../feature/powerloss.h"
 #endif
 
-#if HAS_BED_PROBE || HAS_PROBE_SETTINGS
+#if HAS_BED_PROBE
   #include "../../module/probe.h"
   #if ENABLED(BLTOUCH)
     #include "../../feature/bltouch.h"
@@ -216,7 +216,7 @@ void menu_advanced_settings();
 
   #if ENABLED(BLTOUCH_LCD_VOLTAGE_MENU)
     void bltouch_report() {
-      SERIAL_ECHOLNPAIR("EEPROM Last BLTouch Mode - ", bltouch.last_written_mode);
+      SERIAL_ECHOLNPAIR("EEPROM Last BLTouch Mode - ", (int)bltouch.last_written_mode);
       SERIAL_ECHOLNPGM("Configuration BLTouch Mode - " TERN(BLTOUCH_SET_5V_MODE, "5V", "OD"));
       char mess[21];
       strcpy_P(mess, PSTR("BLTouch Mode - "));
@@ -309,32 +309,6 @@ void menu_advanced_settings();
 
 #endif
 
-#if HAS_PROBE_SETTINGS
-  void menu_config_probe() {
-    START_MENU();
-    BACK_ITEM(MSG_CONFIGURATION);
-
-    #if ENABLED(PROBING_HEATERS_OFF)
-      EDIT_ITEM(bool, MSG_PROBING_HEATERS_OFF, &probe.settings.turn_heaters_off);
-    #endif
-
-    #if PROBING_NOZZLE_TEMP
-      EDIT_ITEM(uint16_3, MSG_PROBING_NOZZLE_TEMP, &probe.settings.preheat_hotend_temp, HEATER_0_MINTEMP, HEATER_0_MAXTEMP - HOTEND_OVERSHOOT);
-    #endif
-
-    #if PROBING_BED_TEMP
-      EDIT_ITEM(uint16_3, MSG_PROBING_BED_TEMP, &probe.settings.preheat_bed_temp, BED_MINTEMP, BED_MAX_TARGET);
-    #endif
-
-     #if ENABLED(PROBING_HEATERS_OFF)
-      EDIT_ITEM(bool, MSG_PROBING_TEMP_STABILIZATION, &probe.settings.stabilize_temperatures_after_probing);
-    #endif
-
-    END_MENU();
-  }
-
-#endif
-
 #if PREHEAT_COUNT && DISABLED(SLIM_LCD_MENUS)
 
   void _menu_configuration_preheat_settings() {
@@ -383,10 +357,6 @@ void menu_configuration() {
     SUBMENU(MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
   #elif HAS_BED_PROBE
     EDIT_ITEM(LCD_Z_OFFSET_TYPE, MSG_ZPROBE_ZOFFSET, &probe.offset.z, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
-  #endif
-
-  #if HAS_PROBE_SETTINGS
-    SUBMENU(MSG_CONFIGURATION_PROBE, menu_config_probe);
   #endif
 
   //

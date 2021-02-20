@@ -21,15 +21,16 @@
  ****************************************************************************/
 
 #include "../config.h"
-#include "screens.h"
 
-#ifdef FTDI_FILAMENT_MENU
+#if ENABLED(TOUCH_UI_FTDI_EVE) && ANY(LIN_ADVANCE, FILAMENT_RUNOUT_SENSOR)
+
+#include "screens.h"
 
 using namespace FTDI;
 using namespace ExtUI;
 using namespace Theme;
 
-#if ENABLED(TOUCH_UI_PORTRAIT)
+#ifdef TOUCH_UI_PORTRAIT
   #define GRID_ROWS 9
   #define GRID_COLS 2
   #define TITLE_POS          BTN_POS(1,1), BTN_SIZE(2,1)
@@ -81,4 +82,4 @@ bool FilamentMenu::onTouchEnd(uint8_t tag) {
   return true;
 }
 
-#endif // FTDI_FILAMENT_MENU
+#endif // TOUCH_UI_FTDI_EVE

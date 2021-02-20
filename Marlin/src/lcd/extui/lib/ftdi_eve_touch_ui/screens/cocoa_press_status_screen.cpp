@@ -22,9 +22,10 @@
  ****************************************************************************/
 
 #include "../config.h"
-#include "screens.h"
 
-#ifdef FTDI_COCOA_STATUS_SCREEN
+#if BOTH(TOUCH_UI_FTDI_EVE, TOUCH_UI_COCOA_PRESS)
+
+#include "screens.h"
 
 #include "../ftdi_eve_lib/extras/poly_ui.h"
 
@@ -44,7 +45,7 @@ void StatusScreen::loadBitmaps() {
   constexpr uint32_t base = ftdi_memory_map::RAM_G;
 
   // Load fonts for internationalization
-  #if ENABLED(TOUCH_UI_USE_UTF8)
+  #ifdef TOUCH_UI_USE_UTF8
     load_utf8_data(base + UTF8_FONT_OFFSET);
   #endif
 }
@@ -110,7 +111,7 @@ void StatusScreen::draw_temperature(draw_mode_t what) {
     ui.bounds(POLY(h3_label), x, y, h, v);
     cmd.text(x, y, h, v, GET_TEXT_F(MSG_CHAMBER));
 
-    #if ENABLED(TOUCH_UI_USE_UTF8)
+    #ifdef TOUCH_UI_USE_UTF8
       load_utf8_bitmaps(cmd); // Restore font bitmap handles
     #endif
   }
@@ -303,4 +304,4 @@ void StatusScreen::onIdle() {
   }
 }
 
-#endif // FTDI_COCOA_STATUS_SCREEN
+#endif // TOUCH_UI_FTDI_EVE

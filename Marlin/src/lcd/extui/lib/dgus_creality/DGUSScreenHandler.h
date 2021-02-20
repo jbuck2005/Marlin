@@ -22,7 +22,7 @@
 #pragma once
 
 #include "DGUSDisplay.h"
-#include "DGUSVPVariable.h"
+#include "../dgus/DGUSVPVariable.h"
 
 #include "../../../../inc/MarlinConfig.h"
 
@@ -42,7 +42,6 @@ public:
 
   static bool loop();
 
-  static void Init();
   static void DefaultSettings();
   static void LoadSettings(const char* buff);
   static void StoreSettings(char* buff);
@@ -51,21 +50,16 @@ public:
 
   static void OnPowerlossResume();
 
-  static void RequestSaveSettings();
-
   /// Send all 4 strings that are displayed on the infoscreen, confirmation screen and kill screen
   /// The bools specifing whether the strings are in RAM or FLASH.
   static void sendinfoscreen(const char* line1, const char* line2, const char* line3, const char* line4, bool l1inflash, bool l2inflash, bool l3inflash, bool liinflash);
 
   static void HandleUserConfirmationPopUp(uint16_t ConfirmVP, const char* line1, const char* line2, const char* line3, const char* line4, bool l1inflash, bool l2inflash, bool l3inflash, bool liinflash);
 
-  static void HandleDevelopmentTestButton(DGUS_VP_Variable &var, void *val_ptr);
-
   /// "M117" Message -- msg is a RAM ptr.
   static void setstatusmessage(const char* msg);
   /// The same for messages from Flash
   static void setstatusmessagePGM(PGM_P const msg);
-
   // Callback for VP "Display wants to change screen on idle printer"
   static void ScreenChangeHookIfIdle(DGUS_VP_Variable &var, void *val_ptr);
   // Callback for VP "Screen has been changed"
@@ -85,11 +79,8 @@ public:
     // Hook for power loss recovery.
     static void HandlePowerLossRecovery(DGUS_VP_Variable &var, void *val_ptr);
   #endif
-
-  // Version sanity check
-  static void HandleScreenVersion(DGUS_VP_Variable &var, void *val_ptr);
-
   // Hook for settings
+  static void HandleSettings(DGUS_VP_Variable &var, void *val_ptr);
   static void HandleStepPerMMChanged(DGUS_VP_Variable &var, void *val_ptr);
   static void HandleStepPerMMExtruderChanged(DGUS_VP_Variable &var, void *val_ptr);
   static void HandleFeedAmountChanged(DGUS_VP_Variable &var, void *val_ptr);
@@ -100,12 +91,6 @@ public:
   static void HandleToggleTouchScreenMute(DGUS_VP_Variable &var, void *val_ptr);
   static void HandleToggleTouchScreenStandbySetting(DGUS_VP_Variable &var, void *val_ptr);
   static void HandleTouchScreenStandbyBrightnessSetting(DGUS_VP_Variable &var, void *val_ptr);
-
-  #if HAS_PROBE_SETTINGS
-  static void HandleToggleProbeHeaters(DGUS_VP_Variable &var, void *val_ptr);
-  static void HandleToggleProbeTemperatureStabilization(DGUS_VP_Variable &var, void *val_ptr);
-  static void HandleToggleProbePreheatTemp(DGUS_VP_Variable &var, void *val_ptr);
-  #endif
 
   #if HAS_PID_HEATING
     // Hook for "Change this temperature PID para"
@@ -119,13 +104,7 @@ public:
 
     static void OnMeshLevelingStart();
 
-    static void OnMeshLevelingUpdate(const int8_t x, const int8_t y, const float z);
-    
-    static void InitMeshValues();
-
-    static void ResetMeshValues();
-
-    static void UpdateMeshValue(const int8_t x, const int8_t y, const float z);
+    static void OnMeshLevelingUpdate(const int8_t xpos, const int8_t ypos);
   #endif
 
   // Hook for live z adjust action
@@ -197,7 +176,6 @@ public:
 
   // Recall the remembered screen.
   static void PopToOldScreen();
-  static void OnBackButton(DGUS_VP_Variable &var, void *val_ptr);
 
   // Make the display show the screen and update all VPs in it.
   static void GotoScreen(DGUSLCD_Screens screen, bool save_current_screen = true);
@@ -241,60 +219,18 @@ public:
     *(T*)var.memadr = x.t;
   }
 
-  template<DGUSLCD_Screens TPage>
-  static void DGUSLCD_NavigateToPage(DGUS_VP_Variable &var, void *val_ptr) {
-    GotoScreen(TPage);
-  }
-
-  template<DGUSLCD_Screens TPage, typename Handler>
-  static void DGUSLCD_NavigateToPage(DGUS_VP_Variable &var, void *val_ptr) {
-    GotoScreen(TPage);
-    Handler::Init();
-  }
-
   /// Send a float value to the display.
   /// Display will get a 4-byte integer scaled to the number of digits:
   /// Tell the display the number of digits and it cheats by displaying a dot between...
   template<unsigned int decimals>
   static void DGUSLCD_SendFloatAsLongValueToDisplay(DGUS_VP_Variable &var) {
     if (var.memadr) {
-      double d = static_cast<double>(*(float *)var.memadr);
-      d *= cpow(10, decimals);
+      float f = *(float *)var.memadr;
+      f *= cpow(10, decimals);
 
       // Round - truncated values look like skipped numbers
-      static_assert(sizeof(long) == 4, "Assuming long is 4 bytes");
-      long roundedValue = static_cast<long>(round(d));
+      long roundedValue = static_cast<long>(round(f));
       dgusdisplay.WriteVariable(var.VP, roundedValue);
-    }
-  }
-
-  // Receive a float from the display - Display will send a 2-byte integer scaled to the number of digits
-  template<unsigned int decimals>
-  static void DGUSLCD_SetFloatAsIntFromDisplay(DGUS_VP_Variable &var, void *val_ptr) {
-    if (var.memadr) {
-      uint16_t value_raw = swap16(*(uint16_t*)val_ptr);
-
-      float value = static_cast<float>(static_cast<double>(value_raw) /cpow(10, decimals));
-      *(float *)var.memadr = value;
-    }
-  }
-
-  // Receive a float from the display - Display will send a 4-byte integer scaled to the number of digits
-  template<unsigned int decimals>
-  static void DGUSLCD_SetFloatAsLongFromDisplay(DGUS_VP_Variable &var, void *val_ptr) {
-    if (var.memadr) {
-      uint32_t value_raw = swap32(*(uint32_t*)val_ptr);
-
-      float value = static_cast<float>(static_cast<double>(value_raw) /cpow(10, decimals));
-      *(float *)var.memadr = value;
-    }
-  }
-
-  // Toggle a boolean at the specified memory address
-  static void DGUSLCD_ToggleBoolean(DGUS_VP_Variable &var, void *val_ptr) {
-    if (var.memadr) {
-      bool* val = (bool *)var.memadr;
-      *val = !*val;
     }
   }
 
@@ -314,11 +250,11 @@ public:
   template<unsigned int decimals>
   static void DGUSLCD_SendFloatAsIntValueToDisplay(DGUS_VP_Variable &var) {
     if (var.memadr) {
-      double d = static_cast<double>(*(float *)var.memadr);
-      d *= cpow(10, decimals);
+      float f = *(float *)var.memadr;
+      f *= cpow(10, decimals);
 
       // Round - truncated values look like skipped numbers
-      int16_t roundedValue = static_cast<int16_t>(round(d));
+      int16_t roundedValue = static_cast<int16_t>(round(f));
       dgusdisplay.WriteVariable(var.VP, roundedValue);
     }
   }
@@ -334,6 +270,7 @@ public:
     //dgusdisplay.SetVariableAppendText(var.VP, suffix);
   }
 
+
   /// Force an update of all VP on the current screen.
   static inline void ForceCompleteUpdate() { update_ptr = 0; ScreenComplete = false; }
   /// Has all VPs sent to the screen
@@ -343,16 +280,10 @@ public:
 
   static bool HandlePendingUserConfirmation();
 
-  static void SetSynchronousOperationStart();
-  static void SetSynchronousOperationFinish();
-  static void SendBusyState(DGUS_VP_Variable &var);
-
   static float feed_amount;
-  static bool fwretract_available;
+  static bool are_steppers_enabled;
 
 private:
-  static void HandleScreenVersionMismatchLEDFlash();
-
   static DGUSLCD_Screens current_screen;  ///< currently on screen
   static constexpr uint8_t NUM_PAST_SCREENS = 4;
   static DGUSLCD_Screens past_screens[NUM_PAST_SCREENS]; ///< LIFO with past screens for the "back" button.
@@ -364,10 +295,6 @@ private:
   static uint16_t ConfirmVP;    ///< context for confirm screen (VP that will be emulated-sent on "OK").
 
   static uint8_t MeshLevelIndex;
-  static uint8_t MeshLevelIconIndex;
-  static bool SaveSettingsRequested;
-  static bool HasScreenVersionMismatch;
-  static bool HasSynchronousOperation;
 
   #if ENABLED(SDSUPPORT)
     static int16_t top_file;    ///< file on top of file chooser
@@ -379,30 +306,3 @@ public: // Needed for VP auto-upload
 };
 
 extern DGUSScreenHandler ScreenHandler;
-
-struct DGUSSynchronousOperation {
-  private:
-    bool is_running;
-
-  public:
-    DGUSSynchronousOperation() : is_running(false) {}
-
-    // Don't allow this to be created on the stack
-    void* operator new (std::size_t size) = delete;
-
-    void start() { 
-      is_running = true; 
-      ScreenHandler.SetSynchronousOperationStart();
-    }
-
-    void done() {
-      is_running = false; 
-      ScreenHandler.SetSynchronousOperationFinish();
-    }
-
-    ~DGUSSynchronousOperation() { 
-      if (is_running) { 
-        ScreenHandler.SetSynchronousOperationFinish();
-      }
-    }
-};

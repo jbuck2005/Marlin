@@ -121,26 +121,13 @@ void menu_led() {
   BACK_ITEM(MSG_MAIN);
 
   #if ENABLED(LED_CONTROL_MENU)
-    #if ENABLED(PSU_CONTROL)
-      extern bool powersupply_on;
-    #else
-      constexpr bool powersupply_on = true;
-    #endif
-    if (powersupply_on) {
-      editable.state = leds.lights_on;
-      EDIT_ITEM(bool, MSG_LEDS, &editable.state, leds.toggle);
-    }
-
-    #if ENABLED(LED_COLOR_PRESETS)
-      ACTION_ITEM(MSG_SET_LEDS_DEFAULT, leds.set_default);
-    #endif
-
+    editable.state = leds.lights_on;
+    EDIT_ITEM(bool, MSG_LEDS, &editable.state, leds.toggle);
+    ACTION_ITEM(MSG_SET_LEDS_DEFAULT, leds.set_default);
     #if ENABLED(NEOPIXEL2_SEPARATE)
       editable.state = leds2.lights_on;
       EDIT_ITEM(bool, MSG_LEDS2, &editable.state, leds2.toggle);
-      #if ENABLED(NEO2_COLOR_PRESETS)
-        ACTION_ITEM(MSG_SET_LEDS_DEFAULT, leds2.set_default);
-      #endif
+      ACTION_ITEM(MSG_SET_LEDS_DEFAULT, leds2.set_default);
     #endif
     #if ENABLED(LED_COLOR_PRESETS)
       SUBMENU(MSG_LED_PRESETS, menu_led_presets);

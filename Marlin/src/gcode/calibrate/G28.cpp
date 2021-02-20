@@ -216,8 +216,6 @@ void GcodeSuite::G28() {
 
   TERN_(LASER_MOVE_G28_OFF, cutter.set_inline_enabled(false));  // turn off laser
 
-  IF_ENABLED(PROBING_HEATERS_OFF, const bool respect_leveling_heatup_settings = parser.seen('U') ? parser.value_bool() : true);
-
   #if ENABLED(DUAL_X_CARRIAGE)
     bool IDEX_saved_duplication_state = extruder_duplication_enabled;
     DualXMode IDEX_saved_mode = dual_x_carriage_mode;
@@ -248,12 +246,11 @@ void GcodeSuite::G28() {
 
   // Disable the leveling matrix before homing
   #if HAS_LEVELING
-    const bool leveling_restore_state = parser.boolval('L', TERN(RESTORE_LEVELING_AFTER_G28, planner.leveling_active, ENABLED(ENABLE_LEVELING_AFTER_G28)));
+    IF_ENABLED(RESTORE_LEVELING_AFTER_G28, const bool leveling_restore_state = planner.leveling_active);
     IF_ENABLED(PROBE_MANUALLY, g29_in_progress = false); // Cancel the active G29 session
     set_bed_leveling_enabled(false);
   #endif
 
-  // Reset to the XY plane
   TERN_(CNC_WORKSPACE_PLANES, workspace_plane = PLANE_XY);
 
   // Count this command as movement / activity
@@ -296,10 +293,6 @@ void GcodeSuite::G28() {
   #if HAS_MULTI_HOTEND
     #if DISABLED(DELTA) || ENABLED(DELTA_HOME_TO_SAFE_ZONE)
       const uint8_t old_tool_index = active_extruder;
-    #endif
-    // PARKING_EXTRUDER homing requires different handling of movement / solenoid activation, depending on the side of homing
-    #if ENABLED(PARKING_EXTRUDER)
-      const bool pe_final_change_must_unpark = parking_extruder_unpark_after_homing(old_tool_index, X_HOME_DIR + 1 == old_tool_index * 2);
     #endif
     tool_change(0, true);
   #endif
@@ -396,17 +389,6 @@ void GcodeSuite::G28() {
         TERN_(BLTOUCH, bltouch.init());
         TERN(Z_SAFE_HOMING, home_z_safely(), homeaxis(Z_AXIS));
         probe.move_z_after_homing();
-
-        #if ENABLED(PROBING_HEATERS_OFF)
-          // If we're going to print then we must ensure we are back on temperature before we continue
-          if (respect_leveling_heatup_settings && TERN1(HAS_PROBE_SETTINGS, probe.settings.turn_heaters_off && probe.settings.stabilize_temperatures_after_probing) && (queue.has_commands_queued() || planner.has_blocks_queued() || print_job_timer.isRunning())) {
-            SERIAL_ECHOLN("Waiting to heat-up again before continueing");
-            ui.set_status("Waiting for heat-up...");
-
-            thermalManager.wait_for_hotend(0);
-            thermalManager.wait_for_bed_heating();
-          }
-        #endif
       }
     #endif
 
@@ -458,13 +440,14 @@ void GcodeSuite::G28() {
     do_blocking_move_to_z(delta_clip_start_height);
   #endif
 
-  TERN_(HAS_LEVELING, set_bed_leveling_enabled(leveling_restore_state));
+  IF_ENABLED(RESTORE_LEVELING_AFTER_G28, set_bed_leveling_enabled(leveling_restore_state));
+  IF_ENABLED(ENABLE_LEVELING_AFTER_G28, set_bed_leveling_enabled(true));
 
   restore_feedrate_and_scaling();
 
   // Restore the active tool after homing
   #if HAS_MULTI_HOTEND && (DISABLED(DELTA) || ENABLED(DELTA_HOME_TO_SAFE_ZONE))
-    tool_change(old_tool_index, TERN(PARKING_EXTRUDER, !pe_final_change_must_unpark, DISABLED(DUAL_X_CARRIAGE)));   // Do move if one of these
+    tool_change(old_tool_index, NONE(PARKING_EXTRUDER, DUAL_X_CARRIAGE));   // Do move if one of these
   #endif
 
   #if HAS_HOMING_CURRENT
@@ -489,6 +472,17 @@ void GcodeSuite::G28() {
   TERN_(EXTENSIBLE_UI, ExtUI::onHomingComplete());
 
   report_current_position();
+
+#if ENABLED(PROBING_HEATERS_OFF)
+  // If we're going to print then we must ensure we are back on temperature before we continue
+  if (queue.has_commands_queued() || planner.has_blocks_queued() || print_job_timer.isRunning()) {
+    SERIAL_ECHOLN("Waiting to heat-up again before continueing");
+    ui.set_status("Waiting for heat-up...");
+
+    thermalManager.wait_for_hotend(0);
+    thermalManager.wait_for_bed_heating();
+  }
+#endif
 
   if (ENABLED(NANODLP_Z_SYNC) && (doZ || ENABLED(NANODLP_ALL_AXIS)))
     SERIAL_ECHOLNPGM(STR_Z_MOVE_COMP);

@@ -114,8 +114,6 @@ namespace Language_en {
   PROGMEM Language_Str MSG_LASER_POWER                     = _UxGT("Laser Power");
   PROGMEM Language_Str MSG_SPINDLE_POWER                   = _UxGT("Spindle Pwr");
   PROGMEM Language_Str MSG_LASER_TOGGLE                    = _UxGT("Toggle Laser");
-  PROGMEM Language_Str MSG_LASER_PULSE_MS                  = _UxGT("Test Pulse ms");
-  PROGMEM Language_Str MSG_LASER_FIRE_PULSE                = _UxGT("Fire Pulse");
   PROGMEM Language_Str MSG_SPINDLE_TOGGLE                  = _UxGT("Toggle Spindle");
   PROGMEM Language_Str MSG_SPINDLE_FORWARD                 = _UxGT("Spindle Forward");
   PROGMEM Language_Str MSG_SPINDLE_REVERSE                 = _UxGT("Spindle Reverse");
@@ -126,13 +124,10 @@ namespace Language_en {
   PROGMEM Language_Str MSG_RETRACT                         = _UxGT("Retract");
   PROGMEM Language_Str MSG_MOVE_AXIS                       = _UxGT("Move Axis");
   PROGMEM Language_Str MSG_BED_LEVELING                    = _UxGT("Bed Leveling");
-  PROGMEM Language_Str MSG_TARE_PROBE                      = _UxGT("Tare probe");
   PROGMEM Language_Str MSG_LEVEL_BED                       = _UxGT("Level Bed");
   PROGMEM Language_Str MSG_LEVEL_CORNERS                   = _UxGT("Level Corners");
   PROGMEM Language_Str MSG_LEVEL_CORNERS_RAISE             = _UxGT("Raise Bed Until Probe Triggered");
   PROGMEM Language_Str MSG_LEVEL_CORNERS_IN_RANGE          = _UxGT("All Corners Within Tolerance. Level Bed");
-  PROGMEM Language_Str MSG_LEVEL_CORNERS_GOOD_POINTS       = _UxGT("Good Points: ");
-  PROGMEM Language_Str MSG_LEVEL_CORNERS_LAST_Z            = _UxGT("Last Z: ");
   PROGMEM Language_Str MSG_NEXT_CORNER                     = _UxGT("Next Corner");
   PROGMEM Language_Str MSG_MESH_EDITOR                     = _UxGT("Mesh Editor");
   PROGMEM Language_Str MSG_EDIT_MESH                       = _UxGT("Edit Mesh");
@@ -272,11 +267,6 @@ namespace Language_en {
   PROGMEM Language_Str MSG_SPEED                           = _UxGT("Speed");
   PROGMEM Language_Str MSG_BED_Z                           = _UxGT("Bed Z");
   PROGMEM Language_Str MSG_NOZZLE                          = _UxGT("Nozzle");
-  PROGMEM Language_Str MSG_CONFIGURATION_PROBE             = _UxGT("Probe settings");
-  PROGMEM Language_Str MSG_PROBING_HEATERS_OFF               = _UxGT("Improve accuracy");
-  PROGMEM Language_Str MSG_PROBING_NOZZLE_TEMP             = _UxGT("Preheat nozzle");
-  PROGMEM Language_Str MSG_PROBING_BED_TEMP                = _UxGT("Preheat bed");
-  PROGMEM Language_Str MSG_PROBING_TEMP_STABILIZATION      = _UxGT("Stabilize temp. after probing");
   PROGMEM Language_Str MSG_NOZZLE_N                        = _UxGT("Nozzle ~");
   PROGMEM Language_Str MSG_NOZZLE_PARKED                   = _UxGT("Load/unload filament");
   PROGMEM Language_Str MSG_NOZZLE_STANDBY                  = _UxGT("Nozzle Standby");
@@ -398,7 +388,6 @@ namespace Language_en {
   PROGMEM Language_Str MSG_RESUME_PRINT                    = _UxGT("Resume Print");
   PROGMEM Language_Str MSG_HOST_START_PRINT                = _UxGT("Host Start");
   PROGMEM Language_Str MSG_STOP_PRINT                      = _UxGT("Stop Print");
-  PROGMEM Language_Str MSG_END_LOOPS                       = _UxGT("End Repeat Loops");
   PROGMEM Language_Str MSG_PRINTING_OBJECT                 = _UxGT("Printing Object");
   PROGMEM Language_Str MSG_CANCEL_OBJECT                   = _UxGT("Cancel Object");
   PROGMEM Language_Str MSG_CANCEL_OBJECT_N                 = _UxGT("Cancel Object =");

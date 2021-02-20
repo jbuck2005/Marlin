@@ -20,8 +20,6 @@ Param(
 
     [Parameter(Mandatory=$true)]
     $ReleaseName,
-	
-	$SingleBuild,
 
     [Switch]
     $DryRun
@@ -97,14 +95,6 @@ class ConfigBuildResult {
 [ConfigBuildResult[]] $Builds = [ConfigBuildResult[]]::new(0)
 
 foreach ($ConfigName in $Configs) {
-    if ($null -ne $SingleBuild -and $ConfigName -ilike "*.user") {
-        continue
-    }
-
-	if ($SingleBuild -and $SingleBuild -ne $ConfigName) {
-		continue
-	}
-	
     $Percent = $([double] $Configs.IndexOf($ConfigName) + 1) / $Configs.Length
 
     Write-Progress -Activity "Building CR-6 community firmwares" `
@@ -118,12 +108,7 @@ foreach ($ConfigName in $Configs) {
     }
 
     $HasTouchscreen = $(Test-Path -Path $(Join-Path -Path $ConfigDirName -ChildPath "no-touchscreen.txt")) -eq $false
-    $HasNoAutoBuild = $(Test-Path -Path $(Join-Path -Path $ConfigDirName -ChildPath "no-autobuild.txt")) -eq $true
     $PlatformIOEnvironment = Get-Content -Raw -Path $(Join-Path -Path $ConfigDirName -ChildPath "platformio-environment.txt")
-	
-	if ($HasNoAutoBuild) {
-		continue;
-	}
 
     if ($null -eq $PlatformIOEnvironment) {
         Write-FatalError "Unable to find platform.io environment name for $ConfigName"

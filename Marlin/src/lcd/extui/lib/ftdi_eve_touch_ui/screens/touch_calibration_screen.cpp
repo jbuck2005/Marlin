@@ -21,9 +21,10 @@
  ****************************************************************************/
 
 #include "../config.h"
-#include "screens.h"
 
-#ifdef FTDI_TOUCH_CALIBRATION_SCREEN
+#if ENABLED(TOUCH_UI_FTDI_EVE)
+
+#include "screens.h"
 
 using namespace FTDI;
 using namespace Theme;
@@ -84,10 +85,7 @@ void TouchCalibrationScreen::onRedraw(draw_mode_t) {
 void TouchCalibrationScreen::onIdle() {
   if (!CLCD::is_touching() && !CommandProcessor::is_processing()) {
     GOTO_PREVIOUS();
-    #if ENABLED(TOUCH_UI_DEBUG)
-      SERIAL_ECHO_MSG("Calibration routine finished");
-    #endif
   }
 }
 
-#endif // FTDI_TOUCH_CALIBRATION_SCREEN
+#endif // TOUCH_UI_FTDI_EVE

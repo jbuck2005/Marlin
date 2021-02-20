@@ -82,15 +82,7 @@ typedef int8_t pin_t;
 
 // Serial ports
 #ifdef USBCON
-  #include "../../core/serial_hook.h"
-  typedef ForwardSerial0Type< decltype(Serial) > DefaultSerial;
-  extern DefaultSerial MSerial;
-  #ifdef BLUETOOTH
-    typedef ForwardSerial0Type< decltype(bluetoothSerial) > BTSerial;
-    extern BTSerial btSerial;
-  #endif
-
-  #define MYSERIAL0 TERN(BLUETOOTH, btSerial, MSerial)
+  #define MYSERIAL0 TERN(BLUETOOTH, bluetoothSerial, Serial)
 #else
   #if !WITHIN(SERIAL_PORT, -1, 3)
     #error "SERIAL_PORT must be from -1 to 3. Please update your configuration."
@@ -105,19 +97,12 @@ typedef int8_t pin_t;
   #endif
 #endif
 
-#ifdef MMU2_SERIAL_PORT
-  #if !WITHIN(MMU2_SERIAL_PORT, -1, 3)
-    #error "MMU2_SERIAL_PORT must be from -1 to 3. Please update your configuration."
-  #endif
-  #define MMU2_SERIAL mmuSerial
-#endif
-
 #ifdef LCD_SERIAL_PORT
   #if !WITHIN(LCD_SERIAL_PORT, -1, 3)
     #error "LCD_SERIAL_PORT must be from -1 to 3. Please update your configuration."
   #endif
   #define LCD_SERIAL lcdSerial
-  #if HAS_DGUS_LCD || ENABLED(DGUS_LCD_UI_CREALITY_TOUCH)
+  #if HAS_DGUS_LCD
     #define SERIAL_GET_TX_BUFFER_FREE() LCD_SERIAL.get_tx_buffer_free()
   #endif
 #endif

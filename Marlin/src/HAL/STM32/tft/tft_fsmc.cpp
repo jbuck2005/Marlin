@@ -154,27 +154,29 @@ uint32_t TFT_FSMC::ReadID(tft_data_t Reg) {
 }
 
 bool TFT_FSMC::isBusy() {
-  #if defined(STM32F1xx)
-    volatile bool dmaEnabled = (DMAtx.Instance->CCR & DMA_CCR_EN) != RESET;
-  #elif defined(STM32F4xx)
-    volatile bool dmaEnabled = DMAtx.Instance->CR & DMA_SxCR_EN;
-  #endif
-  if (dmaEnabled) {
+  if (__IS_DMA_ENABLED(&DMAtx))
     if (__HAL_DMA_GET_FLAG(&DMAtx, __HAL_DMA_GET_TC_FLAG_INDEX(&DMAtx)) != 0 || __HAL_DMA_GET_FLAG(&DMAtx, __HAL_DMA_GET_TE_FLAG_INDEX(&DMAtx)) != 0)
       Abort();
-  }
-  else
-    Abort();
-  return dmaEnabled;
+  return __IS_DMA_ENABLED(&DMAtx);
 }
 
 void TFT_FSMC::TransmitDMA(uint32_t MemoryIncrease, uint16_t *Data, uint16_t Count) {
   DMAtx.Init.PeriphInc = MemoryIncrease;
   HAL_DMA_Init(&DMAtx);
-  DataTransferBegin();
-  HAL_DMA_Start(&DMAtx, (uint32_t)Data, (uint32_t)&(LCD->RAM), Count);
-  HAL_DMA_PollForTransfer(&DMAtx, HAL_DMA_FULL_TRANSFER, HAL_MAX_DELAY);
-  Abort();
+
+  __HAL_DMA_CLEAR_FLAG(&DMAtx, __HAL_DMA_GET_TC_FLAG_INDEX(&DMAtx));
+  __HAL_DMA_CLEAR_FLAG(&DMAtx, __HAL_DMA_GET_TE_FLAG_INDEX(&DMAtx));
+
+  #ifdef STM32F1xx
+    DMAtx.Instance->CNDTR = Count;
+    DMAtx.Instance->CPAR = (uint32_t)Data;
+    DMAtx.Instance->CMAR = (uint32_t)&(LCD->RAM);
+  #elif defined(STM32F4xx)
+    DMAtx.Instance->NDTR = Count;
+    DMAtx.Instance->PAR = (uint32_t)Data;
+    DMAtx.Instance->M0AR = (uint32_t)&(LCD->RAM);
+  #endif
+  __HAL_DMA_ENABLE(&DMAtx);
 }
 
 #endif // HAS_FSMC_TFT

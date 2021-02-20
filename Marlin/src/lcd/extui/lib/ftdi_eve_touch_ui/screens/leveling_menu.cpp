@@ -21,9 +21,10 @@
  ****************************************************************************/
 
 #include "../config.h"
-#include "screens.h"
 
-#ifdef FTDI_LEVELING_MENU
+#if BOTH(TOUCH_UI_FTDI_EVE,HAS_LEVELING)
+
+#include "screens.h"
 
 #if BOTH(HAS_BED_PROBE,BLTOUCH)
   #include "../../../../../feature/bltouch.h"
@@ -33,7 +34,7 @@ using namespace FTDI;
 using namespace ExtUI;
 using namespace Theme;
 
-#if ENABLED(TOUCH_UI_PORTRAIT)
+#ifdef TOUCH_UI_PORTRAIT
   #define GRID_ROWS 9
   #define GRID_COLS 2
   #define TITLE_POS          BTN_POS(1,1), BTN_SIZE(2,1)
@@ -117,4 +118,4 @@ bool LevelingMenu::onTouchEnd(uint8_t tag) {
   return true;
 }
 
-#endif // FTDI_LEVELING_MENU
+#endif // BOTH(TOUCH_UI_FTDI_EVE,HAS_LEVELING)

@@ -10,9 +10,7 @@ Please find official releases in the [Releases section](https://github.com/CR6Co
 
 Ensure you take the right assets: the `firmware[suffix].bin`. You should not download the `Source code` archive if you are downloading with the purpose of directly flashing your printer.
 
-*Support for the [BTT SKR board](https://damsteen.nl/blog/2020/11/25/how-to-btt-skr-cr6-installation) is also available.*
-
-*Support for the obscure Creality v1.1-ERA board is _not_ available.*
+*Support for the [BTT SKR board](https://damsteen.nl/blog/2020/11/25/how-to-btt-skr-cr6-installation) is experimental.*
 
 ### Development and compile-it-yourself
 

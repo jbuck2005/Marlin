@@ -1,6 +1,6 @@
-/**************************
- * temperature_screen.cpp *
- **************************/
+/*******************
+ * boot_screen.cpp *
+ *******************/
 
 /****************************************************************************
  *   Written By Mark Pelletier  2017 - Aleph Objects, Inc.                  *
@@ -21,9 +21,10 @@
  ****************************************************************************/
 
 #include "../config.h"
-#include "screens.h"
 
-#ifdef FTDI_TEMPERATURE_SCREEN
+#if ENABLED(TOUCH_UI_FTDI_EVE)
+
+#include "screens.h"
 
 using namespace FTDI;
 using namespace Theme;
@@ -40,7 +41,7 @@ void TemperatureScreen::onRedraw(draw_mode_t what) {
   w.heading(GET_TEXT_F(MSG_TEMPERATURE));
   w.button(30, GET_TEXT_F(MSG_COOLDOWN));
   #ifndef NO_TOOLHEAD_HEATER_GCODE
-    #if ENABLED(TOUCH_UI_COCOA_PRESS)
+    #ifdef TOUCH_UI_COCOA_PRESS
       w.adjuster(   2, GET_TEXT_F(MSG_NOZZLE), getTargetTemp_celsius(E0));
       w.adjuster(   4, GET_TEXT_F(MSG_BODY), getTargetTemp_celsius(E1));
       #if ENABLED(COCOA_PRESS_EXTRA_HEATER)
@@ -115,4 +116,4 @@ bool TemperatureScreen::onTouchHeld(uint8_t tag) {
   return true;
 }
 
-#endif // FTDI_TEMPERATURE_SCREEN
+#endif // TOUCH_UI_FTDI_EVE
