@@ -145,6 +145,7 @@ namespace ExtUI {
 
   #if HAS_LEVELING
     bool getLevelingActive();
+    bool getLevelingIsInProgress();
     void setLevelingActive(const bool);
     bool getMeshValid();
     #if HAS_MESH
@@ -199,6 +200,7 @@ namespace ExtUI {
   void setFlow_percent(const int16_t, const extruder_t);
   bool awaitingUserConfirm();
   void setUserConfirmed();
+  bool isWaitingOnUser();
 
   #if ENABLED(LIN_ADVANCE)
     float getLinearAdvance_mm_mm_s(const extruder_t);

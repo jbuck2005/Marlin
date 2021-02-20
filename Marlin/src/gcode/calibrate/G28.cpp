@@ -54,6 +54,11 @@
   #include "../../lcd/extui/ui_api.h"
 #endif
 
+#if ENABLED(PROBING_HEATERS_OFF)
+  #include "../../module/temperature.h"
+  #include "../../module/printcounter.h"
+#endif
+
 #if HAS_L64XX                         // set L6470 absolute position registers to counts
   #include "../../libs/L64XX/L64XX_Marlin.h"
 #endif
@@ -96,7 +101,7 @@
       };
     #endif
 
-    do_blocking_move_to_xy(1.5 * mlx * x_axis_home_dir, 1.5 * mly * Y_HOME_DIR, fr_mm_s);
+    do_blocking_move_to_xy(1.5 * mlx * x_axis_home_dir, 1.5 * mly * home_dir(Y_AXIS), fr_mm_s);
 
     endstops.validate_homing_move();
 
@@ -210,6 +215,8 @@ void GcodeSuite::G28() {
   if (DEBUGGING(LEVELING)) log_machine_info();
 
   TERN_(LASER_MOVE_G28_OFF, cutter.set_inline_enabled(false));  // turn off laser
+
+  IF_ENABLED(PROBING_HEATERS_OFF, const bool respect_leveling_heatup_settings = parser.seen('U') ? parser.value_bool() : true);
 
   #if ENABLED(DUAL_X_CARRIAGE)
     bool IDEX_saved_duplication_state = extruder_duplication_enabled;
@@ -389,6 +396,17 @@ void GcodeSuite::G28() {
         TERN_(BLTOUCH, bltouch.init());
         TERN(Z_SAFE_HOMING, home_z_safely(), homeaxis(Z_AXIS));
         probe.move_z_after_homing();
+
+        #if ENABLED(PROBING_HEATERS_OFF)
+          // If we're going to print then we must ensure we are back on temperature before we continue
+          if (respect_leveling_heatup_settings && TERN1(HAS_PROBE_SETTINGS, probe.settings.turn_heaters_off && probe.settings.stabilize_temperatures_after_probing) && (queue.has_commands_queued() || planner.has_blocks_queued() || print_job_timer.isRunning())) {
+            SERIAL_ECHOLN("Waiting to heat-up again before continueing");
+            ui.set_status("Waiting for heat-up...");
+
+            thermalManager.wait_for_hotend(0);
+            thermalManager.wait_for_bed_heating();
+          }
+        #endif
       }
     #endif
 

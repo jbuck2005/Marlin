@@ -82,6 +82,7 @@
 
 #if HAS_LEVELING
   #include "../../feature/bedlevel/bedlevel.h"
+  #include "../../gcode/gcode.h"
 #endif
 
 #if HAS_FILAMENT_SENSOR
@@ -814,6 +815,7 @@ namespace ExtUI {
 
   #if HAS_LEVELING
     bool getLevelingActive() { return planner.leveling_active; }
+    bool getLevelingIsInProgress() { return GcodeSuite::busy_state == GcodeSuite::MarlinBusyState::IN_PROCESS || GcodeSuite::busy_state == GcodeSuite::MarlinBusyState::IN_HANDLER; }
     void setLevelingActive(const bool state) { set_bed_leveling_enabled(state); }
     bool getMeshValid() { return leveling_is_valid(); }
     #if HAS_MESH
@@ -951,6 +953,10 @@ namespace ExtUI {
     TERN_(HAS_RESUME_CONTINUE, wait_for_user = false);
   }
 
+  bool isWaitingOnUser() {
+    return TERN(HAS_RESUME_CONTINUE, wait_for_user, false);
+  }
+
   void printFile(const char *filename) {
     UNUSED(filename);
     IFSD(card.openAndPrintFile(filename), NOOP);
@@ -1069,6 +1075,10 @@ void MarlinUI::kill_screen(PGM_P const error, PGM_P const component) {
     flags.printer_killed = true;
     onPrinterKilled(error, component);
   }
+}
+
+void MarlinUI::buzz(const long duration, const uint16_t freq) {
+  ExtUI::onPlayTone(duration, freq);
 }
 
 #endif // EXTENSIBLE_UI

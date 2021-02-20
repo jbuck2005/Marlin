@@ -1330,7 +1330,7 @@ void do_homing_move(const AxisEnum axis, const float distance, const feedRate_t 
         thermalManager.wait_for_bed_heating();
       #endif
 
-      TERN_(HAS_QUIET_PROBING, if (final_approach) probe.set_probing_paused(true));
+      TERN_(HAS_QUIET_PROBING, if (_TERN(PROBE_TARE_SKIP_SECOND, !final_approach, final_approach)) probe.set_probing_paused(true));
     }
 
     // Disable stealthChop if used. Enable diag1 pin on driver.
@@ -1367,12 +1367,11 @@ void do_homing_move(const AxisEnum axis, const float distance, const feedRate_t 
   planner.synchronize();
 
   if (is_home_dir) {
+    endstops.validate_homing_move();
 
     #if HOMING_Z_WITH_PROBE && HAS_QUIET_PROBING
       if (axis == Z_AXIS && final_approach) probe.set_probing_paused(false);
     #endif
-
-    endstops.validate_homing_move();
 
     // Re-enable stealthChop if used. Disable diag1 pin on driver.
     TERN_(SENSORLESS_HOMING, end_sensorless_homing_per_axis(axis, stealth_states));
@@ -1664,6 +1663,7 @@ void homeaxis(const AxisEnum axis) {
     // Slow move towards endstop until triggered
     const float rebump = bump * 2;
     if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPAIR("Re-bump: ", rebump, "mm");
+
     do_homing_move(axis, rebump, get_homing_bump_feedrate(axis), true);
 
     #if BOTH(HOMING_Z_WITH_PROBE, BLTOUCH)

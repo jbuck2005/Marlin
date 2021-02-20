@@ -126,6 +126,7 @@ namespace Language_en {
   PROGMEM Language_Str MSG_RETRACT                         = _UxGT("Retract");
   PROGMEM Language_Str MSG_MOVE_AXIS                       = _UxGT("Move Axis");
   PROGMEM Language_Str MSG_BED_LEVELING                    = _UxGT("Bed Leveling");
+  PROGMEM Language_Str MSG_TARE_PROBE                      = _UxGT("Tare probe");
   PROGMEM Language_Str MSG_LEVEL_BED                       = _UxGT("Level Bed");
   PROGMEM Language_Str MSG_LEVEL_CORNERS                   = _UxGT("Level Corners");
   PROGMEM Language_Str MSG_LEVEL_CORNERS_RAISE             = _UxGT("Raise Bed Until Probe Triggered");
@@ -271,8 +272,13 @@ namespace Language_en {
   PROGMEM Language_Str MSG_SPEED                           = _UxGT("Speed");
   PROGMEM Language_Str MSG_BED_Z                           = _UxGT("Bed Z");
   PROGMEM Language_Str MSG_NOZZLE                          = _UxGT("Nozzle");
+  PROGMEM Language_Str MSG_CONFIGURATION_PROBE             = _UxGT("Probe settings");
+  PROGMEM Language_Str MSG_PROBING_HEATERS_OFF               = _UxGT("Improve accuracy");
+  PROGMEM Language_Str MSG_PROBING_NOZZLE_TEMP             = _UxGT("Preheat nozzle");
+  PROGMEM Language_Str MSG_PROBING_BED_TEMP                = _UxGT("Preheat bed");
+  PROGMEM Language_Str MSG_PROBING_TEMP_STABILIZATION      = _UxGT("Stabilize temp. after probing");
   PROGMEM Language_Str MSG_NOZZLE_N                        = _UxGT("Nozzle ~");
-  PROGMEM Language_Str MSG_NOZZLE_PARKED                   = _UxGT("Nozzle Parked");
+  PROGMEM Language_Str MSG_NOZZLE_PARKED                   = _UxGT("Load/unload filament");
   PROGMEM Language_Str MSG_NOZZLE_STANDBY                  = _UxGT("Nozzle Standby");
   PROGMEM Language_Str MSG_BED                             = _UxGT("Bed");
   PROGMEM Language_Str MSG_CHAMBER                         = _UxGT("Enclosure");

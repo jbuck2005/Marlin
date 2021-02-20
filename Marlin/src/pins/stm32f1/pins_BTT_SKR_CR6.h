@@ -179,5 +179,7 @@
 #define LED_CONTROL_PIN                     PA13
 
 #ifndef NEOPIXEL_PIN
-  #define NEOPIXEL_PIN                      PA8
+#define NEOPIXEL_PIN                        PA8
 #endif
+
+#define CASE_LIGHT_PIN                      LED_CONTROL_PIN

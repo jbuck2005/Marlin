@@ -41,6 +41,11 @@
   #include "../../../module/temperature.h"
 #endif
 
+#if ENABLED(PROBING_HEATERS_OFF)
+  #include "../../../module/temperature.h"
+  #include "../../../module/printcounter.h"
+#endif
+
 #if HAS_DISPLAY
   #include "../../../lcd/marlinui.h"
 #endif
@@ -166,6 +171,8 @@ G29_TYPE GcodeSuite::G29() {
   reset_stepper_timeout();
 
   const bool seenQ = EITHER(DEBUG_LEVELING_FEATURE, PROBE_MANUALLY) && parser.seen('Q');
+
+  IF_ENABLED(PROBING_HEATERS_OFF, const bool respect_leveling_heatup_settings = parser.seen('U') ? parser.value_bool() : true);
 
   // G29 Q is also available if debugging
   #if ENABLED(DEBUG_LEVELING_FEATURE)
@@ -402,15 +409,11 @@ G29_TYPE GcodeSuite::G29() {
       points[0].z = points[1].z = points[2].z = 0;  // Probe at 3 arbitrary points
     #endif
 
-    #if BOTH(AUTO_BED_LEVELING_BILINEAR, EXTENSIBLE_UI)
-      ExtUI::onMeshLevelingStart();
-    #endif
-
     if (!faux) {
       remember_feedrate_scaling_off();
 
       #if ENABLED(PREHEAT_BEFORE_LEVELING)
-        if (!dryrun) probe.preheat_for_probing(LEVELING_NOZZLE_TEMP, LEVELING_BED_TEMP);
+        if (!dryrun) probe.preheat_for_probing(probe.settings.preheat_hotend_temp, probe.settings.preheat_bed_temp);
       #endif
     }
 
@@ -511,6 +514,7 @@ G29_TYPE GcodeSuite::G29() {
 
         const float newz = measured_z + zoffset;
         z_values[meshCount.x][meshCount.y] = newz;
+
         TERN_(EXTENSIBLE_UI, ExtUI::onMeshUpdate(meshCount, newz));
 
         if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPAIR_P(PSTR("Save X"), meshCount.x, SP_Y_STR, meshCount.y, SP_Z_STR, measured_z + zoffset);
@@ -592,13 +596,21 @@ G29_TYPE GcodeSuite::G29() {
 
   #else // !PROBE_MANUALLY
   {
+
+    #if BOTH(AUTO_BED_LEVELING_BILINEAR, EXTENSIBLE_UI)
+      ExtUI::onMeshLevelingStart();
+    #endif
+
     const ProbePtRaise raise_after = parser.boolval('E') ? PROBE_PT_STOW : PROBE_PT_RAISE;
 
     measured_z = 0;
 
     #if ABL_GRID
-
-      bool zig = PR_OUTER_END & 1;  // Always end at RIGHT and BACK_PROBE_BED_POSITION
+      #if ENABLED(DGUS_LCD_UI_CREALITY_TOUCH)
+        bool zig = 1;
+      #else
+        bool zig = (PR_OUTER_END & 1); // Always end at RIGHT and BACK_PROBE_BED_POSITION
+      #endif
 
       measured_z = 0;
 
@@ -894,6 +906,17 @@ G29_TYPE GcodeSuite::G29() {
   #endif
 
   report_current_position();
+
+#if ENABLED(PROBING_HEATERS_OFF)
+  // If we're going to print then we must ensure we are back on temperature before we continue
+  if (respect_leveling_heatup_settings && TERN1(HAS_PROBE_SETTINGS, probe.settings.turn_heaters_off && probe.settings.stabilize_temperatures_after_probing) && (queue.has_commands_queued() || planner.has_blocks_queued() || print_job_timer.isRunning())) {
+    SERIAL_ECHOLN("Waiting to heat-up again before continueing");
+    ui.set_status("Waiting for heat-up...");
+
+    thermalManager.wait_for_hotend(0);
+    thermalManager.wait_for_bed_heating();
+  }
+#endif
 
   G29_RETURN(isnan(measured_z));
 }
