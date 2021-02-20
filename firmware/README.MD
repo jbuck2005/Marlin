@@ -7,7 +7,7 @@ For example, you would need to rename:<br>
 <br>
 <h3>DWIN & Display</h3>
 <ol>
-  <li>Download the DWIN_SET.zip file into the root directory of a specially formatted microSD card</li>
+  <li>Download the <a href="https://github.com/jbuck2005/Marlin_Custom/blob/paul_cr6se/firmware/DWIN_SET.zip">DWIN_SET.zip</a> file into the root directory of a specially formatted microSD card</li>
   <li>unzip DWIN_SET.zip</li>
   <li>Turn off printer</li>
   <li>format 8Gb microSD card</li>
