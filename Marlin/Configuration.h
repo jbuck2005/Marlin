@@ -2257,7 +2257,7 @@ M500
 // This is RAMPS-compatible using a single 10-pin connector.
 // (For CR-10 owners who want to replace the Melzi Creality board but retain the display)
 //
-#define CR10_STOCKDISPLAY // 20210213 enabled to compile ----------------------------------------------------------------------------------------------------------------------------------------------
+//#define CR10_STOCKDISPLAY // 20210213 enabled to compile - 20210221 disabled for testing ---------------------------------------------------------------------------------------------------------------------------------------------
 
 //
 // Ender-2 OEM display, a variant of the MKS_MINI_12864
@@ -2356,7 +2356,7 @@ M500
 //
 // CR-6 OEM touch screen. A DWIN display with touch.
 //
-//#define DWIN_CREALITY_TOUCHLCD
+#define DWIN_CREALITY_TOUCHLCD // 20210221 enabled for testing ----------------------------------------------------------------------------------------------------------------------------------------
 
 //
 // Touch-screen LCD for Malyan M200/M300 printers
