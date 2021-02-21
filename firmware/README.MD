@@ -7,7 +7,7 @@ For example, you would need to rename:<br>
 <br>
 <h3>DWIN & Display</h3>
 <ol>
-  <li>Download the DWIN_SET.zip file into the root directory of a specially formatted microSD card</li>
+  <li>Download the <a href="https://github.com/jbuck2005/Marlin_Custom/blob/paul_cr6se/firmware/DWIN_SET.zip">DWIN_SET.zip</a> file into the root directory of a specially formatted microSD card</li>
   <li>unzip DWIN_SET.zip</li>
   <li>Turn off printer</li>
   <li>format 8Gb microSD card</li>
@@ -15,7 +15,7 @@ For example, you would need to rename:<br>
     <li>Windows-R</li>
     <li>type in cmd</li>
     <li>press enter</li>
-    <li>format /q <b>g</b>:/fs:fat32/a:4096  <b>(note: use correct drive ID)</b></li>
+    <li>format /Q <font color="red"><b>X:</b></font> /FS:FAT32 /A:4096  <b>(note: use correct drive ID)</b></li>
   </ul>
   <li>Insert the microSD card into the LCD screen's microSD card slot and power the printer on</li>
   <li>turn on printer</li>
