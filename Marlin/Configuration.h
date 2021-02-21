@@ -95,7 +95,7 @@
 //#define SHOW_CUSTOM_BOOTSCREEN // 20210213 - 20210221 disabled for testing -----------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // Show the bitmap in Marlin/_Statusscreen.h on the status screen.
-#define CUSTOM_STATUS_SCREEN_IMAGE // 20210213 - 20210221 disabled for testing -------------------------------------------------------------------------------------------------------------------------------------------------------
+//#define CUSTOM_STATUS_SCREEN_IMAGE // 20210213 - 20210221 disabled for testing -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // @section machine
 
@@ -1249,7 +1249,7 @@
 
 */
 
-#define FILAMENT_RUNOUT_SENSOR		  // 20210219 enabled -----------------------------------------------------------------------------------------------------------------------------------------
+// #define FILAMENT_RUNOUT_SENSOR		  // 20210219 enabled - 20210221 disabled for testing ----------------------------------------------------------------------------------------------------------------------------------------
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)	  // 20210216 pins_BTT_SKR_PRO_common.h defines FIL_RUNOUT_PIN as PE15 which is E0 on the board
   #define FIL_RUNOUT_ENABLED_DEFAULT true // Enable the sensor on startup. Override with M412 followed by M500.
   #define NUM_RUNOUT_SENSORS   1          // Number of sensors, up to one per extruder. Define a FIL_RUNOUT#_PIN for each.
