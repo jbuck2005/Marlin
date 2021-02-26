@@ -461,12 +461,8 @@
 #define HEATER_5_MINTEMP   5
 #define HEATER_6_MINTEMP   5
 #define HEATER_7_MINTEMP   5
-<<<<<<< HEAD
 #define BED_MINTEMP        5 // 20210102 changed from default 5 20210107 back to default did not resolve firmware failures ---------------------------------------------------------
-=======
-#define BED_MINTEMP        5
 #define CHAMBER_MINTEMP    5
->>>>>>> d5b06624fb2b14b57a9621d7b86caf9f1c5dbfb9
 
 // Above this temperature the heater will be switched off.
 // This can protect components from overheating, but NOT from shorts and failures.
@@ -479,12 +475,8 @@
 #define HEATER_5_MAXTEMP 275
 #define HEATER_6_MAXTEMP 275
 #define HEATER_7_MAXTEMP 275
-<<<<<<< HEAD
 #define BED_MAXTEMP      100 // 20210102 changed from default 125 ----------------------------------------------------------------------------------------------------------------
-=======
-#define BED_MAXTEMP      150
 #define CHAMBER_MAXTEMP  60
->>>>>>> d5b06624fb2b14b57a9621d7b86caf9f1c5dbfb9
 
 //===========================================================================
 //============================= PID Settings ================================
@@ -1166,12 +1158,8 @@
  */
 #define PROBING_HEATERS_OFF       // Turn heaters off when probing 20201221 enabled this function -------------------------------------------------------------------------------
 #if ENABLED(PROBING_HEATERS_OFF)
-<<<<<<< HEAD
   #define WAIT_FOR_BED_HEATER     // Wait for bed to heat back up between probes (to improve accuracy) // 20201221 enabled - 20210102 made probing very slow so it was disabled 20210210 reenabled ------------------------------------
-=======
-  //#define WAIT_FOR_BED_HEATER     // Wait for bed to heat back up between probes (to improve accuracy)
   //#define WAIT_FOR_HOTEND         // Wait for hotend to heat back up between probes (to improve accuracy & prevent cold extrude)
->>>>>>> ccf990a0d79869d7d0fef9bc667f04b691771b7e
 #endif
   #define PROBING_FANS_OFF          // Turn fans off when probing //20210210 enabled in an attempt to resolve failure to probe - may have solved probing issues with ferrite & remag tip ----------------------------------------------
   #define PROBING_STEPPERS_OFF      // Turn steppers off (unless needed to hold position) when probing // 20210210 on next test, enable to test with firmware revision -------------------------
@@ -1226,11 +1214,9 @@
 
 // @section homing
 
-<<<<<<< HEAD
 //#define NO_MOTION_BEFORE_HOMING // Inhibit movement until all axes have been homed
 
 //#define UNKNOWN_Z_NO_RAISE      // Don't raise Z (lower the bed) if Z is "unknown." For beds that fall when Z is powered off.
-=======
 //#define NO_MOTION_BEFORE_HOMING // Inhibit movement until all axes have been homed. Also enable HOME_AFTER_DEACTIVATE for extra safety.
 //#define HOME_AFTER_DEACTIVATE   // Require rehoming after steppers are deactivated. Also enable NO_MOTION_BEFORE_HOMING for extra safety.
 
@@ -1240,7 +1226,6 @@
  *  - Use a large value (i.e., Z_MAX_POS) if the bed falls down, away from the nozzle.
  */
 //#define Z_IDLE_HEIGHT Z_HOME_POS
->>>>>>> ccf990a0d79869d7d0fef9bc667f04b691771b7e
 
 #define Z_HOMING_HEIGHT  10       // enabled 20200915 (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ... --------------------------------------
                                   // Be sure to have this much clearance over your Z_MAX_POS to prevent grinding.
@@ -1695,27 +1680,16 @@ M500
 // Preheat Constants - Up to 5 are supported without changes
 //
 #define PREHEAT_1_LABEL       "PLA"
-<<<<<<< HEAD
 #define PREHEAT_1_TEMP_HOTEND 195 // 20200911 was 220 ----------------------------------------------------------------------------------------------------------------------------
 #define PREHEAT_1_TEMP_BED     55 // 20200911 was 45 -----------------------------------------------------------------------------------------------------------------------------
 #define PREHEAT_1_FAN_SPEED   0 // Value from 0 to 255
+#define PREHEAT_1_TEMP_CHAMBER 35
 
 #define PREHEAT_2_LABEL       "ABS"
 #define PREHEAT_2_TEMP_HOTEND 240
 #define PREHEAT_2_TEMP_BED     60
 #define PREHEAT_2_FAN_SPEED   0 // Value from 0 to 255
-=======
-#define PREHEAT_1_TEMP_HOTEND 180
-#define PREHEAT_1_TEMP_BED     70
-#define PREHEAT_1_TEMP_CHAMBER 35
-#define PREHEAT_1_FAN_SPEED     0 // Value from 0 to 255
-
-#define PREHEAT_2_LABEL       "ABS"
-#define PREHEAT_2_TEMP_HOTEND 240
-#define PREHEAT_2_TEMP_BED    110
 #define PREHEAT_2_TEMP_CHAMBER 35
-#define PREHEAT_2_FAN_SPEED     0 // Value from 0 to 255
->>>>>>> d5b06624fb2b14b57a9621d7b86caf9f1c5dbfb9
 
 /**
  * Nozzle Park
