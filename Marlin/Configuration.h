@@ -584,7 +584,6 @@
  * the issues involved, don't use chamber PID until someone else verifies that your hardware works.
  */
 //#define PIDTEMPCHAMBER
-
 //#define CHAMBER_LIMIT_SWITCHING
 
 /**
@@ -1167,7 +1166,12 @@
  */
 #define PROBING_HEATERS_OFF       // Turn heaters off when probing 20201221 enabled this function -------------------------------------------------------------------------------
 #if ENABLED(PROBING_HEATERS_OFF)
+<<<<<<< HEAD
   #define WAIT_FOR_BED_HEATER     // Wait for bed to heat back up between probes (to improve accuracy) // 20201221 enabled - 20210102 made probing very slow so it was disabled 20210210 reenabled ------------------------------------
+=======
+  //#define WAIT_FOR_BED_HEATER     // Wait for bed to heat back up between probes (to improve accuracy)
+  //#define WAIT_FOR_HOTEND         // Wait for hotend to heat back up between probes (to improve accuracy & prevent cold extrude)
+>>>>>>> ccf990a0d79869d7d0fef9bc667f04b691771b7e
 #endif
   #define PROBING_FANS_OFF          // Turn fans off when probing //20210210 enabled in an attempt to resolve failure to probe - may have solved probing issues with ferrite & remag tip ----------------------------------------------
   #define PROBING_STEPPERS_OFF      // Turn steppers off (unless needed to hold position) when probing // 20210210 on next test, enable to test with firmware revision -------------------------
@@ -1222,9 +1226,21 @@
 
 // @section homing
 
+<<<<<<< HEAD
 //#define NO_MOTION_BEFORE_HOMING // Inhibit movement until all axes have been homed
 
 //#define UNKNOWN_Z_NO_RAISE      // Don't raise Z (lower the bed) if Z is "unknown." For beds that fall when Z is powered off.
+=======
+//#define NO_MOTION_BEFORE_HOMING // Inhibit movement until all axes have been homed. Also enable HOME_AFTER_DEACTIVATE for extra safety.
+//#define HOME_AFTER_DEACTIVATE   // Require rehoming after steppers are deactivated. Also enable NO_MOTION_BEFORE_HOMING for extra safety.
+
+/**
+ * Set Z_IDLE_HEIGHT if the Z-Axis moves on its own when steppers are disabled.
+ *  - Use a low value (i.e., Z_MIN_POS) if the nozzle falls down to the bed.
+ *  - Use a large value (i.e., Z_MAX_POS) if the bed falls down, away from the nozzle.
+ */
+//#define Z_IDLE_HEIGHT Z_HOME_POS
+>>>>>>> ccf990a0d79869d7d0fef9bc667f04b691771b7e
 
 #define Z_HOMING_HEIGHT  10       // enabled 20200915 (mm) Minimal Z height before homing (G28) for Z clearance above the bed, clamps, ... --------------------------------------
                                   // Be sure to have this much clearance over your Z_MAX_POS to prevent grinding.
