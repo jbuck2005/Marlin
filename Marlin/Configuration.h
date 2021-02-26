@@ -92,7 +92,7 @@
 #ifndef MOTHERBOARD
   #define MOTHERBOARD BOARD_CREALITY_V4
 #endif
-#define CUSTOM_MACHINE_NAME "Replicator v0.1.15" // does not appear to work if defined in Version.h -------------------------------------------------------------------------------
+#define CUSTOM_MACHINE_NAME "Replicator v0.2.26" // does not appear to work if defined in Version.h -------------------------------------------------------------------------------
 #define EXTRUDERS 1
 #define DEFAULT_NOMINAL_FILAMENT_DIA 1.75
 #if ENABLED(SINGLENOZZLE)
