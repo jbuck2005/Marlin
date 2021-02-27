@@ -1510,7 +1510,7 @@ M500
   //#define MESH_EDIT_GFX_OVERLAY   // Display a graphics overlay while editing the mesh
 
   #define MESH_INSET 1              // Set Mesh bounds as an inset region of the bed
-  #define GRID_MAX_POINTS_X 10      // Don't use more than 15 points per axis, implementation limited.
+  #define GRID_MAX_POINTS_X 5       // Don't use more than 15 points per axis, implementation limited. // 20210227 changed from 10 to 5 ---------------------------------------------------------------
   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
 
   #define UBL_MESH_EDIT_MOVES_Z     // Sophisticated users prefer no movement of nozzle
@@ -1741,9 +1741,6 @@ M500
 #define PREHEAT_1_LABEL       "PLA"
 #define PREHEAT_1_TEMP_HOTEND 205 // 20210216 changed from 180 to preferred 205 -----------------------------------------------------------------------------------------------------------------------
 #define PREHEAT_1_TEMP_BED     60 // 20210216 changed from 70 to preferred 60 -------------------------------------------------------------------------------------------------------------------------
-=======
-#define PREHEAT_1_TEMP_HOTEND 180
-#define PREHEAT_1_TEMP_BED     70
 #define PREHEAT_1_TEMP_CHAMBER 35
 #define PREHEAT_1_FAN_SPEED     0 // Value from 0 to 255
 
