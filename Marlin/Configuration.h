@@ -1614,7 +1614,7 @@ M500
 #endif
 
 // Homing speeds (mm/min)
-#define HOMING_FEED_RATE_MM_M { (100*60), (100*60), (16*60) } // 20210227 default is 50,50,4 - changed to 100,100,16 -----------------------------------------------------------------------------------
+#define HOMING_FEEDRATE_MM_M { (100*60), (100*60), (16*60) } // 20210227 default is 50,50,4 - changed to 100,100,16 -----------------------------------------------------------------------------------
 
 // Validate that endstops are triggered on homing moves
 #define VALIDATE_HOMING_ENDSTOPS
