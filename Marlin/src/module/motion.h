@@ -71,7 +71,7 @@ constexpr feedRate_t z_probe_fast_mm_s = MMM_TO_MMS(Z_PROBE_SPEED_FAST);
  * Feed rates are often configured with mm/m
  * but the planner and stepper like mm/s units.
  */
-constexpr xyz_feedrate_t homing_feedrate_mm_m = HOMING_FEEDRATE_MM_M;
+constexpr xyz_feedrate_t homing_feedrate_mm_m = HOMING_SPEED_MM_M;
 FORCE_INLINE feedRate_t homing_feedrate(const AxisEnum a) {
   float v;
   #if ENABLED(DELTA)
