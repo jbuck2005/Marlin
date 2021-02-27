@@ -1067,13 +1067,13 @@
 #define PROBING_MARGIN 10
 
 // X and Y axis travel speed (mm/min) between probes
-#define XY_PROBE_SPEED (150*60) // 20210216 changed default from 133 to 150 ---------------------------------------------------------------------------------------------------------------------------
+#define XY_PROBE_SPEED (100*60) // 20210227 changed default from 133 to 100 ---------------------------------------------------------------------------------------------------------------------------
 
 // Feedrate (mm/min) for the first approach when double-probing (MULTIPLE_PROBING == 2)
-#define Z_PROBE_SPEED_FAST (12*60) // 20210216 changed from 4 to 12 -----------------------------------------------------------------------------------------------------------------------------------
+#define Z_PROBE_SPEED_FAST (6*60) // 20210227 changed from 4 to 12 -----------------------------------------------------------------------------------------------------------------------------------
 
 // Feedrate (mm/min) for the "accurate" probe of each point
-#define Z_PROBE_SPEED_SLOW (Z_PROBE_SPEED_FAST / 6) // 20210216 changed from 2 to 6 to respect original ratio (4*60)/2 = 120 thus, (12*60)/6 = 120 ----------------------------------------------------
+#define Z_PROBE_SPEED_SLOW (Z_PROBE_SPEED_FAST / 3) // 20210227 changed from 2 to 3 to respect original ratio (4*60)/2 = 120 thus, (6*60)/3 = 120 ----------------------------------------------------
 
 /**
  * Probe Activation Switch
@@ -1614,7 +1614,7 @@ M500
 #endif
 
 // Homing speeds (mm/min)
-#define HOMING_FEEDRATE_MM_M { (120*60), (120*60), (16*60) } // 20210216 default is 50,50,4 - changed to 120,120,16 -----------------------------------------------------------------------------------
+#define HOMING_FEEDRATE_MM_M { (100*60), (100*60), (16*60) } // 20210227 default is 50,50,4 - changed to 100,100,16 -----------------------------------------------------------------------------------
 
 // Validate that endstops are triggered on homing moves
 #define VALIDATE_HOMING_ENDSTOPS
