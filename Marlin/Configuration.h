@@ -747,9 +747,22 @@
                                                       // measured 0.67 via https://marlinfw.org/docs/gcode/M851.html -------------------------------------------------------------
                                                       // 20210107 -1.44 has been working flawlessly for PLA
 #define PROBING_MARGIN 10
+<<<<<<< HEAD
 #define XY_PROBE_SPEED (150*60) // 20201221 default is  133 - 20210105 changing did not resolve homing error ---------------------------------------------------------------------
 #define Z_PROBE_SPEED_FAST (8*60) // 20201220 was 4*60 - 20210105 changing did not resolve homing error --------------------------------------------------------------------------
 #define Z_PROBE_SPEED_SLOW (Z_PROBE_SPEED_FAST / 4) // 20210107 changed from 2 to 4 to respect original ratio (4*60)/2 = 120 thus, (8*60)/4 = 120 --------------------------------
+=======
+
+// X and Y axis travel speed (mm/min) between probes
+#define XY_PROBE_FEEDRATE (133*60)
+
+// Feedrate (mm/min) for the first approach when double-probing (MULTIPLE_PROBING == 2)
+#define Z_PROBE_FEEDRATE_FAST (4*60)
+
+// Feedrate (mm/min) for the "accurate" probe of each point
+#define Z_PROBE_FEEDRATE_SLOW (Z_PROBE_FEEDRATE_FAST / 2)
+
+>>>>>>> 254b25296b37cdb170e32a5530348907e7b8c9fc
 /**
  * Probe Activation Switch
  * A switch indicating proper deployment, or an optical
@@ -1405,6 +1418,64 @@ M500
   #define U8GLIB_SSD1306
   //#define U8GLIB_SH1106
 #endif
+<<<<<<< HEAD
+=======
+
+//
+// TinyBoy2 128x64 OLED / Encoder Panel
+//
+//#define OLED_PANEL_TINYBOY2
+
+//
+// MKS OLED 1.3" 128×64 FULL GRAPHICS CONTROLLER
+// https://reprap.org/wiki/MKS_12864OLED
+//
+// Tiny, but very sharp OLED display
+//
+//#define MKS_12864OLED          // Uses the SH1106 controller (default)
+//#define MKS_12864OLED_SSD1306  // Uses the SSD1306 controller
+
+//
+// Zonestar OLED 128×64 FULL GRAPHICS CONTROLLER
+//
+//#define ZONESTAR_12864LCD           // Graphical (DOGM) with ST7920 controller
+//#define ZONESTAR_12864OLED          // 1.3" OLED with SH1106 controller (default)
+//#define ZONESTAR_12864OLED_SSD1306  // 0.96" OLED with SSD1306 controller
+
+//
+// Einstart S OLED SSD1306
+//
+//#define U8GLIB_SH1106_EINSTART
+
+//
+// Overlord OLED display/controller with i2c buzzer and LEDs
+//
+//#define OVERLORD_OLED
+
+//
+// FYSETC OLED 2.42" 128×64 FULL GRAPHICS CONTROLLER with WS2812 RGB
+// Where to find : https://www.aliexpress.com/item/4000345255731.html
+//#define FYSETC_242_OLED_12864   // Uses the SSD1309 controller
+
+//=============================================================================
+//========================== Extensible UI Displays ===========================
+//=============================================================================
+
+//
+// DGUS Touch Display with DWIN OS. (Choose one.)
+// ORIGIN : https://www.aliexpress.com/item/32993409517.html
+// FYSETC : https://www.aliexpress.com/item/32961471929.html
+//
+//#define DGUS_LCD_UI_ORIGIN
+//#define DGUS_LCD_UI_FYSETC
+//#define DGUS_LCD_UI_HIPRECY
+//#define DGUS_LCD_UI_MKS
+
+//
+// Touch-screen LCD for Malyan M200/M300 printers
+//
+//#define MALYAN_LCD
+>>>>>>> 254b25296b37cdb170e32a5530348907e7b8c9fc
 #if ENABLED(MALYAN_LCD)
   #define LCD_SERIAL_PORT 1  // Default is 1 for Malyan M200
 #endif
@@ -1516,6 +1587,7 @@ M500
   // Use a single NeoPixel LED for static (background) lighting
   //#define NEOPIXEL_BKGD_LED_INDEX  0               // Index of the LED to use
   //#define NEOPIXEL_BKGD_COLOR { 255, 255, 255, 0 } // R, G, B, W
+  //#define NEOPIXEL_BKGD_ALWAYS_ON                  // Keep the backlight on when other NeoPixels are off
 #endif
 /**
  * Printer Event LEDs
