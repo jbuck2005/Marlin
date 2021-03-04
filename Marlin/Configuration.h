@@ -50,8 +50,27 @@
  * Calibration Objects: https://www.thingiverse.com/thing:5573
  *                      https://www.thingiverse.com/thing:1278865
  */
+<<<<<<< HEAD
 #define STRING_CONFIG_H_AUTHOR "(james, james config)" // Who made the changes. 20210105 -----------------------------------------------------------------------------------------
 #define CUSTOM_VERSION_FILE Version.h // Path from the root directory (no quotes) 20201221 enabled hoping that it would read the version.h config file ---------------------------
+=======
+
+//===========================================================================
+//========================== DELTA / SCARA / TPARA ==========================
+//===========================================================================
+//
+// Download configurations from the link above and customize for your machine.
+// Examples are located in config/examples/delta, .../SCARA, and .../TPARA.
+//
+//===========================================================================
+
+// @section info
+
+// Author info of this build printed to the host during boot and M115
+#define STRING_CONFIG_H_AUTHOR "(none, default config)" // Who made the changes.
+//#define CUSTOM_VERSION_FILE Version.h // Path from the root directory (no quotes)
+
+>>>>>>> 0b7e8576147bb3a1b5b6cf6a9c4afcd8ea8958a2
 /**
  * *** VENDORS PLEASE READ ***
  *
