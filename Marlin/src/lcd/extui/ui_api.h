@@ -43,6 +43,7 @@
  ****************************************************************************/
 
 #include "../../inc/MarlinConfig.h"
+#include "../marlinui.h"
 
 namespace ExtUI {
 
@@ -128,12 +129,25 @@ namespace ExtUI {
   float getRetractAcceleration_mm_s2();
   float getTravelAcceleration_mm_s2();
   float getFeedrate_percent();
+  feedRate_t getFeedrate_mm_s();
+  void setFeedrate_mm_s(const feedRate_t fr);
   int16_t getFlowPercentage(const extruder_t);
-  uint8_t getProgress_percent();
+
+  inline uint8_t getProgress_percent() { return ui.get_progress_percent(); }
+
+  #if HAS_PRINT_PROGRESS_PERMYRIAD
+    inline uint16_t getProgress_permyriad() { return ui.get_progress_permyriad(); }
+  #endif
+
   uint32_t getProgress_seconds_elapsed();
+
+  #if ENABLED(SHOW_REMAINING_TIME)
+    inline uint32_t getProgress_seconds_remaining() { return ui.get_remaining_time(); }
+  #endif
 
   #if HAS_LEVELING
     bool getLevelingActive();
+    bool getLevelingIsInProgress();
     void setLevelingActive(const bool);
     bool getMeshValid();
     #if HAS_MESH
@@ -144,7 +158,7 @@ namespace ExtUI {
       void onMeshUpdate(const int8_t xpos, const int8_t ypos, const float zval);
       inline void onMeshUpdate(const xy_int8_t &pos, const float zval) { onMeshUpdate(pos.x, pos.y, zval); }
 
-      typedef enum : unsigned char {
+      typedef enum : uint8_t {
         MESH_START,    // Prior to start of probe
         MESH_FINISH,   // Following probe of all points
         PROBE_START,   // Beginning probe of grid location
@@ -154,6 +168,15 @@ namespace ExtUI {
       inline void onMeshUpdate(const xy_int8_t &pos, probe_state_t state) { onMeshUpdate(pos.x, pos.y, state); }
     #endif
   #endif
+
+  #if ENABLED(G26_MESH_VALIDATION)    
+  void onMeshValidationStarting();
+  void onMeshValidationFinished();
+  #endif
+
+  void setCancelState();
+  void resetCancelState();
+  bool isCanceled();
 
   #if ENABLED(HOST_PROMPT_SUPPORT)
     void setHostResponse(const uint8_t);
@@ -186,6 +209,7 @@ namespace ExtUI {
   void setTravelAcceleration_mm_s2(const float);
   void setFeedrate_percent(const float);
   void setFlow_percent(const int16_t, const extruder_t);
+  bool awaitingUserConfirm();
   void setUserConfirmed();
   bool isWaitingOnUser();
 
@@ -204,6 +228,7 @@ namespace ExtUI {
     void setAxisMaxJerk_mm_s(const float, const extruder_t);
   #endif
 
+  extruder_t getTool(const uint8_t extruder);
   extruder_t getActiveTool();
   void setActiveTool(const extruder_t, bool no_move);
 
@@ -291,8 +316,8 @@ namespace ExtUI {
     FORCE_INLINE uint32_t safe_millis() { return millis(); } // TODO: Implement for AVR
   #endif
 
-  void delay_us(unsigned long us);
-  void delay_ms(unsigned long ms);
+  void delay_us(uint32_t us);
+  void delay_ms(uint32_t ms);
   void yield();
 
   /**

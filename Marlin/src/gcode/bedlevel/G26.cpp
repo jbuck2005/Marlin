@@ -113,12 +113,16 @@
 #include "../../module/temperature.h"
 #include "../../lcd/marlinui.h"
 
+#if ENABLED(EXTENSIBLE_UI)
+  #include "../../lcd/extui/ui_api.h"
+#endif
+
 #define EXTRUSION_MULTIPLIER 1.0
 #define PRIME_LENGTH 10.0
 #define OOZE_AMOUNT 0.3
 
-#define INTERSECTION_CIRCLE_RADIUS 5
-#define CROSSHAIRS_SIZE 3
+#define INTERSECTION_CIRCLE_RADIUS 10
+#define CROSSHAIRS_SIZE 0
 
 #ifndef G26_RETRACT_MULTIPLIER
   #define G26_RETRACT_MULTIPLIER 1.0 // x 1mm
@@ -128,7 +132,11 @@
   #define G26_XY_FEEDRATE (PLANNER_XY_FEEDRATE() / 3.0)
 #endif
 
-#if CROSSHAIRS_SIZE >= INTERSECTION_CIRCLE_RADIUS
+#ifndef G26_XY_FEEDRATE_TRAVEL
+  #define G26_XY_FEEDRATE_TRAVEL (PLANNER_XY_FEEDRATE() / 2)
+#endif
+
+#if CROSSHAIRS_SIZE > INTERSECTION_CIRCLE_RADIUS
   #error "CROSSHAIRS_SIZE must be less than INTERSECTION_CIRCLE_RADIUS."
 #endif
 
@@ -160,6 +168,7 @@ int16_t g26_bed_temp,
 int8_t g26_prime_flag;
 
 #if HAS_LCD_MENU
+  #define HAS_G26_CANCEL
 
   /**
    * If the LCD is clicked, cancel, wait for release, return true
@@ -170,6 +179,21 @@ int8_t g26_prime_flag;
     TERN_(HAS_LCD_MENU, ui.quick_feedback());
     ui.wait_for_release();
     return true;
+  }
+
+#elif ENABLED(EXTENSIBLE_UI)
+  #define HAS_G26_CANCEL
+
+  bool user_canceled() {
+    if (!ExtUI::isCanceled()) return false;
+
+    ExtUI::onStatusChanged_P(GET_TEXT(MSG_G26_CANCELED));
+
+    return true;
+  }
+
+  void updateStatus_P(PGM_P const str) {
+    ExtUI::onStatusChanged_P(str);
   }
 
 #endif
@@ -214,22 +238,25 @@ void move_to(const float &rx, const float &ry, const float &z, const float &e_de
   const xy_pos_t dest = { rx, ry };
 
   const bool has_xy_component = dest != current_position; // Check if X or Y is involved in the movement.
+  const bool has_e_component = e_delta != 0.0;
 
   destination = current_position;
 
   if (z != last_z) {
     last_z = destination.z = z;
-    const feedRate_t feed_value = planner.settings.max_feedrate_mm_s[Z_AXIS] * 0.5f; // Use half of the Z_AXIS max feed rate
-    prepare_internal_move_to_destination(feed_value);
-    destination = current_position;
+    const feedRate_t fr_mm_s = planner.settings.max_feedrate_mm_s[Z_AXIS] * 0.5f; // Use half of the Z_AXIS max feed rate
+    prepare_internal_move_to_destination(fr_mm_s);
   }
 
-  // If X or Y is involved do a 'normal' move. Otherwise retract/recover/hop.
+  // If X or Y in combination with E is involved do a 'normal' move.
+  // If X or Y with no E is involved do a 'fast' move
+  // Otherwise retract/recover/hop.
   destination = dest;
   destination.e += e_delta;
-  const feedRate_t feed_value = has_xy_component ? feedRate_t(G26_XY_FEEDRATE) : planner.settings.max_feedrate_mm_s[E_AXIS] * 0.666f;
-  prepare_internal_move_to_destination(feed_value);
-  destination = current_position;
+  const feedRate_t fr_mm_s = has_xy_component
+    ? (has_e_component ? feedRate_t(G26_XY_FEEDRATE) : feedRate_t(G26_XY_FEEDRATE_TRAVEL))
+    : planner.settings.max_feedrate_mm_s[E_AXIS] * 0.666f;
+  prepare_internal_move_to_destination(fr_mm_s);
 }
 
 FORCE_INLINE void move_to(const xyz_pos_t &where, const float &de) { move_to(where.x, where.y, where.z, de); }
@@ -301,7 +328,7 @@ inline bool look_for_lines_to_connect() {
 
   GRID_LOOP(i, j) {
 
-    if (TERN0(HAS_LCD_MENU, user_canceled())) return true;
+    if (TERN0(HAS_G26_CANCEL, user_canceled())) return true;
 
     if (i < (GRID_MAX_POINTS_X)) {  // Can't connect to anything farther to the right than GRID_MAX_POINTS_X.
                                     // Already a half circle at the edge of the bed.
@@ -356,6 +383,14 @@ inline bool turn_on_heaters() {
 
   SERIAL_ECHOLNPGM("Waiting for heatup.");
 
+  // Start heating the active nozzle
+  #if HAS_WIRED_LCD
+    ui.set_status_P(GET_TEXT(MSG_G26_HEATING_NOZZLE), 99);
+    ui.quick_feedback();
+  #endif
+  IF_ENABLED(EXTENSIBLE_UI, updateStatus_P(GET_TEXT(MSG_G26_HEATING_NOZZLE)));
+  thermalManager.setTargetHotend(g26_hotend_temp, active_extruder);
+
   #if HAS_HEATED_BED
 
     if (g26_bed_temp > 25) {
@@ -364,6 +399,8 @@ inline bool turn_on_heaters() {
         ui.quick_feedback();
         TERN_(HAS_LCD_MENU, ui.capture());
       #endif
+
+      IF_ENABLED(EXTENSIBLE_UI, updateStatus_P(GET_TEXT(MSG_G26_HEATING_BED)));
       thermalManager.setTargetBed(g26_bed_temp);
 
       // Wait for the temperature to stabilize
@@ -376,13 +413,6 @@ inline bool turn_on_heaters() {
     }
 
   #endif // HAS_HEATED_BED
-
-  // Start heating the active nozzle
-  #if HAS_WIRED_LCD
-    ui.set_status_P(GET_TEXT(MSG_G26_HEATING_NOZZLE), 99);
-    ui.quick_feedback();
-  #endif
-  thermalManager.setTargetHotend(g26_hotend_temp, active_extruder);
 
   // Wait for the temperature to stabilize
   if (!thermalManager.wait_for_hotend(active_extruder, true
@@ -447,17 +477,170 @@ inline bool prime_nozzle() {
   #endif
   {
     #if HAS_WIRED_LCD
+
       ui.set_status_P(GET_TEXT(MSG_G26_FIXED_LENGTH), 99);
       ui.quick_feedback();
     #endif
+
+    IF_ENABLED(EXTENSIBLE_UI, updateStatus_P(GET_TEXT(MSG_G26_FIXED_LENGTH)));
+
     destination = current_position;
     destination.e += g26_prime_length;
     prepare_internal_move_to_destination(fr_slow_e);
     destination.e -= g26_prime_length;
+    
+    constexpr float x_gp_size = X_BED_SIZE / GRID_MAX_POINTS_X;
+    constexpr float y_gp_size = Y_BED_SIZE / GRID_MAX_POINTS_Y;
+    constexpr float x_offset = x_gp_size / 2.0f;
+    constexpr float y_offset = y_gp_size / 2.0f;
+
+     // Draw 4 points
+    const xyz_pos_t p1 = { x_offset, y_offset, g26_layer_height };
+    const xyz_pos_t p2 = { X_BED_SIZE - x_offset, y_offset, g26_layer_height };
+    const xyz_pos_t p3 = { X_BED_SIZE - x_offset, Y_BED_SIZE - y_offset, g26_layer_height };
+    const xyz_pos_t p4 = { x_offset, Y_BED_SIZE - y_offset, g26_layer_height };
+
+    // Small prime
+    const xyz_pos_t pp1 = { X_BED_SIZE - x_gp_size - x_offset, y_offset + 10, g26_layer_height };
+    const xyz_pos_t pp2 = { x_gp_size + x_offset, y_offset + 10, g26_layer_height };
+    print_line_from_here_to_there(
+      pp1,
+      pp2
+    );
+    if (user_canceled()) return G26_ERR;
+
+    print_line_from_here_to_there(p1,p2);
+    if (user_canceled()) return G26_ERR;
+
+    print_line_from_here_to_there(p2,p3);
+    if (user_canceled()) return G26_ERR;
+
+    print_line_from_here_to_there(p3,p4);
+    if (user_canceled()) return G26_ERR;
+
+    print_line_from_here_to_there(p4,p1);
+    if (user_canceled()) return G26_ERR;
+    
     retract_filament(destination);
   }
 
   return G26_OK;
+}
+
+inline float circle_arc_length(float quarters, float radius) {
+  return radius * M_PI * quarters;
+}
+
+inline bool draw_circle(float radius, const xy_pos_t& circle, const mesh_index_pair& location) {
+  // If this mesh location is outside the printable radius, skip it.
+  if (!position_is_reachable(circle)) return false;
+
+  // Determine where to start and end the circle,
+  // which is always drawn counter-clockwise.
+  const xy_int8_t st = location;
+  const bool f = st.y == 0,
+              r = st.x >= GRID_MAX_POINTS_X - 1,
+              b = st.y >= GRID_MAX_POINTS_Y - 1;
+
+  #if ENABLED(ARC_SUPPORT)
+
+    xy_float_t e = { circle.x + radius, circle.y };
+    xyz_float_t s = e;
+
+    // Figure out where to start and end the arc - we always print counterclockwise
+    float diameter = radius * 2;
+    float arc_length = circle_arc_length(4, radius);
+    float arc_length_1 = circle_arc_length(1, radius);
+    float arc_length_2 = circle_arc_length(2, radius);
+
+    if (st.x == 0) {                             // left edge
+      if (!f) { s.x = circle.x; s.y -= radius; }
+      if (!b) { e.x = circle.x; e.y += radius; }
+      arc_length = (f || b) ? arc_length_1 : arc_length_2;
+    }
+    else if (r) {                             // right edge
+      if (b) s.set(circle.x - radius, circle.y);
+      else   s.set(circle.x, circle.y + radius);
+      if (f) e.set(circle.x - radius, circle.y);
+      else   e.set(circle.x, circle.y - radius);
+      arc_length = (f || b) ? arc_length_1 : arc_length_2;
+    }
+    else if (f) {
+      e.x -= diameter;
+      arc_length = arc_length_2;
+    }
+    else if (b) {
+      s.x -= diameter;
+      arc_length = arc_length_2;
+    }
+
+    const ab_float_t arc_offset = circle - s;
+    const xy_float_t dist = current_position - s;   // Distance from the start of the actual circle
+    const float dist_start = HYPOT2(dist.x, dist.y);
+    const xyze_pos_t endpoint = {
+      e.x, e.y, g26_layer_height, // 0.8: temporary fix overextrusion on arc (TODO)
+      current_position.e + (arc_length * g26_e_axis_feedrate * g26_extrusion_multiplier * 0.8f)
+    };
+
+    if (dist_start > 2.0) {
+      s.z = g26_layer_height + 0.5f;
+      retract_lift_move(s);
+    }
+
+    s.z = g26_layer_height;
+    move_to(s, 0.0);  // Get to the starting point with no extrusion / un-Z lift
+
+    recover_filament(destination);
+
+    plan_arc(endpoint, arc_offset, false, 0);  // Draw a counter-clockwise arc
+    destination = current_position;
+
+    if (TERN0(HAS_G26_CANCEL, user_canceled())) return false; // Check if the user wants to stop the Mesh Validation
+
+  #else // !ARC_SUPPORT
+
+    int8_t start_ind = -2, end_ind = 9; // Assume a full circle (from 5:00 to 5:00)
+    if (st.x == 0) {                    // Left edge? Just right half.
+      start_ind = f ? 0 : -3;           //  03:00 to 12:00 for front-left
+      end_ind = b ? 0 : 2;              //  06:00 to 03:00 for back-left
+    }
+    else if (r) {                       // Right edge? Just left half.
+      start_ind = b ? 6 : 3;            //  12:00 to 09:00 for front-right
+      end_ind = f ? 5 : 8;              //  09:00 to 06:00 for back-right
+    }
+    else if (f) {                       // Front edge? Just back half.
+      start_ind = 0;                    //  03:00
+      end_ind = 5;                      //  09:00
+    }
+    else if (b) {                       // Back edge? Just front half.
+      start_ind = 6;                    //  09:00
+      end_ind = 11;                     //  03:00
+    }
+
+    for (int8_t ind = start_ind; ind <= end_ind; ind++) {
+
+      if (TERN0(HAS_G26_CANCEL, user_canceled(false))) return false; // Check if the user wants to stop the Mesh Validation
+
+      xyz_float_t p = { circle.x + _COS(ind    ), circle.y + _SIN(ind    ), g26_layer_height },
+                  q = { circle.x + _COS(ind + 1), circle.y + _SIN(ind + 1), g26_layer_height };
+
+      #if IS_KINEMATIC
+        // Check to make sure this segment is entirely on the bed, skip if not.
+        if (!position_is_reachable(p) || !position_is_reachable(q)) return true;
+      #else
+        LIMIT(p.x, X_MIN_POS + 1, X_MAX_POS - 1); // Prevent hitting the endstops
+        LIMIT(p.y, Y_MIN_POS + 1, Y_MAX_POS - 1);
+        LIMIT(q.x, X_MIN_POS + 1, X_MAX_POS - 1);
+        LIMIT(q.y, Y_MIN_POS + 1, Y_MAX_POS - 1);
+      #endif
+
+      print_line_from_here_to_there(p, q);
+      SERIAL_FLUSH();   // Prevent host M105 buffer overrun.
+    }
+
+  #endif // !ARC_SUPPORT
+
+  return true;
 }
 
 /**
@@ -530,7 +713,7 @@ void GcodeSuite::G26() {
 
     if (bedtemp) {
       if (!WITHIN(bedtemp, 40, BED_MAX_TARGET)) {
-        SERIAL_ECHOLNPAIR("?Specified bed temperature not plausible (40-", int(BED_MAX_TARGET), "C).");
+        SERIAL_ECHOLNPAIR("?Specified bed temperature not plausible (40-", BED_MAX_TARGET, "C).");
         return;
       }
       g26_bed_temp = bedtemp;
@@ -665,6 +848,9 @@ void GcodeSuite::G26() {
     planner.calculate_volumetric_multipliers();
   #endif
 
+  IF_ENABLED(EXTENSIBLE_UI, ExtUI::onMeshValidationStarting());
+  IF_ENABLED(EXTENSIBLE_UI, updateStatus_P(PSTR("Starting mesh validation...")));
+
   if (turn_on_heaters() != G26_OK) goto LEAVE;
 
   current_position.e = 0.0;
@@ -716,144 +902,47 @@ void GcodeSuite::G26() {
 
   mesh_index_pair location;
   do {
+    IF_ENABLED(EXTENSIBLE_UI, updateStatus_P(PSTR("Running pattern...")));
+
     // Find the nearest confluence
     location = find_closest_circle_to_print(g26_continue_with_closest ? xy_pos_t(current_position) : g26_xy_pos);
 
     if (location.valid()) {
       const xy_pos_t circle = _GET_MESH_POS(location.pos);
 
-      // If this mesh location is outside the printable radius, skip it.
-      if (!position_is_reachable(circle)) continue;
+      // Draw a filled circle
+      float radius = INTERSECTION_CIRCLE_RADIUS;
+      bool cont = true;
+      while (radius > g26_nozzle && cont) {
+        cont = cont && draw_circle(radius, circle, location);
 
-      // Determine where to start and end the circle,
-      // which is always drawn counter-clockwise.
-      const xy_int8_t st = location;
-      const bool f = st.y == 0,
-                 r = st.x >= GRID_MAX_POINTS_X - 1,
-                 b = st.y >= GRID_MAX_POINTS_Y - 1;
+        radius -= g26_nozzle * 2;
+      }
 
-      #if ENABLED(ARC_SUPPORT)
-
-        #define ARC_LENGTH(quarters)  (INTERSECTION_CIRCLE_RADIUS * M_PI * (quarters) / 2)
-        #define INTERSECTION_CIRCLE_DIAM  ((INTERSECTION_CIRCLE_RADIUS) * 2)
-
-        xy_float_t e = { circle.x + INTERSECTION_CIRCLE_RADIUS, circle.y };
-        xyz_float_t s = e;
-
-        // Figure out where to start and end the arc - we always print counterclockwise
-        float arc_length = ARC_LENGTH(4);
-        if (st.x == 0) {                             // left edge
-          if (!f) { s.x = circle.x; s.y -= INTERSECTION_CIRCLE_RADIUS; }
-          if (!b) { e.x = circle.x; e.y += INTERSECTION_CIRCLE_RADIUS; }
-          arc_length = (f || b) ? ARC_LENGTH(1) : ARC_LENGTH(2);
-        }
-        else if (r) {                             // right edge
-          if (b) s.set(circle.x - (INTERSECTION_CIRCLE_RADIUS), circle.y);
-          else   s.set(circle.x, circle.y + INTERSECTION_CIRCLE_RADIUS);
-          if (f) e.set(circle.x - (INTERSECTION_CIRCLE_RADIUS), circle.y);
-          else   e.set(circle.x, circle.y - (INTERSECTION_CIRCLE_RADIUS));
-          arc_length = (f || b) ? ARC_LENGTH(1) : ARC_LENGTH(2);
-        }
-        else if (f) {
-          e.x -= INTERSECTION_CIRCLE_DIAM;
-          arc_length = ARC_LENGTH(2);
-        }
-        else if (b) {
-          s.x -= INTERSECTION_CIRCLE_DIAM;
-          arc_length = ARC_LENGTH(2);
-        }
-
-        const ab_float_t arc_offset = circle - s;
-        const xy_float_t dist = current_position - s;   // Distance from the start of the actual circle
-        const float dist_start = HYPOT2(dist.x, dist.y);
-        const xyze_pos_t endpoint = {
-          e.x, e.y, g26_layer_height,
-          current_position.e + (arc_length * g26_e_axis_feedrate * g26_extrusion_multiplier)
-        };
-
-        if (dist_start > 2.0) {
-          s.z = g26_layer_height + 0.5f;
-          retract_lift_move(s);
-        }
-
-        s.z = g26_layer_height;
-        move_to(s, 0.0);  // Get to the starting point with no extrusion / un-Z lift
-
-        recover_filament(destination);
-
-        const feedRate_t old_feedrate = feedrate_mm_s;
-        feedrate_mm_s = PLANNER_XY_FEEDRATE() * 0.1f;
-        plan_arc(endpoint, arc_offset, false, 0);  // Draw a counter-clockwise arc
-        feedrate_mm_s = old_feedrate;
-        destination = current_position;
-
-        if (TERN0(HAS_LCD_MENU, user_canceled())) goto LEAVE; // Check if the user wants to stop the Mesh Validation
-
-      #else // !ARC_SUPPORT
-
-        int8_t start_ind = -2, end_ind = 9; // Assume a full circle (from 5:00 to 5:00)
-        if (st.x == 0) {                    // Left edge? Just right half.
-          start_ind = f ? 0 : -3;           //  03:00 to 12:00 for front-left
-          end_ind = b ? 0 : 2;              //  06:00 to 03:00 for back-left
-        }
-        else if (r) {                       // Right edge? Just left half.
-          start_ind = b ? 6 : 3;            //  12:00 to 09:00 for front-right
-          end_ind = f ? 5 : 8;              //  09:00 to 06:00 for back-right
-        }
-        else if (f) {                       // Front edge? Just back half.
-          start_ind = 0;                    //  03:00
-          end_ind = 5;                      //  09:00
-        }
-        else if (b) {                       // Back edge? Just front half.
-          start_ind = 6;                    //  09:00
-          end_ind = 11;                     //  03:00
-        }
-
-        for (int8_t ind = start_ind; ind <= end_ind; ind++) {
-
-          if (TERN0(HAS_LCD_MENU, user_canceled())) goto LEAVE; // Check if the user wants to stop the Mesh Validation
-
-          xyz_float_t p = { circle.x + _COS(ind    ), circle.y + _SIN(ind    ), g26_layer_height },
-                      q = { circle.x + _COS(ind + 1), circle.y + _SIN(ind + 1), g26_layer_height };
-
-          #if IS_KINEMATIC
-            // Check to make sure this segment is entirely on the bed, skip if not.
-            if (!position_is_reachable(p) || !position_is_reachable(q)) continue;
-          #else
-            LIMIT(p.x, X_MIN_POS + 1, X_MAX_POS - 1); // Prevent hitting the endstops
-            LIMIT(p.y, Y_MIN_POS + 1, Y_MAX_POS - 1);
-            LIMIT(q.x, X_MIN_POS + 1, X_MAX_POS - 1);
-            LIMIT(q.y, Y_MIN_POS + 1, Y_MAX_POS - 1);
-          #endif
-
-          print_line_from_here_to_there(p, q);
-          SERIAL_FLUSH();   // Prevent host M105 buffer overrun.
-        }
-
-      #endif // !ARC_SUPPORT
-
+      if (!cont) break;
       if (look_for_lines_to_connect()) goto LEAVE;
     }
 
     SERIAL_FLUSH(); // Prevent host M105 buffer overrun.
 
-  } while (--g26_repeats && location.valid());
+  } while (--g26_repeats && location.valid() && TERN1(HAS_G26_CANCEL, !user_canceled()));
 
   LEAVE:
+  IF_ENABLED(EXTENSIBLE_UI, ExtUI::resetCancelState());
   ui.set_status_P(GET_TEXT(MSG_G26_LEAVING), -1);
+  IF_ENABLED(EXTENSIBLE_UI, updateStatus_P(GET_TEXT(MSG_G26_LEAVING)));
 
-  retract_filament(destination);
-  destination.z = Z_CLEARANCE_BETWEEN_PROBES;
-  move_to(destination, 0);                                    // Raise the nozzle
-
-  destination = g26_xy_pos;                                   // Move back to the starting XY position
-  move_to(destination, 0);                                    // Move back to the starting position
+  planner.clear_block_buffer();
+  char cmdBuffer[80] = {0};
+  sprintf_P(cmdBuffer, PSTR("G90\nG0 Z%d F2000\nG0 X%d Y%d"), Z_HOMING_HEIGHT, X_BED_SIZE/4, Y_BED_SIZE/2);
+  gcode.process_subcommands_now(cmdBuffer);
 
   #if DISABLED(NO_VOLUMETRICS)
     parser.volumetric_enabled = volumetric_was_enabled;
     planner.calculate_volumetric_multipliers();
   #endif
 
+  IF_ENABLED(EXTENSIBLE_UI, ExtUI::onMeshValidationFinished());
   TERN_(HAS_LCD_MENU, ui.release()); // Give back control of the LCD
 
   if (!g26_keep_heaters_on) {

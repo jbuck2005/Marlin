@@ -31,9 +31,12 @@
 #if ENABLED(DGUS_LCD_UI_CREALITY_TOUCH)
 
 #include "ui_api.h"
+#include "../marlinui.h"
 #include "lib/dgus_creality/DGUSDisplay.h"
 #include "lib/dgus_creality/DGUSDisplayDef.h"
 #include "lib/dgus_creality/DGUSScreenHandler.h"
+#include "lib/dgus_creality/creality_touch/PIDHandler.h"
+#include "lib/dgus_creality/creality_touch/MeshValidationHandler.h"
 
 #if ENABLED(POWER_LOSS_RECOVERY)
   #include "../../feature/powerloss.h"
@@ -44,7 +47,7 @@ extern const char NUL_STR[];
 namespace ExtUI {
 
   void onStartup() {
-    dgusdisplay.InitDisplay();
+    ScreenHandler.Init();
     ScreenHandler.UpdateScreenVPData();
   }
 
@@ -85,9 +88,13 @@ bool hasPrintTimer = false;
   void onPrintTimerStarted() {
     hasPrintTimer = true;
 
-    if (!ExtUI::isPrintingFromMedia() && !(PrintJobRecovery::valid() && PrintJobRecovery::exists())) {
+    if (!IS_SD_FILE_OPEN() && !(PrintJobRecovery::valid() && PrintJobRecovery::exists())) {
       ScreenHandler.SetPrintingFromHost();
     }
+    
+#if ENABLED(LCD_SET_PROGRESS_MANUALLY)
+    ui.progress_reset();
+#endif
 
     ScreenHandler.GotoScreen(DGUSLCD_SCREEN_PRINT_RUNNING);
   }
@@ -132,7 +139,7 @@ bool hasPrintTimer = false;
       ScreenHandler.sendinfoscreen(PSTR("Confirmation required"), msg, NUL_STR, PSTR("Ok"), true, true, false, true);
 
       if (ExtUI::isPrinting()) {
-        ScreenHandler.GotoScreen(DGUSLCD_SCREEN_DIALOG_PAUSE);
+        ScreenHandler.GotoScreen(DGUSLCD_SCREEN_PRINT_PAUSED);
       } else {
         ScreenHandler.GotoScreen(DGUSLCD_SCREEN_POPUP);
       }
@@ -187,11 +194,11 @@ bool hasPrintTimer = false;
     }
 
     void onMeshUpdate(const int8_t xpos, const int8_t ypos, const float zval) {
-      ScreenHandler.OnMeshLevelingUpdate(xpos, ypos);
+      ScreenHandler.OnMeshLevelingUpdate(xpos, ypos, zval);
     }
 
     void onMeshUpdate(const int8_t xpos, const int8_t ypos, const ExtUI::probe_state_t state) {
-      ScreenHandler.OnMeshLevelingUpdate(xpos, ypos);
+      ScreenHandler.OnMeshLevelingUpdate(xpos, ypos, 0);
     }
   #endif
 
@@ -208,19 +215,22 @@ bool hasPrintTimer = false;
       // Called for temperature PID tuning result
       switch (rst) {
         case PID_BAD_EXTRUDER_NUM:
-          ScreenHandler.setstatusmessagePGM(GET_TEXT(MSG_PID_BAD_EXTRUDER_NUM));
+          PIDHandler::result_message = GET_TEXT(MSG_PID_BAD_EXTRUDER_NUM);
+          ScreenHandler.setstatusmessagePGM(PIDHandler::result_message);
           break;
         case PID_TEMP_TOO_HIGH:
-          ScreenHandler.setstatusmessagePGM(GET_TEXT(MSG_PID_TEMP_TOO_HIGH));
+          PIDHandler::result_message = GET_TEXT(MSG_PID_TEMP_TOO_HIGH);
+          ScreenHandler.setstatusmessagePGM(PIDHandler::result_message);
           break;
         case PID_TUNING_TIMEOUT:
-          ScreenHandler.setstatusmessagePGM(GET_TEXT(MSG_PID_TIMEOUT));
+          PIDHandler::result_message = GET_TEXT(MSG_PID_TIMEOUT);
+          ScreenHandler.setstatusmessagePGM(PIDHandler::result_message);
         break;
         case PID_DONE:
-          ScreenHandler.setstatusmessagePGM(GET_TEXT(MSG_PID_AUTOTUNE_DONE));
+          PIDHandler::result_message = GET_TEXT(MSG_PID_AUTOTUNE_DONE);
+          ScreenHandler.setstatusmessagePGM(PIDHandler::result_message);
         break;
       }
-      ScreenHandler.GotoScreen(DGUSLCD_SCREEN_MAIN);
     }
   #endif
 
@@ -230,5 +240,12 @@ bool hasPrintTimer = false;
   void onSteppersEnabled() {
   }
 
+  void onMeshValidationStarting() {
+    MeshValidationHandler::OnMeshValidationStart();
+  }
+
+  void onMeshValidationFinished() {
+    MeshValidationHandler::OnMeshValidationFinish();
+  }
 }
 #endif // HAS_DGUS_LCD

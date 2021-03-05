@@ -172,6 +172,8 @@ G29_TYPE GcodeSuite::G29() {
 
   const bool seenQ = EITHER(DEBUG_LEVELING_FEATURE, PROBE_MANUALLY) && parser.seen('Q');
 
+  IF_ENABLED(PROBING_HEATERS_OFF, const bool respect_leveling_heatup_settings = parser.seen('U') ? parser.value_bool() : true);
+
   // G29 Q is also available if debugging
   #if ENABLED(DEBUG_LEVELING_FEATURE)
     const uint8_t old_debug_flags = marlin_debug_flags;
@@ -186,13 +188,17 @@ G29_TYPE GcodeSuite::G29() {
          no_action = seenA || seenQ,
               faux = ENABLED(DEBUG_LEVELING_FEATURE) && DISABLED(PROBE_MANUALLY) ? parser.boolval('C') : no_action;
 
-  // Don't allow auto-leveling without homing first
-  if (homing_needed_error()) G29_RETURN(false);
-
   if (!no_action && planner.leveling_active && parser.boolval('O')) { // Auto-level only if needed
     if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("> Auto-level not needed, skip");
     G29_RETURN(false);
   }
+
+  // Send 'N' to force homing before G29 (internal only)
+  if (parser.seen('N'))
+    process_subcommands_now_P(TERN(G28_L0_ENSURES_LEVELING_OFF, PSTR("G28L0"), G28_STR));
+
+  // Don't allow auto-leveling without homing first
+  if (homing_needed_error()) G29_RETURN(false);
 
   // Define local vars 'static' for manual probing, 'auto' otherwise
   #define ABL_VAR TERN_(PROBE_MANUALLY, static)
@@ -254,7 +260,6 @@ G29_TYPE GcodeSuite::G29() {
 
   #if ENABLED(AUTO_BED_LEVELING_LINEAR)
     struct linear_fit_data lsf_results;
-    incremental_LSF_reset(&lsf_results);
   #endif
 
   /**
@@ -329,6 +334,8 @@ G29_TYPE GcodeSuite::G29() {
 
     #if ENABLED(AUTO_BED_LEVELING_LINEAR)
 
+      incremental_LSF_reset(&lsf_results);
+
       do_topography_map = verbose_level > 2 || parser.boolval('T');
 
       // X and Y specify points in each direction, overriding the default
@@ -359,7 +366,7 @@ G29_TYPE GcodeSuite::G29() {
 
     #if ABL_GRID
 
-      xy_probe_feedrate_mm_s = MMM_TO_MMS(parser.linearval('S', XY_PROBE_SPEED));
+      xy_probe_feedrate_mm_s = MMM_TO_MMS(parser.linearval('S', XY_PROBE_FEEDRATE));
 
       const float x_min = probe.min_x(), x_max = probe.max_x(),
                   y_min = probe.min_y(), y_max = probe.max_y();
@@ -406,7 +413,7 @@ G29_TYPE GcodeSuite::G29() {
       remember_feedrate_scaling_off();
 
       #if ENABLED(PREHEAT_BEFORE_LEVELING)
-        if (!dryrun) probe.preheat_for_probing(LEVELING_NOZZLE_TEMP, LEVELING_BED_TEMP);
+        if (!dryrun) probe.preheat_for_probing(probe.settings.preheat_hotend_temp, probe.settings.preheat_bed_temp);
       #endif
     }
 
@@ -642,7 +649,7 @@ G29_TYPE GcodeSuite::G29() {
           // Avoid probing outside the round or hexagonal area
           if (TERN0(IS_KINEMATIC, !probe.can_reach(probePos))) continue;
 
-          if (verbose_level) SERIAL_ECHOLNPAIR("Probing mesh point ", int(pt_index), "/", abl_points, ".");
+          if (verbose_level) SERIAL_ECHOLNPAIR("Probing mesh point ", pt_index, "/", abl_points, ".");
           TERN_(HAS_DISPLAY, ui.status_printf_P(0, PSTR(S_FMT " %i/%i"), GET_TEXT(MSG_PROBING_MESH), int(pt_index), int(abl_points)));
 
           measured_z = faux ? 0.001f * random(-100, 101) : probe.probe_at_point(probePos, raise_after, verbose_level);
@@ -687,7 +694,7 @@ G29_TYPE GcodeSuite::G29() {
       // Probe at 3 arbitrary points
 
       LOOP_L_N(i, 3) {
-        if (verbose_level) SERIAL_ECHOLNPAIR("Probing point ", int(i + 1), "/3.");
+        if (verbose_level) SERIAL_ECHOLNPAIR("Probing point ", i + 1, "/3.");
         TERN_(HAS_DISPLAY, ui.status_printf_P(0, PSTR(S_FMT " %i/3"), GET_TEXT(MSG_PROBING_MESH), int(i + 1)));
 
         // Retain the last probe position
@@ -791,7 +798,7 @@ G29_TYPE GcodeSuite::G29() {
         float min_diff = 999;
 
         auto print_topo_map = [&](PGM_P const title, const bool get_min) {
-          serialprintPGM(title);
+          SERIAL_ECHOPGM_P(title);
           for (int8_t yy = abl_grid_points.y - 1; yy >= 0; yy--) {
             LOOP_L_N(xx, abl_grid_points.x) {
               const int ind = indexIntoAB[xx][yy];
@@ -902,7 +909,7 @@ G29_TYPE GcodeSuite::G29() {
 
 #if ENABLED(PROBING_HEATERS_OFF)
   // If we're going to print then we must ensure we are back on temperature before we continue
-  if (queue.has_commands_queued() || planner.has_blocks_queued() || print_job_timer.isRunning()) {
+  if (respect_leveling_heatup_settings && TERN1(HAS_PROBE_SETTINGS, probe.settings.turn_heaters_off && probe.settings.stabilize_temperatures_after_probing) && (queue.has_commands_queued() || planner.has_blocks_queued() || print_job_timer.isRunning())) {
     SERIAL_ECHOLN("Waiting to heat-up again before continueing");
     ui.set_status("Waiting for heat-up...");
 

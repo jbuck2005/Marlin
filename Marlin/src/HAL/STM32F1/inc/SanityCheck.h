@@ -34,13 +34,13 @@
 #endif
 
 #if ENABLED(SERIAL_STATS_MAX_RX_QUEUED)
-  #error "SERIAL_STATS_MAX_RX_QUEUED is not supported on this platform."
+  #error "SERIAL_STATS_MAX_RX_QUEUED is not supported on the STM32F1 platform."
 #elif ENABLED(SERIAL_STATS_DROPPED_RX)
-  #error "SERIAL_STATS_DROPPED_RX is not supported on this platform."
+  #error "SERIAL_STATS_DROPPED_RX is not supported on the STM32F1 platform."
 #endif
 
 #if ENABLED(NEOPIXEL_LED)
-  #error "NEOPIXEL_LED (Adafruit NeoPixel) is not supported for HAL/STM32F1. Comment out this line to proceed at your own risk!"
+  //#warning "NEOPIXEL_LED (Adafruit NeoPixel) might not be supported for HAL/STM32F1. Proceed at your own risk!"
 #endif
 
 // Emergency Parser needs at least one serial with HardwareSerial or USBComposite.

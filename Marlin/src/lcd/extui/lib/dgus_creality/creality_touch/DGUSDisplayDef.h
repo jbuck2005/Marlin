@@ -69,25 +69,29 @@ enum DGUSLCD_Screens : uint8_t {
 
   DGUSLCD_SCREEN_POPUP = 63,           // NEW - does not exist in original display
   DGUSLCD_SCREEN_KILL = 64,            // NEW - does not exist in original display
+
+  DGUSLCD_SCREEN_PIDTUNE_CALIBRATION = 68,
+  DGUSLCD_SCREEN_ESTEPS_CALIBRATION = 69,
+
+  DGUSLCD_SCREEN_TUNEFWRETRACT = 70,
+
+  DGUSLCD_SCREEN_ESTEPS_CALIBRATION_RESULTS = 71,
+  DGUSLCD_SCREEN_LEVELING_SETTINGS = 72,
+
+  DGUSLCD_SCREEN_AXIS_SETTINGS_NAV = 73,
+  DGUSLCD_SCREEN_AXIS_SETTINGS_AXIS = 74,
+  DGUSLCD_SCREEN_AXIS_SETTINGS_TMC = 75,
+
+  DGUSLCD_SCREEN_ADV_MOV_SETTINGS = 76,
+  DGUSLCD_SCREEN_MISC_SETTINGS = 77,
+  DGUSLCD_SCREEN_MESH_VALIDATION = 78
 };
 
-// Display Memory layout used (T5UID)
-// Except system variables this is arbitrary, just to organize stuff....
-
-// 0x0000 .. 0x0FFF  -- System variables and reserved by the display
-// 0x1000 .. 0x1FFF  -- Variables to never change location, regardless of UI Version
-// 0x2000 .. 0x2FFF  -- Controls (VPs that will trigger some action)
-// 0x3000 .. 0x4FFF  -- Marlin Data to be displayed
-// 0x5000 ..         -- SPs (if we want to modify display elements, e.g change color or like) -- currently unused
-
-// As there is plenty of space (at least most displays have >8k RAM), we do not pack them too tight,
-// so that we can keep variables nicely together in the address space.
-
-// UI Version always on 0x1000...0x1002 so that the firmware can check this and bail out.
-// constexpr uint16_t VP_UI_VERSION_MAJOR = 0x1000;  // Major -- incremented when incompatible
-// constexpr uint16_t VP_UI_VERSION_MINOR = 0x1001;  // Minor -- incremented on new features, but compatible
-// constexpr uint16_t VP_UI_VERSION_PATCH = 0x1002;  // Patch -- fixed which do not change functionality.
-// constexpr uint16_t VP_UI_FLAVOUR       = 0x1010;  // lets reserve 16 bytes here to determine if UI is suitable for this Marlin. tbd.
+// Version checks
+constexpr uint16_t VP_UI_VERSION_MAJOR = 0xFFFA;
+constexpr uint16_t EXPECTED_UI_VERSION_MAJOR = 6;
+constexpr uint16_t VERSION_MISMATCH_BUZZ_AMOUNT = 5;
+constexpr uint16_t VERSION_MISMATCH_LED_FLASH_DELAY = 1000;
 
 #define VP_STARTPROGRESSBAR           0x1000
 
@@ -196,7 +200,6 @@ constexpr uint16_t VP_MUTE_TOGGLE = 0x2286;
 
 constexpr uint16_t VP_SCREEN_BACKLIGHT_STANDBY = 0x228D;
 
-
 // Material preheat settings
 constexpr uint16_t VP_PREHEAT_PLA_HOTEND_TEMP = 0x1102;
 constexpr uint16_t VP_PREHEAT_PLA_BED_TEMP = 0x1104;
@@ -204,27 +207,20 @@ constexpr uint16_t VP_PREHEAT_PLA_BED_TEMP = 0x1104;
 constexpr uint16_t VP_PREHEAT_ABS_HOTEND_TEMP = 0x1108;
 constexpr uint16_t VP_PREHEAT_ABS_BED_TEMP = 0x110a;
 
-// // Place for status messages.
-constexpr uint16_t VP_M117 = 0x21B3;
-constexpr uint8_t VP_M117_LEN = 40;
+// Place for status messages.
+
+// ... We have memory space for scrolling messages
+constexpr uint16_t VP_M117 = 0x3000 + (3 * 1);  // Text Variable Pointer. First three VP must be reserved [a VP is two bytes red.]. Text is saved after the 3rd VP and ended with 0x00 or 0x0F. 
+constexpr uint8_t VP_M117_LEN = 100;
+
+// ... And memory space for static (short) messages. Note this VPAddr is also the VP of the 5 beta and alpha 4 touch screens. 
+constexpr uint8_t M117_STATIC_DISPLAY_LEN = 26; // Fits "TFT flashed incorrectly v0" exactly
+constexpr uint16_t VP_M117_STATIC = 0x21B3;
+constexpr uint8_t VP_M117_STATIC_LEN = 70;
 
 // // Temperatures.
 constexpr uint16_t VP_T_E0_Is = 0x1036;  // 4 Byte Integer - HEAD_CURRENT_TEMP_VP
 constexpr uint16_t VP_T_E0_Set = 0x1034; // 2 Byte Integer - HEAD_SET_TEMP_VP
-// constexpr uint16_t VP_T_E1_Is = 0x3064;  // 4 Byte Integer
-
-// // reserved to support up to 6 Extruders:
-// //constexpr uint16_t VP_T_E1_Set = 0x3066; // 2 Byte Integer
-// //constexpr uint16_t VP_T_E2_Is = 0x3068;  // 4 Byte Integer
-// //constexpr uint16_t VP_T_E2_Set = 0x306A; // 2 Byte Integer
-// //constexpr uint16_t VP_T_E3_Is = 0x306C;  // 4 Byte Integer
-// //constexpr uint16_t VP_T_E3_Set = 0x306E; // 2 Byte Integer
-// //constexpr uint16_t VP_T_E4_Is = 0x3070;  // 4 Byte Integer
-// //constexpr uint16_t VP_T_E4_Set = 0x3072; // 2 Byte Integer
-// //constexpr uint16_t VP_T_E4_Is = 0x3074;  // 4 Byte Integer
-// //constexpr uint16_t VP_T_E4_Set = 0x3076; // 2 Byte Integer
-// //constexpr uint16_t VP_T_E5_Is = 0x3078;  // 4 Byte Integer
-// //constexpr uint16_t VP_T_E5_Set = 0x307A; // 2 Byte Integer
 
 constexpr uint16_t VP_T_Bed_Is = 0x103c;  // 4 Byte Integer - BED_SET_TEMP_VP
 constexpr uint16_t VP_T_Bed_Set = 0x103A; // 2 Byte Integer - BED_CURRENT_TEMP_VP
@@ -232,9 +228,6 @@ constexpr uint16_t VP_T_Bed_Set = 0x103A; // 2 Byte Integer - BED_CURRENT_TEMP_V
 constexpr uint16_t VP_Flowrate_E0 = 0x228A; // 2 Byte Integer
 
 constexpr uint16_t VP_Fan0_Percentage = 0x228F;  // 2 Byte Integer (0..100)
-// constexpr uint16_t VP_Fan1_Percentage = 0x33A2;  // 2 Byte Integer (0..100)
-// //constexpr uint16_t VP_Fan2_Percentage = 0x33A4;  // 2 Byte Integer (0..100)
-// //constexpr uint16_t VP_Fan3_Percentage = 0x33A6;  // 2 Byte Integer (0..100)
 
 constexpr uint16_t VP_Feedrate_Percentage = 0x1006; // 2 Byte Integer (0..100) - PRINT_SPEED_RATE_VP
 constexpr uint16_t VP_PrintProgress_Percentage = 0x1016; // 2 Byte Integer (0..100)
@@ -242,13 +235,15 @@ constexpr uint16_t VP_PrintProgress_Percentage = 0x1016; // 2 Byte Integer (0..1
 constexpr uint16_t VP_PrintTimeProgressBar = 0x100E;
 
 constexpr uint16_t VP_PrintTime = 0x21a0;
-constexpr uint16_t VP_PrintTime_LEN = 6;
+constexpr uint16_t VP_PrintTimeWithRemainingVisible = 0x2335;
+constexpr uint16_t VP_PrintTime_LEN = 19;
 
-// constexpr uint16_t VP_PrintAccTime = 0x3160;
-// constexpr uint16_t VP_PrintAccTime_LEN = 32;
+constexpr uint16_t VP_PrintTimeRemaining = 0x231f;
+constexpr uint16_t VP_PrintTimeRemaining_LEN = 21;
 
-// constexpr uint16_t VP_PrintsTotal = 0x3180;
-// constexpr uint16_t VP_PrintsTotal_LEN = 16;
+constexpr uint16_t VP_HideRemainingTime_Ico = 0x21b4;
+constexpr uint16_t ICON_REMAINING_VISIBLE = 26;
+constexpr uint16_t ICON_REMAINING_HIDDEN = 27;
 
 constexpr uint16_t VP_Z_OFFSET = 0x1026;
 
@@ -271,58 +266,18 @@ constexpr uint16_t VP_SD_Print_Filename = 0x2000; //
 constexpr uint16_t VP_ICON_OVERLAY_CLEAR = 10;
 constexpr uint16_t VP_ICON_OVERLAY_SELECTED = 6;
 
-// // Fan status
-// constexpr uint16_t VP_FAN0_STATUS = 0x3300;
-// constexpr uint16_t VP_FAN1_STATUS = 0x3302;
-// //constexpr uint16_t VP_FAN2_STATUS = 0x3304;
-// //constexpr uint16_t VP_FAN3_STATUS = 0x3306;
-
-// // Heater status
-// constexpr uint16_t VP_E0_STATUS = 0x3310;
-// //constexpr uint16_t VP_E1_STATUS = 0x3312;
-// //constexpr uint16_t VP_E2_STATUS = 0x3314;
-// //constexpr uint16_t VP_E3_STATUS = 0x3316;
-// //constexpr uint16_t VP_E4_STATUS = 0x3318;
-// //constexpr uint16_t VP_E5_STATUS = 0x331A;
-// constexpr uint16_t VP_BED_STATUS = 0x331C;
-
-// constexpr uint16_t VP_MOVE_OPTION = 0x3400;
-
 // // Step per mm
-constexpr uint16_t VP_X_STEP_PER_MM = 0x3600; // at the moment , 2 byte unsigned int , 0~1638.4
-// //constexpr uint16_t VP_X2_STEP_PER_MM = 0x3602;
+constexpr uint16_t VP_X_STEP_PER_MM = 0x3600;
 constexpr uint16_t VP_Y_STEP_PER_MM = 0x3604;
-// //constexpr uint16_t VP_Y2_STEP_PER_MM = 0x3606;
 constexpr uint16_t VP_Z_STEP_PER_MM = 0x3608;
-// //constexpr uint16_t VP_Z2_STEP_PER_MM = 0x360A;
 constexpr uint16_t VP_E0_STEP_PER_MM = 0x3610;
-// //constexpr uint16_t VP_E1_STEP_PER_MM = 0x3612;
-// //constexpr uint16_t VP_E2_STEP_PER_MM = 0x3614;
-// //constexpr uint16_t VP_E3_STEP_PER_MM = 0x3616;
-// //constexpr uint16_t VP_E4_STEP_PER_MM = 0x3618;
-// //constexpr uint16_t VP_E5_STEP_PER_MM = 0x361A;
-
 // // PIDs
-constexpr uint16_t VP_E0_PID_P = 0x3700; // at the moment , 2 byte unsigned int , 0~1638.4
+constexpr uint16_t VP_E0_PID_P = 0x3700;
 constexpr uint16_t VP_E0_PID_I = 0x3702;
 constexpr uint16_t VP_E0_PID_D = 0x3704;
 constexpr uint16_t VP_BED_PID_P = 0x3710;
 constexpr uint16_t VP_BED_PID_I = 0x3712;
 constexpr uint16_t VP_BED_PID_D = 0x3714;
-
-// // Wating screen status
-// constexpr uint16_t VP_WAITING_STATUS = 0x3800;
-
-// // SPs for certain variables...
-
-// // located at 0x5000 and up
-// // Not used yet!
-// // This can be used e.g to make controls / data display invisible
-// constexpr uint16_t SP_T_E0_Is = 0x5000;
-// constexpr uint16_t SP_T_E0_Set = 0x5010;
-// constexpr uint16_t SP_T_E1_Is = 0x5020;
-// constexpr uint16_t SP_T_Bed_Is = 0x5030;
-// constexpr uint16_t SP_T_Bed_Set = 0x5040;
 
 // Power loss recovery
 constexpr uint16_t VP_POWER_LOSS_RECOVERY = 0x105F;
@@ -346,24 +301,208 @@ constexpr uint16_t VP_BUTTON_HEATLOADSTARTKEY = 0x1056;
 // Additional stuff defined by Creality
 constexpr uint16_t VP_FAN_TOGGLE = 0x101E;
 constexpr uint16_t VP_LED_TOGGLE = 0x101F;
-constexpr uint16_t VP_STEPPERS = 0x1200;
-constexpr uint16_t VP_MESH_LEVEL_TEMP = 0x108A;
-constexpr uint16_t VP_MESH_LEVEL_STATUS = 0x108D;
+
+// Feed / retract
 constexpr uint16_t VP_FEED_AMOUNT = 0x1054;
 constexpr uint16_t VP_FEED_PROGRESS = 0x108e;
 
+// Axis settings
+constexpr uint16_t VP_AXIS_SETTINGS_NAV_BUTTON = 0x22D9;
+constexpr uint16_t AXIS_SETTINGS_NAV_BUTTON_VAL_X = 1;
+constexpr uint16_t AXIS_SETTINGS_NAV_BUTTON_VAL_Y = 2;
+constexpr uint16_t AXIS_SETTINGS_NAV_BUTTON_VAL_Z = 3;
+constexpr uint16_t AXIS_SETTINGS_NAV_BUTTON_VAL_E = 4;
+
+constexpr uint16_t VP_AXIS_SETTINGS_TITLE_ICON = 0x22DB;
+constexpr uint16_t ICON_AXIS_SETTINGS_TITLE_X = 20;
+constexpr uint16_t ICON_AXIS_SETTINGS_TITLE_Y = 21;
+constexpr uint16_t ICON_AXIS_SETTINGS_TITLE_Z = 22;
+constexpr uint16_t ICON_AXIS_SETTINGS_TITLE_E = 23;
+
+constexpr uint16_t VP_AXIS_SETTINGS_NAV_BACKBUTTON = 0x22DD;
+
+constexpr uint16_t VP_AXIS_SETTINGS_AXIS_STEPSMM = 0x22DF; // 2-byte
+constexpr uint16_t VP_AXIS_SETTINGS_AXIS_MAX_ACCEL = 0x22E1; // 4-byte (!)
+constexpr uint16_t VP_AXIS_SETTINGS_AXIS_JERK = 0x22E5; // 2-byte
+constexpr uint16_t VP_AXIS_SETTINGS_AXIS_FEEDRATE = 0x22E7; // 2-byte
+
+constexpr uint16_t VP_AXIS_SETTINGS_AXIS_TMCCURRENT = 0x22E9; // 2-byte
+
+constexpr uint16_t VP_AXIS_SETTINGS_AXIS_TMCSTEALTHCHOP_BUTTON = 0x22EB; // 2-byte
+constexpr uint16_t VP_AXIS_SETTINGS_AXIS_TMCSTEALTHCHOP_ICON = 0x22ED; // 2-byte
+constexpr uint16_t VP_AXIS_SETTINGS_AXIS_TMCHYBRIDTHRESHOLD = 0x22EF; // 4-byte (!)
+
+constexpr uint16_t VP_AXIS_TUNING_NAV_BUTTON = 0x22F5; 
+constexpr uint16_t VP_AXIS_TMC_NAV_BUTTON = 0x22F7; 
+
+constexpr uint16_t VP_AXIS_TMC_NAV_ICON = 0x22F3; // 2-byte
+constexpr uint16_t AXIS_TMC_NAV_ICON_SHOWING = 10;
+constexpr uint16_t AXIS_TMC_NAV_ICON_HIDING = 11;
+
+// ... Advanced movement settings
+constexpr uint16_t VP_MOV_NAV_BUTTON = 0x2305; 
+
+constexpr uint16_t VP_MOV_MINIMUM_SEGMENT_TIME = 0x22F9; // uint 2-byte
+constexpr uint16_t VP_MOV_MINIMUM_FEEDRATE = 0x22FB; // float 2-byte
+constexpr uint16_t VP_MOV_NORMAL_ACCELERATION = 0x22FD; // float 2-byte
+
+constexpr uint16_t VP_MOV_MINIMUM_TRAVEL_FEEDRATE = 0x2301; // float 2-byte
+constexpr uint16_t VP_MOV_MINIMUM_TRAVEL_ACCELERATION = 0x2303; // float 2-byte
+
+constexpr uint16_t VP_MOV_RETRACT_ACCELERATION = 0x2307; // float 4-byte
+
+// Misc settings
+constexpr uint16_t VP_MISCSETTINGS_NAV_BUTTON = 0x2311; 
+
+constexpr uint16_t VP_FILAMENTRUNOUT_SENSOR_TOGGLE_BUTTON = 0x2309;
+constexpr uint16_t VP_FILAMENTRUNOUT_SENSOR_TOGGLE_ICON = 0x230b;
+
+constexpr uint16_t VP_PLR_TOGGLE_BUTTON = 0x230d;
+constexpr uint16_t VP_PLR_TOGGLE_ICON = 0x230F;
+
+// Mesh leveling
+constexpr uint16_t VP_MESH_SCREEN_MESSAGE_ICON = 0x22cb;
+constexpr uint16_t MESH_SCREEN_MESSAGE_ICON_LEVELING = 5;
+constexpr uint16_t MESH_SCREEN_MESSAGE_ICON_VIEWING = 6;
+
+constexpr uint16_t VP_MESH_LEVEL_TEMP = 0x108A;
+constexpr uint16_t VP_MESH_LEVEL_STATUS = 0x108D;
+
+constexpr uint8_t DGUS_GRID_VISUALIZATION_START_ID = GRID_MAX_POINTS > (4*4) ? 30 : 1;
+
+static_assert(
+  (GRID_MAX_POINTS == 16 && DGUS_GRID_VISUALIZATION_START_ID == 1)||  // CR-6 SE
+  (GRID_MAX_POINTS == 49 && DGUS_GRID_VISUALIZATION_START_ID == 30) || // CR-6 MAX
+  (GRID_MAX_POINTS != 16 && GRID_MAX_POINTS != 49),                    // Custom Leveling
+  "Incorrect offset selected for leveling config"
+);
+static_assert(GRID_MAX_POINTS_X == GRID_MAX_POINTS_Y, "Assuming bed leveling points is square");
+
+
+constexpr uint16_t VP_MESH_LEVEL_X0_Y0 = 0x1350;
+constexpr uint16_t SP_MESH_LEVEL_X0_Y0 = 0x5000;
+
+constexpr uint16_t MESH_LEVEL_EDGE_MAX_POINTS = 4;
+
+constexpr uint16_t MESH_LEVEL_VP_SIZE = 0x4; // 4-byte native float
+constexpr uint16_t MESH_LEVEL_SP_SIZE = 0x10; // 0x10 distance
+
+constexpr uint16_t MESH_LEVEL_VP_EDGE_SIZE = MESH_LEVEL_VP_SIZE * MESH_LEVEL_EDGE_MAX_POINTS;
+constexpr uint16_t MESH_LEVEL_SP_EDGE_SIZE = MESH_LEVEL_SP_SIZE * MESH_LEVEL_EDGE_MAX_POINTS;
+
+constexpr uint16_t MESH_LEVEL_MAX_POINTS = MESH_LEVEL_EDGE_MAX_POINTS * MESH_LEVEL_EDGE_MAX_POINTS;
+
+// Mesh inputs
+constexpr uint16_t VP_MESH_INPUT_X0_Y0 = 0x2360;
+
+#define MESH_INPUT_SUPPORTED_X_SIZE 4
+#define MESH_INPUT_SUPPORTED_Y_SIZE 4
+#define MESH_INPUT_SUPPORTED_SIZE 16
+#define MESH_INPUT_DATA_SIZE 2 // 2 byte integer
+
+// Color table: https://stackoverflow.com/q/13720937/646215
+// Color picker: https://ee-programming-notepad.blogspot.com/2016/10/16-bit-color-generator-picker.html
+// Colors below were picked on bed leveling visualizer defaults
+
+constexpr uint16_t MESH_COLOR_BELOW_ZERO = 0x899B;   // Blue
+constexpr uint16_t MESH_COLOR_NEAR_ZERO = 0x1C80;    // Green
+constexpr uint16_t MESH_COLOR_ABOVE_ZERO = 0xB800;    // Purple
+constexpr uint16_t MESH_COLOR_NOT_MEASURED = 0xFFFF; // White (becomes invisible on white background)
+
+constexpr float MESH_NEAR_ZERO = 0.020;
+constexpr float MESH_UNSET_EPSILON = 0.001;
+
+// Mesh validation pattern
+constexpr uint16_t VP_MESHPATTERN_NOZZLE_TEMP = 0x2313;
+constexpr uint16_t VP_MESHPATTERN_BED_TEMP = 0x2315;
+
+constexpr uint16_t VP_MESHPATTERN_START_BUTTON = 0x2317;
+constexpr uint16_t VP_MESHPATTERN_BUTTON_ICON = 0x2319;
+
+constexpr uint16_t VP_MESHPATTERN_NAV_BUTTON = 0x231B;
+
+constexpr uint16_t MESHPATTERN_BUTTON_START = 24; // This icon does not exist, and will therefore not show
+constexpr uint16_t MESHPATTERN_BUTTON_CANCEL = 25;
+
+
 // Movement screen
 constexpr uint16_t VP_X_POSITION = 0x1048;
-constexpr uint16_t VP_X_POSITION_SP = 0x4000;
+constexpr uint16_t SP_X_POSITION = 0x4000;
 constexpr uint16_t VP_Y_POSITION = 0x104A;
-constexpr uint16_t VP_Y_POSITION_SP = 0x4030;
+constexpr uint16_t SP_Y_POSITION = 0x4030;
 constexpr uint16_t VP_Z_POSITION = 0x104C;
-constexpr uint16_t VP_Z_POSITION_SP = 0x4060;
+constexpr uint16_t SP_Z_POSITION = 0x4060;
 constexpr uint16_t VP_BUTTON_MOVEKEY = 0x1046;
+
+// Buttons
+constexpr uint16_t VP_ESTEP_NAV_BUTTON = 0x2291;
+constexpr uint16_t VP_PIDTUNE_NAV_BUTTON = 0x2293;
+constexpr uint16_t VP_GENERIC_BACK_BUTTON = 0x2295; // Generic button for popping back to the old display
+
+constexpr uint16_t GENERIC_BACK_BUTTON_NEED_SAVE = 0x1;
+
+// PID tuning
+constexpr uint16_t VP_PIDTUNE_TARGET_TEMP = 0x2297;
+constexpr uint16_t VP_PIDTUNE_CYCLES = 0x2299;
+constexpr uint16_t VP_PIDTUNE_START_BUTTON = 0x229B;
+
+// FWRetract
+constexpr uint16_t VP_FWRETRACT_NAV_BUTTON = 0x22AD;
+
+constexpr uint16_t VP_FWRETRACT_RETRACT_LENGTH = 0x22B1;
+constexpr uint16_t VP_FWRETRACT_RETRACT_FEEDRATE = 0x22B3;
+constexpr uint16_t VP_FWRETRACT_RETRACT_ZHOP = 0x22B5;
+
+constexpr uint16_t VP_FWRETRACT_RESTART_LENGTH = 0x22B7;
+constexpr uint16_t VP_FWRETRACT_RESTART_FEEDRATE = 0x22B9;
+
+constexpr uint16_t VP_FWRETRACT_TOGGLE_BUTTON = 0x22BB;
+constexpr uint16_t VP_FWRETRACT_TOGGLE_BUTTON_ICON = 0x22BD;
+constexpr uint16_t VP_FWRETRACT_INDICATOR_ICON = 0x22BF;
+
+// Other tuning
+constexpr uint16_t VP_LINEAR_ADVANCE_FACTOR = 0x22AF;
+
+// Leveling settings
+constexpr uint16_t VP_TOGGLE_PROBING_HEATERS_OFF_ONOFF_BUTTON = 0x22C1;
+constexpr uint16_t VP_TOGGLE_PROBING_HEATERS_OFF_ONOFF_ICON = 0x22C3;
+
+constexpr uint16_t VP_TOGGLE_PROBE_PREHEAT_HOTEND_TEMP = 0x22C5;
+constexpr uint16_t VP_TOGGLE_PROBE_PREHEAT_BED_TEMP = 0x22C7;
+
+constexpr uint16_t VP_TOGGLE_PROBE_SETTINGS_NAV_BUTTON = 0x22C9;
+
+constexpr uint16_t VP_TOGGLE_POST_PROBING_TEMPERATURE_STABILIZATION_ICON = 0x22CD;
+constexpr uint16_t VP_TOGGLE_POST_PROBING_TEMPERATURE_STABILIZATION_BUTTON = 0x22CF;
+
+constexpr uint16_t VP_LEVELING_FADE_HEIGHT = 0x231D;
+
+// E-steps calibration
+constexpr uint16_t VP_ESTEPS_CURRENT = 0x229d;
+constexpr uint16_t VP_ESTEPS_CALIBRATION_TEMP = 0x229f;
+constexpr uint16_t VP_ESTEPS_CALIBRATION_LENGTH = 0x22a1;
+constexpr uint16_t VP_ESTEPS_CALIBRATION_MARK_LENGTH = 0x22ab;
+constexpr uint16_t VP_ESTEPS_CALIBRATION_LEFTOVER_LENGTH = 0x22a3;
+constexpr uint16_t VP_ESTEPS_CALCULATED_ESTEPS = 0x22a5;
+constexpr uint16_t VP_ESTEPS_CALIBRATESTART_BUTTON = 0x22a7;
+constexpr uint16_t VP_ESTEPS_APPLY_BUTTON = 0x22a9;
+constexpr uint16_t VP_ESTEPS_BACK_BUTTON = 0x22D7;
 
 // Icons
 constexpr uint16_t ICON_TOGGLE_ON = 1;
 constexpr uint16_t ICON_TOGGLE_OFF = 2;
+
+constexpr uint16_t ICON_BACK_BUTTON_ENABLED = 7;
+constexpr uint16_t ICON_BACK_BUTTON_DISABLED = 8;
+
+constexpr uint16_t ICON_THROBBER_ANIM_OFF = 0;
+constexpr uint16_t ICON_THROBBER_ANIM_ON = 1;
+
+// Allow to visually disable/enable the back button
+constexpr uint16_t VP_BACK_BUTTON_STATE = 0x22D1;
+
+// Throbber animation
+constexpr uint16_t VP_BUSY_ANIM_STATE = 0x22D3;
 
 // Toggles
 constexpr uint16_t ICON_FAN_TOGGLE_ON = 1;
@@ -374,3 +513,18 @@ constexpr uint16_t ICON_SOUND_TOGGLE_ON = 5;
 constexpr uint16_t ICON_SOUND_TOGGLE_OFF = 6;
 constexpr uint16_t ICON_STANDBY_TOGGLE_ON = 7;
 constexpr uint16_t ICON_STANDBY_TOGGLE_OFF = 8;
+constexpr uint16_t ICON_FWRETRACT_AUTO_TOGGLE_ON = 9;
+constexpr uint16_t ICON_FWRETRACT_AUTO_TOGGLE_OFF = 10;
+constexpr uint16_t ICON_ACCURACY_TOGGLE_ON = 11;
+constexpr uint16_t ICON_ACCURACY_TOGGLE_OFF = 12;
+constexpr uint16_t ICON_POST_PROBE_TEMP_STABILIZATION_TOGGLE_ON = 13;
+constexpr uint16_t ICON_POST_PROBE_TEMP_STABILIZATION_TOGGLE_OFF = 14;
+
+constexpr uint16_t ICON_FWRETRACT_AUTO_DISENGAGED = 4; // This icon deliberately does not exist
+constexpr uint16_t ICON_FWRETRACT_AUTO_ENGAGED = 3;
+
+// Development helper
+constexpr uint16_t VP_DEVELOPMENT_HELPER_BUTTON = 0x22D5;
+constexpr uint16_t VP_DEVELOPMENT_HELPER_BUTTON_ACTION_FIRMWARE_UPDATE = 2;
+constexpr uint16_t VP_DEVELOPMENT_HELPER_BUTTON_ACTION_TO_MAIN_MENU = 4;
+constexpr uint16_t VP_DEVELOPMENT_HELPER_BUTTON_ACTION_RESET_DISPLAY = 8;

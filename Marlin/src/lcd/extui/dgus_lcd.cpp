@@ -21,21 +21,17 @@
  */
 
 /**
- * dgus_lcd.cpp
- *
- * DGUS implementation for Marlin by coldtobi, Feb-May 2019
+ * lcd/extui/dgus_lcd.cpp
  */
 
 #include "../../inc/MarlinConfigPre.h"
 
-#if HAS_DGUS_LCD && DISABLED(DGUS_LCD_UI_CREALITY_TOUCH)
+#if HAS_DGUS_LCD
 
 #include "ui_api.h"
 #include "lib/dgus/DGUSDisplay.h"
 #include "lib/dgus/DGUSDisplayDef.h"
 #include "lib/dgus/DGUSScreenHandler.h"
-
-extern const char NUL_STR[];
 
 namespace ExtUI {
 
@@ -127,10 +123,9 @@ namespace ExtUI {
   #if ENABLED(POWER_LOSS_RECOVERY)
     void onPowerLossResume() {
       // Called on resume from power-loss
-      ScreenHandler.GotoScreen(DGUSLCD_SCREEN_POWER_LOSS);
+      IF_DISABLED(DGUS_LCD_UI_MKS, ScreenHandler.GotoScreen(DGUSLCD_SCREEN_POWER_LOSS));
     }
   #endif
-
 
   #if HAS_PID_HEATING
     void onPidTuning(const result_t rst) {
@@ -155,6 +150,9 @@ namespace ExtUI {
 
   void onSteppersDisabled() {}
   void onSteppersEnabled()  {}
+
+  void onMeshValidationStarting() {}
+  void onMeshValidationFinished() {}
 }
 
 #endif // HAS_DGUS_LCD

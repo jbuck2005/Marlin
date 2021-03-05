@@ -23,7 +23,7 @@
 
 /* DGUS implementation written by Sebastiaan Dammann in 2020 for Marlin */
 
-#include "../dgus/DGUSVPVariable.h"
+#include "DGUSVPVariable.h"
 
 #include <stdint.h>
 
@@ -42,6 +42,9 @@ extern const struct VPMapping VPMap[];
 
 // List of VPs handled by Marlin / The Display.
 extern const struct DGUS_VP_Variable ListOfVP[];
+
+#define DWIN_DEFAULT_FILLER_CHAR ' '
+#define DWIN_SCROLLER_FILLER_CHAR 0x0
 
 #include "../../../../inc/MarlinConfig.h"
 

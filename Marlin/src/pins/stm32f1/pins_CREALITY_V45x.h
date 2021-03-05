@@ -24,9 +24,7 @@
  * Creality v4.5.2 and v4.5.3 (STM32F103RET6) board pin assignments
  */
 
-#if NOT_TARGET(__STM32F1__)
-  #error "Oops! Select an STM32F1 board in 'Tools > Board.'"
-#endif
+#include "env_validate.h"
 
 #define DEFAULT_MACHINE_NAME "Creality3D"
 
@@ -105,10 +103,15 @@
 #define NO_SD_HOST_DRIVE                          // SD is only seen by the printer
 
 #define SDIO_SUPPORT                              // Extra added by Creality
-#define SDIO_CLOCK                       6000000  // In original source code overridden by Creality in sdio.h
+#define SDIO_CLOCK                       4500000  // In original source code overridden by Creality in sdio.h
+
+#ifndef SDIO_READ_RETRIES
+#define SDIO_READ_RETRIES                  16
+#endif
 
 //
 // Misc. Functions
 //
 #define LED_PIN                             PA6
 #define CASE_LIGHT_PIN                      LED_PIN
+

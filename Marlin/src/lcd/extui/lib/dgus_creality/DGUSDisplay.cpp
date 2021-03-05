@@ -45,7 +45,7 @@
 #endif
 
 #include "DGUSDisplay.h"
-#include "../dgus/DGUSVPVariable.h"
+#include "DGUSVPVariable.h"
 #include "DGUSDisplayDef.h"
 
 // Preamble... 2 Bytes, usually 0x5A 0xA5, but configurable
@@ -97,7 +97,7 @@ void DGUSDisplay::ReadVariable(uint16_t adr) {
   dgusserial.write(static_cast<uint8_t>(1));
 }
 
-void DGUSDisplay::WriteVariable(uint16_t adr, const void* values, uint8_t valueslen, bool isstr) {
+void DGUSDisplay::WriteVariable(uint16_t adr, const void* values, uint8_t valueslen, bool isstr, char fillChar) {
   const char* myvalues = static_cast<const char*>(values);
   bool strend = !myvalues;
   WriteHeader(adr, DGUS_CMD_WRITEVAR, valueslen);
@@ -106,7 +106,7 @@ void DGUSDisplay::WriteVariable(uint16_t adr, const void* values, uint8_t values
     if (!strend) x = *myvalues++;
     if ((isstr && !x) || strend) {
       strend = true;
-      x = ' ';
+      x = fillChar;
     }
     dgusserial.write(x);
   }
@@ -118,8 +118,13 @@ void DGUSDisplay::WriteVariable(uint16_t adr, uint16_t value) {
 }
 
 void DGUSDisplay::WriteVariable(uint16_t adr, int16_t value) {
-  value = (value & 0xffU) << 8U | (value >> 8U);
-  WriteVariable(adr, static_cast<const void*>(&value), sizeof(uint16_t));
+  union { int16_t l; char lb[2]; } endian;
+  char tmp[2];
+  endian.l = value;
+  tmp[0] = endian.lb[1];
+  tmp[1] = endian.lb[0];
+
+  WriteVariable(adr, static_cast<const void*>(&tmp), sizeof(int16_t));
 }
 
 void DGUSDisplay::WriteVariable(uint16_t adr, uint8_t value) {
@@ -141,7 +146,20 @@ void DGUSDisplay::WriteVariable(uint16_t adr, long value) {
     WriteVariable(adr, static_cast<const void*>(&tmp), sizeof(long));
 }
 
-void DGUSDisplay::WriteVariablePGM(uint16_t adr, const void* values, uint8_t valueslen, bool isstr) {
+void DGUSDisplay::WriteVariable(uint16_t adr, float value) {
+    static_assert(sizeof(float) == 4);
+
+    union { float l; char lb[4]; } endian;
+    char tmp[4];
+    endian.l = value;
+    tmp[0] = endian.lb[3];
+    tmp[1] = endian.lb[2];
+    tmp[2] = endian.lb[1];
+    tmp[3] = endian.lb[0];
+    WriteVariable(adr, static_cast<const void*>(&tmp), sizeof(float));
+}
+
+void DGUSDisplay::WriteVariablePGM(uint16_t adr, const void* values, uint8_t valueslen, bool isstr, char fillChar) {
   const char* myvalues = static_cast<const char*>(values);
   bool strend = !myvalues;
   WriteHeader(adr, DGUS_CMD_WRITEVAR, valueslen);
@@ -150,7 +168,7 @@ void DGUSDisplay::WriteVariablePGM(uint16_t adr, const void* values, uint8_t val
     if (!strend) x = pgm_read_byte(myvalues++);
     if ((isstr && !x) || strend) {
       strend = true;
-      x = ' ';
+      x = fillChar;
     }
     dgusserial.write(x);
   }
@@ -158,18 +176,6 @@ void DGUSDisplay::WriteVariablePGM(uint16_t adr, const void* values, uint8_t val
 
 void DGUSDisplay::SetVariableDisplayColor(uint16_t sp, uint16_t color) {
   WriteVariable(sp + 0x03, color);
-}
-
-void DGUSDisplay::SetVariableAppendText(uint16_t sp, PGM_P appendText) {
-  // High byte is length, low byte is first char
-  if (!appendText) {
-    WriteVariable(sp + 0x07, static_cast<uint8_t>(0));
-    return;
-  }
-
-  uint8_t lengthFirstChar = strlen_P(appendText);// << 8;
-  WriteVariable(sp + 0x07, lengthFirstChar);
-  WriteVariablePGM(sp + 0x08, appendText, strlen_P(appendText));
 }
 
 void DGUSDisplay::ProcessRx() {
@@ -243,28 +249,18 @@ void DGUSDisplay::ProcessRx() {
         if (command == DGUS_CMD_READVAR) {
           const uint16_t vp = tmp[0] << 8 | tmp[1];
 
-          if (vp == 0x14 /*PIC_Now*/) {
-            const uint16_t screen_id = tmp[3] << 8 | tmp[4];
-
-            // A display was requested. If the screen didn't yet switch to that display, we won't give that value back, otherwise the code gets confused.
-            // The DWIN display mostly honours the PIC_SET requests from the firmware, so after a while we may want to nudge it to the correct screen
-            DEBUG_ECHOPAIR(" Got a response on the current screen: ", screen_id);
-            DEBUG_ECHOLNPAIR(" - however, we've requested screen ", displayRequest);
-            UNUSED(screen_id);
-          } else {
-            //const uint8_t dlen = tmp[2] << 1;  // Convert to Bytes. (Display works with words)
-            //DEBUG_ECHOPAIR(" vp=", vp, " dlen=", dlen);
-            DGUS_VP_Variable ramcopy;
-            DEBUG_ECHOLNPAIR("VP received: ", vp , " - val ", tmp[3]);
-            if (populate_VPVar(vp, &ramcopy)) {
-              if (ramcopy.set_by_display_handler)
-                ramcopy.set_by_display_handler(ramcopy, &tmp[3]);
-              else
-                DEBUG_ECHOLNPGM(" VPVar found, no handler.");
-            }
+          //const uint8_t dlen = tmp[2] << 1;  // Convert to Bytes. (Display works with words)
+          //DEBUG_ECHOPAIR(" vp=", vp, " dlen=", dlen);
+          DGUS_VP_Variable ramcopy;
+          DEBUG_ECHOLNPAIR("VP received: ", vp , " - val ", tmp[3]);
+          if (populate_VPVar(vp, &ramcopy)) {
+            if (ramcopy.set_by_display_handler)
+              ramcopy.set_by_display_handler(ramcopy, &tmp[3]);
             else
-              DEBUG_ECHOLNPAIR(" VPVar not found:", vp);
+              DEBUG_ECHOLNPGM(" VPVar found, no handler.");
           }
+          else
+            DEBUG_ECHOLNPAIR(" VPVar not found:", vp);
 
           rx_datagram_state = DGUS_IDLE;
           break;

@@ -29,12 +29,28 @@
 #include "../DGUSDisplayDef.h"
 #include "../DGUSDisplay.h"
 #include "../DGUSScreenHandler.h"
+#include "../creality_touch/AxisSettingsHandler.h"
+#include "../creality_touch/EstepsHandler.h"
+#include "../creality_touch/PIDHandler.h"
+#include "../creality_touch/MeshValidationHandler.h"
 
 #include "../../../../../module/temperature.h"
 #include "../../../../../module/motion.h"
 #include "../../../../../module/planner.h"
 
 #include "../../../../../feature/caselight.h"
+
+#if ENABLED(FWRETRACT)
+  #include "../../../../../feature/fwretract.h"
+#endif
+
+#if ENABLED(POWER_LOSS_RECOVERY)
+  #include "../../../../../feature/powerloss.h"
+#endif
+
+#if ENABLED(FILAMENT_RUNOUT_SENSOR)
+#include "../../../../../feature/runout.h"
+#endif
 
 #include "../../../ui_api.h"
 #include "../../../../marlinui.h"
@@ -49,44 +65,44 @@ using namespace ExtUI;
 
 const char MarlinVersion[] PROGMEM = SHORT_BUILD_VERSION;
 
+// ----- Common var lists
+#if HOTENDS >= 1
+#define VPList_HeatHotend VP_T_E0_Is, VP_T_E0_Set,
+#else
+#define VPList_HeatHotend
+#endif
+
+#if HAS_HEATED_BED
+#define VPList_HeatBed  VP_T_Bed_Is, VP_T_Bed_Set,
+#else
+#define VPList_HeatBed
+#endif
+
+#define VPList_Common VP_BACK_BUTTON_STATE
+#define VPList_CommonWithStatus VPList_HeatHotend VPList_HeatBed VP_Z_OFFSET, VP_Feedrate_Percentage, VP_BACK_BUTTON_STATE
+#define VPList_CommonWithHeatOnly VPList_HeatHotend VPList_HeatBed VP_BACK_BUTTON_STATE
+
 // ----- Which variables to auto-update on which screens
 const uint16_t VPList_None[] PROGMEM = {
+  VPList_Common,
+
   0x0000
 };
 
 const uint16_t VPList_DialogStop[] PROGMEM = {
+  VPList_Common,
+
   0x0000
 };
 
 const uint16_t VPList_Main[] PROGMEM = {
-  #if HOTENDS >= 1
-    VP_T_E0_Is, VP_T_E0_Set,// VP_E0_STATUS,
-  #endif
-  #if HAS_HEATED_BED
-    VP_T_Bed_Is, VP_T_Bed_Set,// VP_BED_STATUS,
-  #endif
-  VP_Z_OFFSET,
-  //VP_Fan0_Percentage,
-  VP_Feedrate_Percentage,
-  #if ENABLED(LCD_SET_PROGRESS_MANUALLY)
-    VP_PrintProgress_Percentage,
-  #endif
+  VPList_CommonWithStatus,
+
   0x0000
 };
 
 const uint16_t VPList_SDFileList[] PROGMEM = {
-  #if HOTENDS >= 1
-    VP_T_E0_Is, VP_T_E0_Set,// VP_E0_STATUS,
-  #endif
-  #if HAS_HEATED_BED
-    VP_T_Bed_Is, VP_T_Bed_Set,// VP_BED_STATUS,
-  #endif
-  VP_Z_OFFSET,
-  //VP_Fan0_Percentage,
-  VP_Feedrate_Percentage,
-  #if ENABLED(LCD_SET_PROGRESS_MANUALLY)
-    VP_PrintProgress_Percentage,
-  #endif
+  VPList_CommonWithStatus,
 
   VP_SD_FileName0,
   VP_SD_FileName1,
@@ -99,18 +115,7 @@ const uint16_t VPList_SDFileList[] PROGMEM = {
 };
 
 const uint16_t VPList_Control[] PROGMEM = {
-  #if HOTENDS >= 1
-    VP_T_E0_Is, VP_T_E0_Set,// VP_E0_STATUS,
-  #endif
-  #if HAS_HEATED_BED
-    VP_T_Bed_Is, VP_T_Bed_Set,// VP_BED_STATUS,
-  #endif
-  VP_Z_OFFSET,
-  //VP_Fan0_Percentage,
-  VP_Feedrate_Percentage,
-  #if ENABLED(LCD_SET_PROGRESS_MANUALLY)
-    VP_PrintProgress_Percentage,
-  #endif
+  VPList_CommonWithStatus,
 
   VP_LED_TOGGLE,
   VP_MUTE_ICON,
@@ -121,15 +126,7 @@ const uint16_t VPList_Control[] PROGMEM = {
 };
 
 const uint16_t VPList_Feed[] PROGMEM = {
-  #if HOTENDS >= 1
-    VP_T_E0_Is, VP_T_E0_Set,// VP_E0_STATUS,
-  #endif
-  #if HAS_HEATED_BED
-    VP_T_Bed_Is, VP_T_Bed_Set,// VP_BED_STATUS,
-  #endif
-  VP_Z_OFFSET,
-  //VP_Fan0_Percentage,
-  VP_Feedrate_Percentage,
+  VPList_CommonWithStatus,
 
   VP_FEED_AMOUNT,
 
@@ -137,18 +134,7 @@ const uint16_t VPList_Feed[] PROGMEM = {
 };
 
 const uint16_t VPList_Temp[] PROGMEM = {
-  #if HOTENDS >= 1
-    VP_T_E0_Is, VP_T_E0_Set,// VP_E0_STATUS,
-  #endif
-  #if HAS_HEATED_BED
-    VP_T_Bed_Is, VP_T_Bed_Set,// VP_BED_STATUS,
-  #endif
-  VP_Z_OFFSET,
-  //VP_Fan0_Percentage,
-  VP_Feedrate_Percentage,
-  #if ENABLED(LCD_SET_PROGRESS_MANUALLY)
-    VP_PrintProgress_Percentage,
-  #endif
+  VPList_CommonWithStatus,
 
   VP_FAN_TOGGLE,
 
@@ -157,15 +143,7 @@ const uint16_t VPList_Temp[] PROGMEM = {
 
 
 const uint16_t VPList_PreheatPLASettings[] PROGMEM = {
-  #if HOTENDS >= 1
-    VP_T_E0_Is, VP_T_E0_Set,// VP_E0_STATUS,
-  #endif
-  #if HAS_HEATED_BED
-    VP_T_Bed_Is, VP_T_Bed_Set,// VP_BED_STATUS,
-  #endif
-  VP_Z_OFFSET,
-  //VP_Fan0_Percentage,
-  VP_Feedrate_Percentage,
+  VPList_CommonWithStatus,
 
   VP_PREHEAT_PLA_HOTEND_TEMP,
   VP_PREHEAT_PLA_BED_TEMP,
@@ -174,15 +152,7 @@ const uint16_t VPList_PreheatPLASettings[] PROGMEM = {
 };
 
 const uint16_t VPList_PreheatABSSettings[] PROGMEM = {
-  #if HOTENDS >= 1
-    VP_T_E0_Is, VP_T_E0_Set,// VP_E0_STATUS,
-  #endif
-  #if HAS_HEATED_BED
-    VP_T_Bed_Is, VP_T_Bed_Set,// VP_BED_STATUS,
-  #endif
-  VP_Z_OFFSET,
-  //VP_Fan0_Percentage,
-  VP_Feedrate_Percentage,
+  VPList_CommonWithStatus,
 
   VP_PREHEAT_ABS_HOTEND_TEMP,
   VP_PREHEAT_ABS_BED_TEMP,
@@ -192,12 +162,7 @@ const uint16_t VPList_PreheatABSSettings[] PROGMEM = {
 
 
 const uint16_t VPList_PrintPausingError[] PROGMEM = {
-  #if HOTENDS >= 1
-    VP_T_E0_Is, VP_T_E0_Set,// VP_E0_STATUS,
-  #endif
-  #if HAS_HEATED_BED
-    VP_T_Bed_Is, VP_T_Bed_Set,// VP_BED_STATUS,
-  #endif
+  VPList_CommonWithStatus,
 
   VP_X_POSITION,
   VP_Y_POSITION,
@@ -209,45 +174,36 @@ const uint16_t VPList_PrintPausingError[] PROGMEM = {
   VP_PrintProgress_Percentage,
   VP_PrintTimeProgressBar,
   VP_PrintTime,
+  VP_PrintTimeWithRemainingVisible,
+  VP_PrintTimeRemaining,
+  VP_LINEAR_ADVANCE_FACTOR,
 
   0x0000
 };
 
 const uint16_t VPList_PrintScreen[] PROGMEM = {
-  VP_PrintTime,
-
-  #if HOTENDS >= 1
-    VP_T_E0_Is, VP_T_E0_Set,// VP_E0_STATUS,
-  #endif
-  #if HAS_HEATED_BED
-    VP_T_Bed_Is, VP_T_Bed_Set,// VP_BED_STATUS,
-  #endif
+  VPList_CommonWithStatus,
 
   VP_X_POSITION, VP_Y_POSITION, VP_Z_POSITION,
-  VP_X_POSITION_SP, VP_Y_POSITION_SP, VP_Z_POSITION_SP,
+  SP_X_POSITION, SP_Y_POSITION, SP_Z_POSITION,
 
-  VP_Z_OFFSET,
   VP_Flowrate_E0,
   VP_Fan0_Percentage,
-  VP_Feedrate_Percentage,
 
   VP_PrintProgress_Percentage,
   VP_PrintTimeProgressBar,
   VP_PrintTime,
+  VP_PrintTimeWithRemainingVisible,
+  VP_PrintTimeRemaining,
+  VP_LINEAR_ADVANCE_FACTOR,
+
+  VP_FWRETRACT_INDICATOR_ICON,
 
   0x0000
 };
 
 const uint16_t VPList_Leveling[] PROGMEM = {
-  #if HOTENDS >= 1
-    VP_T_E0_Is, VP_T_E0_Set,// VP_E0_STATUS,
-  #endif
-  #if HAS_HEATED_BED
-    VP_T_Bed_Is, VP_T_Bed_Set,// VP_BED_STATUS,
-  #endif
-  VP_Z_OFFSET,
-  //VP_Fan0_Percentage,
-  VP_Feedrate_Percentage,
+  VPList_CommonWithStatus,
 
   VP_MESH_LEVEL_TEMP,
 
@@ -255,71 +211,39 @@ const uint16_t VPList_Leveling[] PROGMEM = {
 };
 
 const uint16_t VPList_ZOffsetLevel[] PROGMEM = {
-  #if HOTENDS >= 1
-    VP_T_E0_Is, VP_T_E0_Set,// VP_E0_STATUS,
-  #endif
-  #if HAS_HEATED_BED
-    VP_T_Bed_Is, VP_T_Bed_Set,// VP_BED_STATUS,
-  #endif
-  VP_Z_OFFSET,
-  //VP_Fan0_Percentage,
-  VP_Feedrate_Percentage,
+  VPList_CommonWithStatus,
 
   0x0000
 };
 
 const uint16_t VPList_TuneScreen[] PROGMEM = {
+  VPList_CommonWithStatus,
+
   VP_PrintTime,
 
   VP_Flowrate_E0,
-
-  #if HOTENDS >= 1
-    VP_T_E0_Is, VP_T_E0_Set,// VP_E0_STATUS,
-  #endif
-  #if HAS_HEATED_BED
-    VP_T_Bed_Is, VP_T_Bed_Set,// VP_BED_STATUS,
-  #endif
-  VP_Z_OFFSET,
-  //VP_Fan0_Percentage,
-  VP_Feedrate_Percentage,
 
   VP_LED_TOGGLE,
   VP_FAN_TOGGLE,
   VP_Fan0_Percentage,
 
+  VP_LINEAR_ADVANCE_FACTOR,
+
   0x0000
 };
 
 const uint16_t VPList_Prepare[] PROGMEM = {
+  VPList_CommonWithStatus,
+
   VP_PrintTime,
-
-  #if HOTENDS >= 1
-    VP_T_E0_Is, VP_T_E0_Set,// VP_E0_STATUS,
-  #endif
-  #if HAS_HEATED_BED
-    VP_T_Bed_Is, VP_T_Bed_Set,// VP_BED_STATUS,
-  #endif
-  VP_Z_OFFSET,
-  //VP_Fan0_Percentage,
-  VP_Feedrate_Percentage,
-
-  VP_STEPPERS,
 
   0x0000
 };
 
 const uint16_t VPList_Info[] PROGMEM = {
-  VP_PrintTime,
+  VPList_CommonWithStatus,
 
-  #if HOTENDS >= 1
-    VP_T_E0_Is, VP_T_E0_Set,// VP_E0_STATUS,
-  #endif
-  #if HAS_HEATED_BED
-    VP_T_Bed_Is, VP_T_Bed_Set,// VP_BED_STATUS,
-  #endif
-  VP_Z_OFFSET,
-  //VP_Fan0_Percentage,
-  VP_Feedrate_Percentage,
+  VP_PrintTime,
 
   VP_PRINTER_BEDSIZE,
   VP_MARLIN_WEBSITE,
@@ -328,22 +252,119 @@ const uint16_t VPList_Info[] PROGMEM = {
   0x0000
 };
 
-// Toggle button handler
-void DGUSCrealityDisplay_HandleToggleButton(DGUS_VP_Variable &var, void *val_ptr) {
-  switch (*(uint16_t*)var.memadr) {
-    case ICON_TOGGLE_ON:
-      *((bool*)var.memadr) = true;
-      break;
+const uint16_t VPList_EstepsCalibration[] PROGMEM = {
+  VPList_CommonWithHeatOnly,
 
-    case ICON_TOGGLE_OFF:
-      *((bool*)var.memadr) = true;
-      break;
-  }
-}
+  VP_ESTEPS_CURRENT,
+  VP_ESTEPS_CALIBRATION_TEMP,
+  VP_ESTEPS_CALIBRATION_LENGTH,
+  VP_ESTEPS_CALIBRATION_LEFTOVER_LENGTH,
+  VP_ESTEPS_CALIBRATION_MARK_LENGTH,
+  VP_ESTEPS_CALCULATED_ESTEPS,
 
-void DGUSCrealityDisplay_SendToggleButton(DGUS_VP_Variable &var) {
-  dgusdisplay.WriteVariable(var.VP, *(bool*)var.memadr ? ICON_TOGGLE_ON : ICON_TOGGLE_OFF);
-}
+  0x0000
+};
+
+const uint16_t VPList_PidTune[] PROGMEM = {
+  VPList_CommonWithHeatOnly,
+
+  VP_PIDTUNE_TARGET_TEMP,
+  VP_PIDTUNE_CYCLES,
+
+  0x0000
+};
+
+const uint16_t VPList_FWRetractTune[] PROGMEM = {
+  VPList_CommonWithStatus,
+
+  VP_FWRETRACT_RETRACT_LENGTH,
+  VP_FWRETRACT_RETRACT_FEEDRATE,
+  VP_FWRETRACT_RETRACT_ZHOP,
+  VP_FWRETRACT_RESTART_LENGTH,
+  VP_FWRETRACT_RESTART_FEEDRATE,
+
+  VP_FWRETRACT_TOGGLE_BUTTON_ICON,
+
+  0x0000
+};
+
+const uint16_t VPList_LevelingSettings[] PROGMEM = {
+  VPList_CommonWithStatus,
+
+  VP_TOGGLE_PROBING_HEATERS_OFF_ONOFF_ICON,
+  VP_TOGGLE_PROBE_PREHEAT_HOTEND_TEMP,
+  VP_TOGGLE_PROBE_PREHEAT_BED_TEMP,
+  VP_TOGGLE_POST_PROBING_TEMPERATURE_STABILIZATION_ICON,
+  VP_LEVELING_FADE_HEIGHT,
+
+  0x0000
+};
+
+const uint16_t VPList_AxisSettingsNav[] PROGMEM = {
+  VPList_CommonWithStatus,
+
+  0x0000
+};
+
+const uint16_t VPList_AxisSettingsAxis[] PROGMEM = {
+  VPList_CommonWithHeatOnly,
+
+  VP_AXIS_SETTINGS_TITLE_ICON,
+
+  VP_AXIS_SETTINGS_AXIS_STEPSMM,
+  VP_AXIS_SETTINGS_AXIS_MAX_ACCEL,
+  VP_AXIS_SETTINGS_AXIS_JERK,
+  VP_AXIS_SETTINGS_AXIS_FEEDRATE,
+
+  VP_AXIS_TMC_NAV_ICON,
+
+  0x0000
+};
+
+const uint16_t VPList_AxisSettingsTMC[] PROGMEM = {
+  VPList_CommonWithHeatOnly,
+
+  VP_AXIS_SETTINGS_AXIS_TMCCURRENT,
+  VP_AXIS_SETTINGS_AXIS_TMCSTEALTHCHOP_ICON,
+  VP_AXIS_SETTINGS_AXIS_TMCHYBRIDTHRESHOLD,
+
+  0x0000
+};
+
+const uint16_t VPList_AdvMovementSettings[] PROGMEM = {
+  VPList_CommonWithHeatOnly,
+
+  VP_MOV_MINIMUM_SEGMENT_TIME,
+  VP_MOV_MINIMUM_FEEDRATE,
+  VP_MOV_NORMAL_ACCELERATION,
+  VP_MOV_RETRACT_ACCELERATION,
+
+  VP_MOV_MINIMUM_TRAVEL_FEEDRATE,
+  VP_MOV_MINIMUM_TRAVEL_ACCELERATION, 
+
+  0x0000
+};
+
+const uint16_t VPList_MiscSettings[] PROGMEM = {
+  VPList_CommonWithHeatOnly,
+
+  VP_FILAMENTRUNOUT_SENSOR_TOGGLE_ICON,
+
+  VP_PLR_TOGGLE_ICON,
+
+  0x0000
+};
+
+const uint16_t VPList_MeshValidation[] PROGMEM = {
+  VPList_CommonWithHeatOnly,
+
+  VP_MESHPATTERN_NOZZLE_TEMP,
+  VP_MESHPATTERN_BED_TEMP,
+
+  VP_MESHPATTERN_BUTTON_ICON,
+
+  0x0000
+};
 
 // -- Mapping from screen to variable list
 const struct VPMapping VPMap[] PROGMEM = {
@@ -392,6 +413,21 @@ const struct VPMapping VPMap[] PROGMEM = {
   { DGUSLCD_SCREEN_CONFIRM, VPList_None },
   { DGUSLCD_SCREEN_POPUP, VPList_None },
 
+  { DGUSLCD_SCREEN_ESTEPS_CALIBRATION, VPList_EstepsCalibration },
+  { DGUSLCD_SCREEN_PIDTUNE_CALIBRATION, VPList_PidTune },
+
+  { DGUSLCD_SCREEN_TUNEFWRETRACT, VPList_FWRetractTune },
+
+  { DGUSLCD_SCREEN_ESTEPS_CALIBRATION_RESULTS, VPList_EstepsCalibration },
+  { DGUSLCD_SCREEN_LEVELING_SETTINGS, VPList_LevelingSettings },
+
+  { DGUSLCD_SCREEN_AXIS_SETTINGS_NAV, VPList_AxisSettingsNav },
+  { DGUSLCD_SCREEN_AXIS_SETTINGS_AXIS , VPList_AxisSettingsAxis },
+  { DGUSLCD_SCREEN_AXIS_SETTINGS_TMC, VPList_AxisSettingsTMC },
+  { DGUSLCD_SCREEN_ADV_MOV_SETTINGS, VPList_AdvMovementSettings },
+
+  { DGUSLCD_SCREEN_MISC_SETTINGS, VPList_MiscSettings },
+  { DGUSLCD_SCREEN_MESH_VALIDATION, VPList_MeshValidation },
 
   { 0 , nullptr } // List is terminated with an nullptr as table entry.
 };
@@ -405,7 +441,11 @@ const struct VPMapping VPMap[] PROGMEM = {
   .set_by_display_handler = RXFPTR, .send_to_display_handler = TXFPTR }
 
 const struct DGUS_VP_Variable ListOfVP[] PROGMEM = {
-  // TODO:
+  // Back button state
+  VPHELPER(VP_BACK_BUTTON_STATE, nullptr, nullptr, ScreenHandler.SendBusyState),
+
+  // Screen version
+  VPHELPER(VP_UI_VERSION_MAJOR, nullptr, ScreenHandler.HandleScreenVersion, nullptr),
 
   #if HOTENDS >= 1
     VPHELPER(VP_Flowrate_E0, &planner.flow_percentage[ExtUI::extruder_t::E0], ScreenHandler.HandleFlowRateChanged, &ScreenHandler.DGUSLCD_SendWordValueToDisplay),
@@ -419,13 +459,93 @@ const struct DGUS_VP_Variable ListOfVP[] PROGMEM = {
   #endif
 
   VPHELPER(VP_MESH_LEVEL_TEMP, &thermalManager.temp_hotend[0].target, nullptr, &ScreenHandler.DGUSLCD_SendWordValueToDisplay),
-  VPHELPER(VP_MESH_LEVEL_STATUS, nullptr, nullptr, nullptr),
 
   // Feedrate
   VPHELPER(VP_Feedrate_Percentage, &feedrate_percentage, ScreenHandler.DGUSLCD_SetValueDirectly<int16_t>, &ScreenHandler.DGUSLCD_SendWordValueToDisplay),
 
   VPHELPER(VP_PrintProgress_Percentage, nullptr, nullptr, ScreenHandler.DGUSLCD_SendPrintProgressToDisplay),
   VPHELPER(VP_PrintTimeProgressBar, nullptr, nullptr, ScreenHandler.DGUSLCD_SendPrintProgressToDisplay),
+
+  // Calibration
+  // ... e-steps
+  VPHELPER(VP_ESTEPS_CURRENT, &EstepsHandler::set_esteps, ScreenHandler.DGUSLCD_SetFloatAsIntFromDisplay<1>, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
+  VPHELPER(VP_ESTEPS_CALIBRATION_TEMP, &EstepsHandler::calibration_temperature, ScreenHandler.DGUSLCD_SetValueDirectly<uint16_t>, ScreenHandler.DGUSLCD_SendWordValueToDisplay),
+  VPHELPER(VP_ESTEPS_CALIBRATION_LENGTH, &EstepsHandler::filament_to_extrude, ScreenHandler.DGUSLCD_SetFloatAsIntFromDisplay<1>, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
+  VPHELPER(VP_ESTEPS_CALIBRATION_MARK_LENGTH, &EstepsHandler::mark_filament_mm, ScreenHandler.DGUSLCD_SetFloatAsIntFromDisplay<1>, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
+  VPHELPER(VP_ESTEPS_CALIBRATION_LEFTOVER_LENGTH, &EstepsHandler::remaining_filament, EstepsHandler::HandleRemainingFilament, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
+  VPHELPER(VP_ESTEPS_CALCULATED_ESTEPS, &EstepsHandler::calculated_esteps, ScreenHandler.DGUSLCD_SetFloatAsIntFromDisplay<1>, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
+
+  VPHELPER(VP_ESTEPS_CALIBRATESTART_BUTTON, nullptr, EstepsHandler::HandleStartButton, nullptr),
+  VPHELPER(VP_ESTEPS_APPLY_BUTTON, nullptr, EstepsHandler::HandleApplyButton, nullptr),
+  VPHELPER(VP_ESTEPS_BACK_BUTTON, nullptr, EstepsHandler::HandleBackButton, nullptr),
+
+  VPHELPER(VP_ESTEP_NAV_BUTTON, nullptr, (ScreenHandler.DGUSLCD_NavigateToPage<DGUSLCD_SCREEN_ESTEPS_CALIBRATION, EstepsHandler>), nullptr),
+
+  // ... PID
+  VPHELPER(VP_PIDTUNE_TARGET_TEMP, &PIDHandler::calibration_temperature, ScreenHandler.DGUSLCD_SetValueDirectly<uint16_t>, ScreenHandler.DGUSLCD_SendWordValueToDisplay),
+  VPHELPER(VP_PIDTUNE_CYCLES, &PIDHandler::cycles, ScreenHandler.DGUSLCD_SetValueDirectly<uint16_t>, ScreenHandler.DGUSLCD_SendWordValueToDisplay),
+  VPHELPER(VP_PIDTUNE_START_BUTTON, nullptr, PIDHandler::HandleStartButton, nullptr),
+
+  VPHELPER(VP_PIDTUNE_NAV_BUTTON, nullptr, (ScreenHandler.DGUSLCD_NavigateToPage<DGUSLCD_SCREEN_PIDTUNE_CALIBRATION, PIDHandler>), nullptr),
+
+  VPHELPER(VP_GENERIC_BACK_BUTTON, nullptr, ScreenHandler.OnBackButton, nullptr),
+
+  // ... Mesh validation
+  VPHELPER(VP_MESHPATTERN_NOZZLE_TEMP, &MeshValidationHandler::nozzle_temperature, MeshValidationHandler::HandleTemperature, ScreenHandler.DGUSLCD_SendWordValueToDisplay),
+  VPHELPER(VP_MESHPATTERN_BED_TEMP, &MeshValidationHandler::bed_temperature, MeshValidationHandler::HandleTemperature, ScreenHandler.DGUSLCD_SendWordValueToDisplay),
+
+  VPHELPER(VP_MESHPATTERN_BUTTON_ICON, &MeshValidationHandler::is_running,  nullptr, (ScreenHandler.DGUSLCD_SendIconValue<MESHPATTERN_BUTTON_CANCEL, MESHPATTERN_BUTTON_START>)),
+
+  VPHELPER(VP_MESHPATTERN_START_BUTTON, nullptr, MeshValidationHandler::HandleStartOrCancelButton, nullptr),
+  VPHELPER(VP_MESHPATTERN_NAV_BUTTON, nullptr, (ScreenHandler.DGUSLCD_NavigateToPage<DGUSLCD_SCREEN_MESH_VALIDATION, MeshValidationHandler>), nullptr),
+
+
+  // Axis settings
+  VPHELPER(VP_AXIS_SETTINGS_NAV_BUTTON, nullptr, AxisSettingsHandler::HandleNavigation, nullptr),
+  VPHELPER(VP_AXIS_SETTINGS_TITLE_ICON, &AxisSettingsHandler::axis_settings_title_icon, nullptr, ScreenHandler.DGUSLCD_SendWordValueToDisplay),
+
+  VPHELPER(VP_AXIS_SETTINGS_AXIS_STEPSMM, &AxisSettingsHandler::axis_steps_mm, ScreenHandler.DGUSLCD_SetFloatAsIntFromDisplay<1>, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
+  VPHELPER(VP_AXIS_SETTINGS_AXIS_MAX_ACCEL, &AxisSettingsHandler::max_acceleration_mm_per_s2, ScreenHandler.DGUSLCD_SetValueDirectly<uint16_t>, ScreenHandler.DGUSLCD_SendWordValueToDisplay),
+  
+  VPHELPER(VP_AXIS_SETTINGS_AXIS_JERK, &AxisSettingsHandler::jerk, ScreenHandler.DGUSLCD_SetFloatAsIntFromDisplay<1>, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
+  VPHELPER(VP_AXIS_SETTINGS_AXIS_FEEDRATE, &AxisSettingsHandler::max_feedrate, ScreenHandler.DGUSLCD_SetFloatAsIntFromDisplay<1>, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
+
+  VPHELPER(VP_AXIS_SETTINGS_AXIS_TMCCURRENT, &AxisSettingsHandler::tmc_current, ScreenHandler.DGUSLCD_SetValueDirectly<uint16_t>, ScreenHandler.DGUSLCD_SendWordValueToDisplay),
+  VPHELPER(VP_AXIS_SETTINGS_AXIS_TMCSTEALTHCHOP_BUTTON, &AxisSettingsHandler::stealthchop, ScreenHandler.DGUSLCD_ToggleBoolean, nullptr),
+  VPHELPER(VP_AXIS_SETTINGS_AXIS_TMCSTEALTHCHOP_ICON, &AxisSettingsHandler::stealthchop, nullptr, (ScreenHandler.DGUSLCD_SendIconValue<ICON_TOGGLE_ON, ICON_TOGGLE_OFF>)),
+  VPHELPER(VP_AXIS_SETTINGS_AXIS_TMCHYBRIDTHRESHOLD, &AxisSettingsHandler::hybrid_threshold, ScreenHandler.DGUSLCD_ReceiveULongFromDisplay, ScreenHandler.DGUSLCD_SendULongToDisplay),
+  
+  VPHELPER(VP_AXIS_TMC_NAV_ICON, &AxisSettingsHandler::has_tmc_settings,  nullptr, (ScreenHandler.DGUSLCD_SendIconValue<AXIS_TMC_NAV_ICON_SHOWING, AXIS_TMC_NAV_ICON_HIDING>)),
+
+  VPHELPER(VP_AXIS_SETTINGS_NAV_BACKBUTTON, nullptr, AxisSettingsHandler::HandleBackNavigation, nullptr),
+
+  VPHELPER(VP_AXIS_TUNING_NAV_BUTTON, nullptr, (ScreenHandler.DGUSLCD_NavigateToPage<DGUSLCD_SCREEN_AXIS_SETTINGS_NAV>), nullptr),
+  VPHELPER(VP_AXIS_TMC_NAV_BUTTON, nullptr, (ScreenHandler.DGUSLCD_NavigateToPage<DGUSLCD_SCREEN_AXIS_SETTINGS_TMC>), nullptr),
+
+  // Advanced movement settings
+  VPHELPER(VP_MOV_NAV_BUTTON, nullptr, (ScreenHandler.DGUSLCD_NavigateToPage<DGUSLCD_SCREEN_ADV_MOV_SETTINGS>), nullptr),
+
+  VPHELPER(VP_MOV_MINIMUM_SEGMENT_TIME, &planner.settings.min_segment_time_us, ScreenHandler.DGUSLCD_SetValueDirectly<uint16_t>, ScreenHandler.DGUSLCD_SendWordValueToDisplay),
+
+  VPHELPER(VP_MOV_MINIMUM_FEEDRATE, &planner.settings.min_feedrate_mm_s, ScreenHandler.DGUSLCD_SetFloatAsIntFromDisplay<1>, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
+  VPHELPER(VP_MOV_NORMAL_ACCELERATION, &planner.settings.acceleration, ScreenHandler.DGUSLCD_SetFloatAsIntFromDisplay<1>, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
+  VPHELPER(VP_MOV_RETRACT_ACCELERATION, &planner.settings.retract_acceleration, ScreenHandler.DGUSLCD_SetFloatAsLongFromDisplay<1>, ScreenHandler.DGUSLCD_SendFloatAsLongValueToDisplay<1>),
+
+  VPHELPER(VP_MOV_MINIMUM_TRAVEL_FEEDRATE, &planner.settings.min_travel_feedrate_mm_s, ScreenHandler.DGUSLCD_SetFloatAsIntFromDisplay<1>, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
+  VPHELPER(VP_MOV_MINIMUM_TRAVEL_ACCELERATION, &planner.settings.travel_acceleration, ScreenHandler.DGUSLCD_SetFloatAsIntFromDisplay<1>, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
+
+  // Misc settings
+  VPHELPER(VP_MISCSETTINGS_NAV_BUTTON, nullptr, (ScreenHandler.DGUSLCD_NavigateToPage<DGUSLCD_SCREEN_MISC_SETTINGS>), nullptr),
+
+#if ENABLED(FILAMENT_RUNOUT_SENSOR)
+  VPHELPER(VP_FILAMENTRUNOUT_SENSOR_TOGGLE_BUTTON, &runout.enabled, ScreenHandler.DGUSLCD_ToggleBoolean, nullptr),
+  VPHELPER(VP_FILAMENTRUNOUT_SENSOR_TOGGLE_ICON, &runout.enabled,  nullptr, (ScreenHandler.DGUSLCD_SendIconValue<ICON_TOGGLE_ON, ICON_TOGGLE_OFF>)),
+#endif
+
+#if ENABLED(POWER_LOSS_RECOVERY)
+  VPHELPER(VP_PLR_TOGGLE_BUTTON, nullptr, ScreenHandler.TogglePowerLossRecovery, nullptr),
+  VPHELPER(VP_PLR_TOGGLE_ICON, &PrintJobRecovery::enabled,  nullptr, (ScreenHandler.DGUSLCD_SendIconValue<ICON_TOGGLE_ON, ICON_TOGGLE_OFF>)),
+#endif
 
   // Preheat settings
   #ifdef PREHEAT_1_LABEL
@@ -448,9 +568,9 @@ const struct DGUS_VP_Variable ListOfVP[] PROGMEM = {
   VPHELPER(VP_Y_POSITION, &current_position.y, ScreenHandler.HandlePositionChange, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
   VPHELPER(VP_Z_POSITION, &current_position.z, ScreenHandler.HandlePositionChange, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
 
-  VPHELPER(VP_X_POSITION_SP, nullptr, nullptr, ScreenHandler.SendAxisTrustValue<X_AXIS>),
-  VPHELPER(VP_Y_POSITION_SP, nullptr, nullptr, ScreenHandler.SendAxisTrustValue<Y_AXIS>),
-  VPHELPER(VP_Z_POSITION_SP, nullptr, nullptr, ScreenHandler.SendAxisTrustValue<Z_AXIS>),
+  VPHELPER(SP_X_POSITION, nullptr, nullptr, ScreenHandler.SendAxisTrustValue<X_AXIS>),
+  VPHELPER(SP_Y_POSITION, nullptr, nullptr, ScreenHandler.SendAxisTrustValue<Y_AXIS>),
+  VPHELPER(SP_Z_POSITION, nullptr, nullptr, ScreenHandler.SendAxisTrustValue<Z_AXIS>),
 
   VPHELPER(VP_Z_OFFSET, &probe.offset.z, ScreenHandler.HandleZoffsetChange, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<2>),
 
@@ -462,8 +582,25 @@ const struct DGUS_VP_Variable ListOfVP[] PROGMEM = {
   #endif
 
   VPHELPER_STR(VP_PrintTime, nullptr, VP_PrintTime_LEN, nullptr, ScreenHandler.DGUSLCD_SendPrintTimeToDisplay),
+  VPHELPER_STR(VP_PrintTimeWithRemainingVisible, nullptr, VP_PrintTime_LEN, nullptr, ScreenHandler.DGUSLCD_SendPrintTimeWithRemainingToDisplay),
+  VPHELPER_STR(VP_PrintTimeRemaining, nullptr, VP_PrintTimeRemaining_LEN, nullptr, ScreenHandler.DGUSLCD_SendPrintTimeRemainingToDisplay),
   VPHELPER(VP_SCREENCHANGE, nullptr, ScreenHandler.ScreenChangeHook, nullptr),
   VPHELPER(VP_CONFIRMED, nullptr, ScreenHandler.ScreenConfirmedOK, nullptr),
+
+  #if HAS_PROBE_SETTINGS
+  VPHELPER(VP_TOGGLE_PROBING_HEATERS_OFF_ONOFF_BUTTON, nullptr, ScreenHandler.HandleToggleProbeHeaters, nullptr),
+  VPHELPER(VP_TOGGLE_PROBING_HEATERS_OFF_ONOFF_ICON, &probe.settings.turn_heaters_off, nullptr, (ScreenHandler.DGUSLCD_SendIconValue<ICON_ACCURACY_TOGGLE_ON, ICON_ACCURACY_TOGGLE_OFF>)),
+
+  VPHELPER(VP_TOGGLE_POST_PROBING_TEMPERATURE_STABILIZATION_BUTTON, nullptr, ScreenHandler.HandleToggleProbeTemperatureStabilization, nullptr),
+  VPHELPER(VP_TOGGLE_POST_PROBING_TEMPERATURE_STABILIZATION_ICON, &probe.settings.stabilize_temperatures_after_probing, nullptr, (ScreenHandler.DGUSLCD_SendIconValue<ICON_POST_PROBE_TEMP_STABILIZATION_TOGGLE_ON, ICON_POST_PROBE_TEMP_STABILIZATION_TOGGLE_OFF>)),
+
+  VPHELPER(VP_TOGGLE_PROBE_PREHEAT_HOTEND_TEMP, &probe.settings.preheat_hotend_temp, ScreenHandler.HandleToggleProbePreheatTemp, ScreenHandler.DGUSLCD_SendWordValueToDisplay),
+  VPHELPER(VP_TOGGLE_PROBE_PREHEAT_BED_TEMP, &probe.settings.preheat_bed_temp, ScreenHandler.HandleToggleProbePreheatTemp, ScreenHandler.DGUSLCD_SendWordValueToDisplay),
+
+  VPHELPER(VP_LEVELING_FADE_HEIGHT, &planner.z_fade_height, ScreenHandler.HandleFadeHeight, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
+
+  VPHELPER(VP_TOGGLE_PROBE_SETTINGS_NAV_BUTTON, nullptr, (ScreenHandler.DGUSLCD_NavigateToPage<DGUSLCD_SCREEN_LEVELING_SETTINGS>), nullptr),
+  #endif
 
   // Feed
   VPHELPER(VP_FEED_AMOUNT, &ScreenHandler.feed_amount, ScreenHandler.HandleFeedAmountChanged, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
@@ -494,6 +631,25 @@ const struct DGUS_VP_Variable ListOfVP[] PROGMEM = {
   VPHELPER_STR(VP_SD_FileName4,  nullptr, VP_SD_FileName_LEN, nullptr, ScreenHandler.DGUSLCD_SD_SendFilename),
   VPHELPER_STR(VP_SD_FileName5,  nullptr, VP_SD_FileName_LEN, nullptr, ScreenHandler.DGUSLCD_SD_SendFilename),
 
+  // Firmware retract
+  VPHELPER(VP_FWRETRACT_NAV_BUTTON, nullptr, ScreenHandler.DGUSLCD_NavigateToPage<DGUSLCD_SCREEN_TUNEFWRETRACT>, nullptr),
+
+  VPHELPER(VP_FWRETRACT_RETRACT_LENGTH, &fwretract.settings.retract_length, ScreenHandler.DGUSLCD_SetFloatAsIntFromDisplay<1>, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
+  VPHELPER(VP_FWRETRACT_RETRACT_FEEDRATE, &fwretract.settings.retract_feedrate_mm_s, ScreenHandler.DGUSLCD_SetFloatAsIntFromDisplay<1>, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
+  VPHELPER(VP_FWRETRACT_RETRACT_ZHOP, &fwretract.settings.retract_zraise, ScreenHandler.DGUSLCD_SetFloatAsIntFromDisplay<1>, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
+
+  VPHELPER(VP_FWRETRACT_RESTART_LENGTH, &fwretract.settings.retract_recover_extra, ScreenHandler.DGUSLCD_SetFloatAsIntFromDisplay<1>, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
+  VPHELPER(VP_FWRETRACT_RESTART_FEEDRATE, &fwretract.settings.retract_recover_feedrate_mm_s, ScreenHandler.DGUSLCD_SetFloatAsIntFromDisplay<1>, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<1>),
+
+  VPHELPER(VP_FWRETRACT_INDICATOR_ICON, &fwretract.autoretract_enabled, nullptr, (ScreenHandler.DGUSLCD_SendIconValue<ICON_FWRETRACT_AUTO_ENGAGED, ICON_FWRETRACT_AUTO_DISENGAGED>)),
+  VPHELPER(VP_FWRETRACT_TOGGLE_BUTTON_ICON, &fwretract.autoretract_enabled, nullptr, (ScreenHandler.DGUSLCD_SendIconValue<ICON_FWRETRACT_AUTO_TOGGLE_ON, ICON_FWRETRACT_AUTO_TOGGLE_OFF>)),
+  VPHELPER(VP_FWRETRACT_TOGGLE_BUTTON, &fwretract.autoretract_enabled, ScreenHandler.DGUSLCD_ToggleBoolean, nullptr),
+
+#if ENABLED(LIN_ADVANCE)
+  VPHELPER(VP_LINEAR_ADVANCE_FACTOR, &planner.extruder_advance_K[0], ScreenHandler.DGUSLCD_SetFloatAsIntFromDisplay<2>, ScreenHandler.DGUSLCD_SendFloatAsIntValueToDisplay<2>),
+#endif
+
+
   // Additional buttons
   VPHELPER(VP_MUTE_TOGGLE, nullptr, ScreenHandler.HandleToggleTouchScreenMute, nullptr),
   VPHELPER(VP_STANDBY_BACKLIGHT_TOGGLE, nullptr, ScreenHandler.HandleToggleTouchScreenStandbySetting, nullptr),
@@ -502,15 +658,41 @@ const struct DGUS_VP_Variable ListOfVP[] PROGMEM = {
   VPHELPER(VP_SCREEN_BACKLIGHT_STANDBY, &ScreenHandler.Settings.standby_screen_brightness, ScreenHandler.HandleTouchScreenStandbyBrightnessSetting, ScreenHandler.DGUSLCD_SendWordValueToDisplay),
 
   // Icons
-  VPHELPER(VP_STEPPERS, &ScreenHandler.are_steppers_enabled, nullptr, (ScreenHandler.DGUSLCD_SendIconValue<ICON_TOGGLE_OFF, ICON_TOGGLE_ON>)),
   VPHELPER(VP_LED_TOGGLE, &caselight.on, nullptr, (ScreenHandler.DGUSLCD_SendIconValue<ICON_LED_TOGGLE_ON, ICON_LED_TOGGLE_OFF>)),
   VPHELPER(VP_STANDBY_BACKLIGHT_ICON, &ScreenHandler.Settings.display_standby, nullptr, (ScreenHandler.DGUSLCD_SendIconValue<ICON_STANDBY_TOGGLE_ON, ICON_STANDBY_TOGGLE_OFF>)),
   VPHELPER(VP_MUTE_ICON, &ScreenHandler.Settings.display_sound, nullptr, (ScreenHandler.DGUSLCD_SendIconValue<ICON_SOUND_TOGGLE_ON, ICON_SOUND_TOGGLE_OFF>)),
 
+  // Development test button
+  VPHELPER(VP_DEVELOPMENT_HELPER_BUTTON, nullptr, ScreenHandler.HandleDevelopmentTestButton, nullptr),
+
+  // Mesh override input
+#if MESH_INPUT_SUPPORTED_SIZE == GRID_MAX_POINTS
+  //#define _VPHELPER_GP(N) VPHELPER((VP_MESH_INPUT_X0_Y0 + ( ##N## * MESH_INPUT_DATA_SIZE)), nullptr, ScreenHandler.HandleMeshPoint, nullptr),
+  //REPEAT(MESH_INPUT_SUPPORTED_SIZE, _VPHELPER_GP)
+
+  VPHELPER((VP_MESH_INPUT_X0_Y0 + ( 0 * MESH_INPUT_DATA_SIZE)), nullptr, ScreenHandler.HandleMeshPoint, nullptr),
+  VPHELPER((VP_MESH_INPUT_X0_Y0 + ( 1 * MESH_INPUT_DATA_SIZE)), nullptr, ScreenHandler.HandleMeshPoint, nullptr),
+  VPHELPER((VP_MESH_INPUT_X0_Y0 + ( 2 * MESH_INPUT_DATA_SIZE)), nullptr, ScreenHandler.HandleMeshPoint, nullptr),
+  VPHELPER((VP_MESH_INPUT_X0_Y0 + ( 3 * MESH_INPUT_DATA_SIZE)), nullptr, ScreenHandler.HandleMeshPoint, nullptr),
+  VPHELPER((VP_MESH_INPUT_X0_Y0 + ( 4 * MESH_INPUT_DATA_SIZE)), nullptr, ScreenHandler.HandleMeshPoint, nullptr),
+  VPHELPER((VP_MESH_INPUT_X0_Y0 + ( 5 * MESH_INPUT_DATA_SIZE)), nullptr, ScreenHandler.HandleMeshPoint, nullptr),
+  VPHELPER((VP_MESH_INPUT_X0_Y0 + ( 6 * MESH_INPUT_DATA_SIZE)), nullptr, ScreenHandler.HandleMeshPoint, nullptr),
+  VPHELPER((VP_MESH_INPUT_X0_Y0 + ( 7 * MESH_INPUT_DATA_SIZE)), nullptr, ScreenHandler.HandleMeshPoint, nullptr),
+  VPHELPER((VP_MESH_INPUT_X0_Y0 + ( 8 * MESH_INPUT_DATA_SIZE)), nullptr, ScreenHandler.HandleMeshPoint, nullptr),
+  VPHELPER((VP_MESH_INPUT_X0_Y0 + ( 9 * MESH_INPUT_DATA_SIZE)), nullptr, ScreenHandler.HandleMeshPoint, nullptr),
+  VPHELPER((VP_MESH_INPUT_X0_Y0 + ( 10 * MESH_INPUT_DATA_SIZE)), nullptr, ScreenHandler.HandleMeshPoint, nullptr),
+  VPHELPER((VP_MESH_INPUT_X0_Y0 + ( 11 * MESH_INPUT_DATA_SIZE)), nullptr, ScreenHandler.HandleMeshPoint, nullptr),
+  VPHELPER((VP_MESH_INPUT_X0_Y0 + ( 12 * MESH_INPUT_DATA_SIZE)), nullptr, ScreenHandler.HandleMeshPoint, nullptr),
+  VPHELPER((VP_MESH_INPUT_X0_Y0 + ( 13 * MESH_INPUT_DATA_SIZE)), nullptr, ScreenHandler.HandleMeshPoint, nullptr),
+  VPHELPER((VP_MESH_INPUT_X0_Y0 + ( 14 * MESH_INPUT_DATA_SIZE)), nullptr, ScreenHandler.HandleMeshPoint, nullptr),
+  VPHELPER((VP_MESH_INPUT_X0_Y0 + ( 15 * MESH_INPUT_DATA_SIZE)), nullptr, ScreenHandler.HandleMeshPoint, nullptr),
+#endif
+
   // M117 LCD String (We don't need the string in memory but "just" push it to the display on demand, hence the nullptr
   { .VP = VP_M117, .memadr = nullptr, .size = VP_M117_LEN, .set_by_display_handler = nullptr, .send_to_display_handler =&ScreenHandler.DGUSLCD_SendStringToDisplay },
+  { .VP = VP_M117_STATIC, .memadr = nullptr, .size = VP_M117_STATIC_LEN, .set_by_display_handler = nullptr, .send_to_display_handler =&ScreenHandler.DGUSLCD_SendStringToDisplay },
 
- // Messages for the User, shared by the popup and the kill screen. They cant be autouploaded as we do not buffer content.
+  // Messages for the User, shared by the popup and the kill screen. They cant be autouploaded as we do not buffer content.
   { .VP = VP_MSGSTR1, .memadr = nullptr, .size = VP_MSGSTR1_LEN, .set_by_display_handler = nullptr, .send_to_display_handler = &ScreenHandler.DGUSLCD_SendStringToDisplayPGM },
   { .VP = VP_MSGSTR2, .memadr = nullptr, .size = VP_MSGSTR2_LEN, .set_by_display_handler = nullptr, .send_to_display_handler = &ScreenHandler.DGUSLCD_SendStringToDisplayPGM },
   { .VP = VP_MSGSTR3, .memadr = nullptr, .size = VP_MSGSTR3_LEN, .set_by_display_handler = nullptr, .send_to_display_handler = &ScreenHandler.DGUSLCD_SendStringToDisplayPGM },
