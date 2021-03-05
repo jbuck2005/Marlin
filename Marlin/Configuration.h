@@ -50,10 +50,8 @@
  * Calibration Objects: https://www.thingiverse.com/thing:5573
  *                      https://www.thingiverse.com/thing:1278865
  */
-<<<<<<< HEAD
 #define STRING_CONFIG_H_AUTHOR "(james, james config)" // Who made the changes. 20210105 -----------------------------------------------------------------------------------------
 #define CUSTOM_VERSION_FILE Version.h // Path from the root directory (no quotes) 20201221 enabled hoping that it would read the version.h config file ---------------------------
-=======
 
 //===========================================================================
 //========================== DELTA / SCARA / TPARA ==========================
@@ -64,13 +62,6 @@
 //
 //===========================================================================
 
-// @section info
-
-// Author info of this build printed to the host during boot and M115
-#define STRING_CONFIG_H_AUTHOR "(none, default config)" // Who made the changes.
-//#define CUSTOM_VERSION_FILE Version.h // Path from the root directory (no quotes)
-
->>>>>>> 0b7e8576147bb3a1b5b6cf6a9c4afcd8ea8958a2
 /**
  * *** VENDORS PLEASE READ ***
  *
@@ -766,11 +757,9 @@
                                                       // measured 0.67 via https://marlinfw.org/docs/gcode/M851.html -------------------------------------------------------------
                                                       // 20210107 -1.44 has been working flawlessly for PLA
 #define PROBING_MARGIN 10
-<<<<<<< HEAD
 #define XY_PROBE_SPEED (150*60) // 20201221 default is  133 - 20210105 changing did not resolve homing error ---------------------------------------------------------------------
 #define Z_PROBE_SPEED_FAST (8*60) // 20201220 was 4*60 - 20210105 changing did not resolve homing error --------------------------------------------------------------------------
 #define Z_PROBE_SPEED_SLOW (Z_PROBE_SPEED_FAST / 4) // 20210107 changed from 2 to 4 to respect original ratio (4*60)/2 = 120 thus, (8*60)/4 = 120 --------------------------------
-=======
 
 // X and Y axis travel speed (mm/min) between probes
 #define XY_PROBE_FEEDRATE (133*60)
@@ -781,7 +770,6 @@
 // Feedrate (mm/min) for the "accurate" probe of each point
 #define Z_PROBE_FEEDRATE_SLOW (Z_PROBE_FEEDRATE_FAST / 2)
 
->>>>>>> 254b25296b37cdb170e32a5530348907e7b8c9fc
 /**
  * Probe Activation Switch
  * A switch indicating proper deployment, or an optical
@@ -939,10 +927,8 @@
   #define FIL_RUNOUT_STATE     LOW        // Pin state indicating that filament is NOT present.
   #define FIL_RUNOUT_PULLUP               // Use internal pullup for filament runout pins.
   //#define FIL_RUNOUT_PULLDOWN           // Use internal pulldown for filament runout pins.
-<<<<<<< HEAD
   // Set one or more commands to execute on filament runout.
   // (After 'M412 H' Marlin will ask the host to handle the process.)
-=======
   //#define WATCH_ALL_RUNOUT_SENSORS      // Execute runout script on any triggering sensor, not only for the active extruder.
                                           // This is automatically enabled for MIXING_EXTRUDERs.
 
@@ -982,7 +968,6 @@
   // Commands to execute on filament runout.
   // With multiple runout sensors use the %c placeholder for the current tool in commands (e.g., "M600 T%c")
   // NOTE: After 'M412 H1' the host handles filament runout and this script does not apply.
->>>>>>> f52cba6aff5e8e3675070a965e8b74adc810d728
   #define FILAMENT_RUNOUT_SCRIPT "M600"
   // After a runout is detected, continue printing this length of filament
   // before executing the runout script. Useful for a sensor at the end of
@@ -1479,8 +1464,6 @@ M500
   #define U8GLIB_SSD1306
   //#define U8GLIB_SH1106
 #endif
-<<<<<<< HEAD
-=======
 
 //
 // TinyBoy2 128x64 OLED / Encoder Panel
@@ -1536,7 +1519,6 @@ M500
 // Touch-screen LCD for Malyan M200/M300 printers
 //
 //#define MALYAN_LCD
->>>>>>> 254b25296b37cdb170e32a5530348907e7b8c9fc
 #if ENABLED(MALYAN_LCD)
   #define LCD_SERIAL_PORT 1  // Default is 1 for Malyan M200
 #endif
