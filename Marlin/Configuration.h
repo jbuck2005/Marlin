@@ -1086,12 +1086,12 @@
  * These options are most useful for the BLTouch probe, but may also improve
  * readings with inductive probes and piezo sensors.
  */
-#define PROBING_HEATERS_OFF       // Turn heaters off when probing
+//#define PROBING_HEATERS_OFF       // Turn heaters off when probing // 20210305 disabled to test resolution of temperature drops ---------------------------------------------------------------------
 #if ENABLED(PROBING_HEATERS_OFF)
   #define PROBING_KEEP_BED_HEATER
   //#define WAIT_FOR_BED_HEATER     // Wait for bed to heat back up between probes (to improve accuracy)
 #endif
-#define PROBING_FANS_OFF          // Turn fans off when probing
+//#define PROBING_FANS_OFF          // Turn fans off when probing    // 20210305 disabled since we will leave heaters on ------------------------------------------------------------------------------
 //#define PROBING_STEPPERS_OFF      // Turn steppers off (unless needed to hold position) when probing
 #define DELAY_BEFORE_PROBING 200  // (ms) To prevent vibrations from triggering piezo sensors
 
