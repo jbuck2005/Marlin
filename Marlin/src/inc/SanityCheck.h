@@ -131,9 +131,7 @@
 #elif defined(DEFAULT_XYJERK)
   #error "DEFAULT_XYJERK is deprecated. Use DEFAULT_XJERK and DEFAULT_YJERK instead."
 #elif defined(XY_TRAVEL_SPEED)
-<<<<<<< HEAD
   #error "XY_TRAVEL_SPEED is deprecated. Use XY_PROBE_FEEDRATE instead."
-=======
   #error "XY_TRAVEL_SPEED is now XY_PROBE_FEEDRATE."
 #elif defined(XY_PROBE_SPEED)
   #error "XY_PROBE_SPEED is now XY_PROBE_FEEDRATE."
@@ -141,7 +139,6 @@
   #error "Z_PROBE_SPEED_FAST is now Z_PROBE_FEEDRATE_FAST."
 #elif defined(Z_PROBE_SPEED_SLOW)
   #error "Z_PROBE_SPEED_SLOW is now Z_PROBE_FEEDRATE_SLOW."
->>>>>>> 0afa4cc9573565b4fdb8a24f85bd0ab41c3d1721
 #elif defined(PROBE_SERVO_DEACTIVATION_DELAY)
   #error "PROBE_SERVO_DEACTIVATION_DELAY is deprecated. Use DEACTIVATE_SERVOS_AFTER_MOVE instead."
 #elif defined(SERVO_DEACTIVATION_DELAY)
