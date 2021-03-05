@@ -28,26 +28,25 @@
 /**
  * Marlin release version identifier
  */
-#define SHORT_BUILD_VERSION "CR6Comm-Rel6-Pre4"
+#define SHORT_BUILD_VERSION "bugfix-2.0.x paul CR6 SE" // 20210220 ------------------------------------------------------------------------------------------------------------------------------------
 
 /**
  * Verbose version identifier which should contain a reference to the location
  * from where the binary was downloaded or the source code was compiled.
  */
-#define DETAILED_BUILD_VERSION "CR-6 community firmware - release 6 - prerelease 4"
+//#define DETAILED_BUILD_VERSION SHORT_BUILD_VERSION
 
 /**
  * The STRING_DISTRIBUTION_DATE represents when the binary file was built,
  * here we define this default string as the date where the latest release
  * version was tagged.
  */
-#define STRING_DISTRIBUTION_DATE "2021-02-28"
+#define STRING_DISTRIBUTION_DATE "2021-02-20 07:00" // ------------------------------------------------------------------------------------------------------------------------------------------------
 
 /**
  * Defines a generic printer name to be output to the LCD after booting Marlin.
  */
-#define CUSTOM_MACHINE_NAME SHORT_BUILD_VERSION
-#define MACHINE_NAME CUSTOM_MACHINE_NAME
+//#define MACHINE_NAME "Replicator v0.3b" // 20201221 this value is ignored ---------------------------------------------------------------------------------------------------------------------------
 
 /**
  * The SOURCE_CODE_URL is the location where users will find the Marlin Source
@@ -55,7 +54,7 @@
  * has a distinct Github fork— the Source Code URL should just be the main
  * Marlin repository.
  */
-#define SOURCE_CODE_URL "https://github.com/CR6Community/Marlin"
+#define SOURCE_CODE_URL "https://github.com/jbuck2005/Marlin_Custom/tree/paul_cr6se" // 20210220 added GIT URL to show correct branch -----------------------------------------------------------------
 
 /**
  * Default generic printer UUID.
@@ -66,7 +65,8 @@
  * The WEBSITE_URL is the location where users can get more information such as
  * documentation about a specific Marlin release.
  */
-#define WEBSITE_URL "github.com/CR6Community"
+#define WEBSITE_URL "https://ve3bux.com" // 20201221 --------------------------------------------------------------------------------------------------------------------------------------------------
+#define CUSTOM_WEBSITE_URL "https://ve3bux.com" // 20201221 added custom to see if it matters ---------------------------------------------------------------------------------------------------------
 
 /**
  * Set the vendor info the serial USB interface, if changable
