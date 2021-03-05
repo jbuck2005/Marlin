@@ -2277,8 +2277,6 @@
 //
 
 #define DGUS_LCD_UI_CREALITY_TOUCH
-  #define LCD_SERIAL_PORT 3
-  #define LCD_BAUDRATE 115200
 
 //
 // Touch-screen LCD for Malyan M200/M300 printers
