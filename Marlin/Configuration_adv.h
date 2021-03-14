@@ -3461,16 +3461,21 @@
   #define CUSTOM_USER_MENU_TITLE "Custom Commands"
   #define USER_SCRIPT_DONE "M117 User Script Done"
   #define USER_SCRIPT_AUDIBLE_FEEDBACK
-  //#define USER_SCRIPT_RETURN  // Return to status screen after a script
+  //#define USER_SCRIPT_RETURN    // Return to status screen after a script
+  #define CUSTOM_MENU_ONLY_IDLE   // Only show custom menu when the machine is idle
 
   #define USER_DESC_1 "Home & UBL Info"
   #define USER_GCODE_1 "G28\nG29W"
+<<<<<<< HEAD
   
   #define USER_DESC_2 "PID Autotune (Bed + Extruder)"
   #define USER_GCODE_2 "M303 C10 E0 S205 U1\nG4 S1\nM303 C10 E-1 S60 U1" // 20210113 added 1s pause for testing (to see if this will resolve issue of beeping during bed PID)
 
   #define USER_DESC_3 "Extrude 100mm filament"
   #define USER_GCODE_3 "G21\nG90\nG92 E0\nM109 S205\nG1 E100 F300\nG92 E0\nG4 S15\nM104 S0" // 20210113 updated script
+=======
+  //#define USER_CONFIRM_1        // Show a confirmation dialog before this action
+>>>>>>> 36d3b6aa95b454a7463651e12494b5b33a8b10bf
 
   #define USER_DESC_4 "Probe bed (5m heat time)"  // 20200102 last updated
   #define USER_GCODE_4 "M118 E1 Starting bed probing routine\nM190 S60\nM117 Heating bed\nM117 Waiting 5 minutes for bed to heat evenly\nM118 E1 Waiting 5 minutes for bed to head\nG4 S300\nG28\nM117 Probing bed\nM118 E1 Probing bed\nG29 P1\nM104 S0\nG29 P3\nG29 F10\nG29 S1\nG29 A\nG29 L1\nM500\nM190 S0"
@@ -3478,17 +3483,24 @@
 /*
   #define USER_DESC_2 "Preheat for " PREHEAT_1_LABEL
   #define USER_GCODE_2 "M140 S" STRINGIFY(PREHEAT_1_TEMP_BED) "\nM104 S" STRINGIFY(PREHEAT_1_TEMP_HOTEND)
+  //#define USER_CONFIRM_2
 
   #define USER_DESC_3 "Preheat for " PREHEAT_2_LABEL
   #define USER_GCODE_3 "M140 S" STRINGIFY(PREHEAT_2_TEMP_BED) "\nM104 S" STRINGIFY(PREHEAT_2_TEMP_HOTEND)
+  //#define USER_CONFIRM_3
 
   #define USER_DESC_4 "Heat Bed/Home/Level"
   #define USER_GCODE_4 "M140 S" STRINGIFY(PREHEAT_2_TEMP_BED) "\nG28\nG29"
+  //#define USER_CONFIRM_4
 
   #define USER_DESC_5 "Home & Info"
   #define USER_GCODE_5 "G28\nM503"
+<<<<<<< HEAD
   */
 
+=======
+  //#define USER_CONFIRM_5
+>>>>>>> 36d3b6aa95b454a7463651e12494b5b33a8b10bf
 #endif
 
 /**
