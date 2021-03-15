@@ -3466,9 +3466,11 @@
   //#define CUSTOM_USER_MENU_TITLE "Custom Commands"
   #define USER_SCRIPT_DONE "M117 User Script Done"
   #define USER_SCRIPT_AUDIBLE_FEEDBACK
-  //#define USER_SCRIPT_RETURN  // Return to status screen after a script
+  //#define USER_SCRIPT_RETURN    // Return to status screen after a script
+  #define CUSTOM_MENU_ONLY_IDLE   // Only show custom menu when the machine is idle
 
   #define USER_DESC_1 "Home & UBL Info"
+<<<<<<< HEAD
   #define USER_GCODE_1 "G28\nG29 W"
 
   #define USER_DESC_2 "PID Autotune (Bed + Extruder)"
@@ -3479,6 +3481,26 @@
 
   #define USER_DESC_4 "Probe bed (5m heat time)"  // 20200102 last updated
   #define USER_GCODE_4 "M118 E1 Starting bed probing routine\nM190 S60\nM117 Heating bed\nM117 Waiting 5 minutes for bed to heat evenly\nM118 E1 Waiting 5 minutes for bed to head\nG4 S300\nG28\nM117 Probing bed\nM118 E1 Probing bed\nG29 P1\nM104 S0\nG29 P3\nG29 F10\nG29 S1\nG29 A\nG29 L1\nM500\nM190 S0"
+=======
+  #define USER_GCODE_1 "G28\nG29W"
+  //#define USER_CONFIRM_1        // Show a confirmation dialog before this action
+
+  #define USER_DESC_2 "Preheat for " PREHEAT_1_LABEL
+  #define USER_GCODE_2 "M140 S" STRINGIFY(PREHEAT_1_TEMP_BED) "\nM104 S" STRINGIFY(PREHEAT_1_TEMP_HOTEND)
+  //#define USER_CONFIRM_2
+
+  #define USER_DESC_3 "Preheat for " PREHEAT_2_LABEL
+  #define USER_GCODE_3 "M140 S" STRINGIFY(PREHEAT_2_TEMP_BED) "\nM104 S" STRINGIFY(PREHEAT_2_TEMP_HOTEND)
+  //#define USER_CONFIRM_3
+
+  #define USER_DESC_4 "Heat Bed/Home/Level"
+  #define USER_GCODE_4 "M140 S" STRINGIFY(PREHEAT_2_TEMP_BED) "\nG28\nG29"
+  //#define USER_CONFIRM_4
+
+  #define USER_DESC_5 "Home & Info"
+  #define USER_GCODE_5 "G28\nM503"
+  //#define USER_CONFIRM_5
+>>>>>>> c07f99d5e406ef82376ad3baeb246d3e78c9a7e3
 #endif
 
 /**
