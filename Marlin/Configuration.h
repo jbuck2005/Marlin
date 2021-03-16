@@ -1504,10 +1504,245 @@ M500
                                   // This LCD is known to be susceptible to electrical interference
                                   // which scrambles the display.  Pressing any button clears it up.
                                   // This is a LCD2004 display with 5 analog buttons.
+<<<<<<< HEAD
 #define CR10_STOCKDISPLAY
 #if ENABLED(CR10_STOCKDISPLAY)
   #define RET6_12864_LCD  // Specific to the SoC (can either be RET / VET)
 #endif
+=======
+
+//
+// Generic 16x2, 16x4, 20x2, or 20x4 character-based LCD.
+//
+//#define ULTRA_LCD
+
+//=============================================================================
+//======================== LCD / Controller Selection =========================
+//=====================   (I2C and Shift-Register LCDs)   =====================
+//=============================================================================
+
+//
+// CONTROLLER TYPE: I2C
+//
+// Note: These controllers require the installation of Arduino's LiquidCrystal_I2C
+// library. For more info: https://github.com/kiyoshigawa/LiquidCrystal_I2C
+//
+
+//
+// Elefu RA Board Control Panel
+// http://www.elefu.com/index.php?route=product/product&product_id=53
+//
+//#define RA_CONTROL_PANEL
+
+//
+// Sainsmart (YwRobot) LCD Displays
+//
+// These require F.Malpartida's LiquidCrystal_I2C library
+// https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/Home
+//
+//#define LCD_SAINSMART_I2C_1602
+//#define LCD_SAINSMART_I2C_2004
+
+//
+// Generic LCM1602 LCD adapter
+//
+//#define LCM1602
+
+//
+// PANELOLU2 LCD with status LEDs,
+// separate encoder and click inputs.
+//
+// Note: This controller requires Arduino's LiquidTWI2 library v1.2.3 or later.
+// For more info: https://github.com/lincomatic/LiquidTWI2
+//
+// Note: The PANELOLU2 encoder click input can either be directly connected to
+// a pin (if BTN_ENC defined to != -1) or read through I2C (when BTN_ENC == -1).
+//
+//#define LCD_I2C_PANELOLU2
+
+//
+// Panucatt VIKI LCD with status LEDs,
+// integrated click & L/R/U/D buttons, separate encoder inputs.
+//
+//#define LCD_I2C_VIKI
+
+//
+// CONTROLLER TYPE: Shift register panels
+//
+
+//
+// 2-wire Non-latching LCD SR from https://goo.gl/aJJ4sH
+// LCD configuration: https://reprap.org/wiki/SAV_3D_LCD
+//
+//#define SAV_3DLCD
+
+//
+// 3-wire SR LCD with strobe using 74HC4094
+// https://github.com/mikeshub/SailfishLCD
+// Uses the code directly from Sailfish
+//
+//#define FF_INTERFACEBOARD
+
+//
+// TFT GLCD Panel with Marlin UI
+// Panel connected to main board by SPI or I2C interface.
+// See https://github.com/Serhiy-K/TFTGLCDAdapter
+//
+//#define TFTGLCD_PANEL_SPI
+//#define TFTGLCD_PANEL_I2C
+
+//=============================================================================
+//=======================   LCD / Controller Selection  =======================
+//=========================      (Graphical LCDs)      ========================
+//=============================================================================
+
+//
+// CONTROLLER TYPE: Graphical 128x64 (DOGM)
+//
+// IMPORTANT: The U8glib library is required for Graphical Display!
+//            https://github.com/olikraus/U8glib_Arduino
+//
+// NOTE: If the LCD is unresponsive you may need to reverse the plugs.
+//
+
+//
+// RepRapDiscount FULL GRAPHIC Smart Controller
+// https://reprap.org/wiki/RepRapDiscount_Full_Graphic_Smart_Controller
+//
+//#define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
+
+//
+// K.3D Full Graphic Smart Controller
+//
+//#define K3D_FULL_GRAPHIC_SMART_CONTROLLER
+
+//
+// ReprapWorld Graphical LCD
+// https://reprapworld.com/?products_details&products_id/1218
+//
+//#define REPRAPWORLD_GRAPHICAL_LCD
+
+//
+// Activate one of these if you have a Panucatt Devices
+// Viki 2.0 or mini Viki with Graphic LCD
+// https://www.panucatt.com
+//
+//#define VIKI2
+//#define miniVIKI
+
+//
+// MakerLab Mini Panel with graphic
+// controller and SD support - https://reprap.org/wiki/Mini_panel
+//
+//#define MINIPANEL
+
+//
+// MaKr3d Makr-Panel with graphic controller and SD support.
+// https://reprap.org/wiki/MaKr3d_MaKrPanel
+//
+//#define MAKRPANEL
+
+//
+// Adafruit ST7565 Full Graphic Controller.
+// https://github.com/eboston/Adafruit-ST7565-Full-Graphic-Controller/
+//
+//#define ELB_FULL_GRAPHIC_CONTROLLER
+
+//
+// BQ LCD Smart Controller shipped by
+// default with the BQ Hephestos 2 and Witbox 2.
+//
+//#define BQ_LCD_SMART_CONTROLLER
+
+//
+// Cartesio UI
+// http://mauk.cc/webshop/cartesio-shop/electronics/user-interface
+//
+//#define CARTESIO_UI
+
+//
+// LCD for Melzi Card with Graphical LCD
+//
+//#define LCD_FOR_MELZI
+
+//
+// Original Ulticontroller from Ultimaker 2 printer with SSD1309 I2C display and encoder
+// https://github.com/Ultimaker/Ultimaker2/tree/master/1249_Ulticontroller_Board_(x1)
+//
+//#define ULTI_CONTROLLER
+
+//
+// MKS MINI12864 with graphic controller and SD support
+// https://reprap.org/wiki/MKS_MINI_12864
+//
+//#define MKS_MINI_12864
+
+//
+// MKS LCD12864A/B with graphic controller and SD support. Follows MKS_MINI_12864 pinout.
+// https://www.aliexpress.com/item/33018110072.html
+//
+//#define MKS_LCD12864
+
+//
+// FYSETC variant of the MINI12864 graphic controller with SD support
+// https://wiki.fysetc.com/Mini12864_Panel/
+//
+//#define FYSETC_MINI_12864_X_X    // Type C/D/E/F. No tunable RGB Backlight by default
+//#define FYSETC_MINI_12864_1_2    // Type C/D/E/F. Simple RGB Backlight (always on)
+//#define FYSETC_MINI_12864_2_0    // Type A/B. Discreet RGB Backlight
+//#define FYSETC_MINI_12864_2_1    // Type A/B. NeoPixel RGB Backlight
+//#define FYSETC_GENERIC_12864_1_1 // Larger display with basic ON/OFF backlight.
+
+//
+// Factory display for Creality CR-10
+// https://www.aliexpress.com/item/32833148327.html
+//
+// This is RAMPS-compatible using a single 10-pin connector.
+// (For CR-10 owners who want to replace the Melzi Creality board but retain the display)
+//
+//#define CR10_STOCKDISPLAY
+
+//
+// Ender-2 OEM display, a variant of the MKS_MINI_12864
+//
+//#define ENDER2_STOCKDISPLAY
+
+//
+// ANET and Tronxy Graphical Controller
+//
+// Anet 128x64 full graphics lcd with rotary encoder as used on Anet A6
+// A clone of the RepRapDiscount full graphics display but with
+// different pins/wiring (see pins_ANET_10.h). Enable one of these.
+//
+//#define ANET_FULL_GRAPHICS_LCD
+//#define ANET_FULL_GRAPHICS_LCD_ALT_WIRING
+
+//
+// AZSMZ 12864 LCD with SD
+// https://www.aliexpress.com/item/32837222770.html
+//
+//#define AZSMZ_12864
+
+//
+// Silvergate GLCD controller
+// https://github.com/android444/Silvergate
+//
+//#define SILVER_GATE_GLCD_CONTROLLER
+
+//=============================================================================
+//==============================  OLED Displays  ==============================
+//=============================================================================
+
+//
+// SSD1306 OLED full graphics generic display
+//
+//#define U8GLIB_SSD1306
+
+//
+// SAV OLEd LCD module support using either SSD1306 or SH1106 based LCD modules
+//
+//#define SAV_3DGLCD
+>>>>>>> 5ffa6f3331569c8fa0266c1395d7a6a8cf5515f9
 #if ENABLED(SAV_3DGLCD)
   #define U8GLIB_SSD1306
   //#define U8GLIB_SH1106
@@ -1519,7 +1754,7 @@ M500
 //#define OLED_PANEL_TINYBOY2
 
 //
-// MKS OLED 1.3" 128×64 FULL GRAPHICS CONTROLLER
+// MKS OLED 1.3" 128×64 Full Graphics Controller
 // https://reprap.org/wiki/MKS_12864OLED
 //
 // Tiny, but very sharp OLED display
@@ -1528,7 +1763,7 @@ M500
 //#define MKS_12864OLED_SSD1306  // Uses the SSD1306 controller
 
 //
-// Zonestar OLED 128×64 FULL GRAPHICS CONTROLLER
+// Zonestar OLED 128×64 Full Graphics Controller
 //
 //#define ZONESTAR_12864LCD           // Graphical (DOGM) with ST7920 controller
 //#define ZONESTAR_12864OLED          // 1.3" OLED with SH1106 controller (default)
@@ -1545,9 +1780,14 @@ M500
 //#define OVERLORD_OLED
 
 //
-// FYSETC OLED 2.42" 128×64 FULL GRAPHICS CONTROLLER with WS2812 RGB
+// FYSETC OLED 2.42" 128×64 Full Graphics Controller with WS2812 RGB
 // Where to find : https://www.aliexpress.com/item/4000345255731.html
 //#define FYSETC_242_OLED_12864   // Uses the SSD1309 controller
+
+//
+// K.3D SSD1309 OLED 2.42" 128×64 Full Graphics Controller
+//
+//#define K3D_242_OLED_CONTROLLER   // Software SPI
 
 //=============================================================================
 //========================== Extensible UI Displays ===========================
