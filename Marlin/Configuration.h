@@ -1814,6 +1814,24 @@ M500
   #define LCD_SERIAL_PORT 3  // Default is 3 for Anycubic
   //#define ANYCUBIC_LCD_DEBUG
 #endif
+<<<<<<< HEAD
+=======
+
+//
+// 320x240 Nextion 2.8" serial TFT Resistive Touch Screen NX3224T028
+//
+//#define NEXTION_TFT
+#if ENABLED(NEXTION_TFT)
+  #define LCD_SERIAL_PORT 1  // Default is 1 for Nextion
+#endif
+
+//
+// Third-party or vendor-customized controller interfaces.
+// Sources should be installed in 'src/lcd/extui'.
+//
+//#define EXTENSIBLE_UI
+
+>>>>>>> b51aed8aa54f41cc5897485d3b34b019ce38343d
 #if ENABLED(EXTENSIBLE_UI)
   //#define EXTUI_LOCAL_BEEPER // Enables use of local Beeper pin with external display
 #endif
