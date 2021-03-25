@@ -37,6 +37,41 @@ jobs:
         # STM32F1 (Maple) Environments
 
         - STM32F103RET6_creality
+<<<<<<< HEAD
+=======
+        - mks_robin_nano35
+
+        # STM32 (ST) Environments
+
+        - STM32F407VE_black
+        - STM32F401VE_STEVAL
+        - BIGTREE_BTT002
+        - BIGTREE_SKR_PRO
+        - BIGTREE_GTR_V1_0
+        - mks_robin_stm32
+        - ARMED
+        - FYSETC_S6
+        - STM32F070CB_malyan
+        - STM32F070RB_malyan
+        - malyan_M300
+        - FLYF407ZG
+        - rumba32
+        - LERDGEX
+        - mks_robin_nano35_stm32
+        - NUCLEO_F767ZI
+        - REMRAM_V1
+
+        # Put lengthy tests last
+
+        - LPC1768
+        - LPC1769
+
+        # Non-working environment tests
+        #- at90usb1286_cdc
+        #- STM32F103CB_malyan
+        #- STM32F103RE
+        #- mks_robin_mini
+>>>>>>> 8bf6b190ff074ae9aa76734389cf7612a1e0fb0c
 
     steps:
 
