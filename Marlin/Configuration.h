@@ -323,12 +323,9 @@
 #define TEMP_SENSOR_BED 1
 #define TEMP_SENSOR_PROBE 0
 #define TEMP_SENSOR_CHAMBER 0
-<<<<<<< HEAD
-=======
 #define TEMP_SENSOR_COOLER 0
 
 // Dummy thermistor constant temperature readings, for use with 998 and 999
->>>>>>> 5dc8f5cfabbfcc6803cad1edd3ea469b29b0834a
 #define DUMMY_THERMISTOR_998_VALUE  25
 #define DUMMY_THERMISTOR_999_VALUE 100
 #define MAX_REDUNDANT_TEMP_SENSOR_DIFF 10
@@ -361,8 +358,6 @@
 #define HEATER_7_MAXTEMP 275
 #define BED_MAXTEMP      100 // 20210102 changed from default 125 ----------------------------------------------------------------------------------------------------------------
 #define CHAMBER_MAXTEMP  60
-<<<<<<< HEAD
-=======
 
 /**
  * Thermal Overshoot
@@ -380,7 +375,6 @@
 // PID Tuning Guide here: https://reprap.org/wiki/PID_Tuning
 
 // Comment the following line to disable PID and enable bang-bang.
->>>>>>> 5dc8f5cfabbfcc6803cad1edd3ea469b29b0834a
 #define PIDTEMP
 #define BANG_MAX 255     // Limits current to nozzle while in bang-bang mode; 255=full current
 #define PID_MAX BANG_MAX // Limits current to nozzle while PID is active (see PID_FUNCTIONAL_RANGE below); 255=full current
@@ -509,8 +503,6 @@
 #define THERMAL_PROTECTION_HOTENDS // Enable thermal protection for all extruders
 #define THERMAL_PROTECTION_BED     // Enable thermal protection for the heated bed
 #define THERMAL_PROTECTION_CHAMBER // Enable thermal protection for the heated chamber
-<<<<<<< HEAD
-=======
 #define THERMAL_PROTECTION_COOLER  // Enable thermal protection for the laser cooling
 
 //===========================================================================
@@ -538,7 +530,6 @@
 // Specify here all the endstop connectors that are connected to any endstop or probe.
 // Almost all printers will be using one per axis. Probes will use one or more of the
 // extra connectors. Leave undefined any used for non-endstop and non-probe purposes.
->>>>>>> 5dc8f5cfabbfcc6803cad1edd3ea469b29b0834a
 #define USE_XMIN_PLUG
 #define USE_YMIN_PLUG
 #define USE_ZMIN_PLUG // 20210102 should this be disabled for filament runout sensing? ---------------------------------------------------------------------------------------------
@@ -1144,12 +1135,9 @@ M500
   #define MESH_INSET 1              // Set Mesh bounds as an inset region of the bed
   #define GRID_MAX_POINTS_X 10      // Don't use more than 15 points per axis, implementation limited. // 20210115 set back to default of 10 -----------------------------
   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
-<<<<<<< HEAD
-=======
 
   //#define UBL_HILBERT_CURVE       // Use Hilbert distribution for less travel when probing multiple points
 
->>>>>>> 07c24e72ac0deba0a9229a3cbcd8694279b102ab
   #define UBL_MESH_EDIT_MOVES_Z     // Sophisticated users prefer no movement of nozzle
   #define UBL_SAVE_ACTIVE_ON_M500   // Save the currently active mesh in the current slot on M500
   //#define UBL_Z_RAISE_WHEN_OFF_MESH 2.5 // When the nozzle is off the mesh, this value is used
@@ -1511,12 +1499,10 @@ M500
                                   // This LCD is known to be susceptible to electrical interference
                                   // which scrambles the display.  Pressing any button clears it up.
                                   // This is a LCD2004 display with 5 analog buttons.
-<<<<<<< HEAD
 #define CR10_STOCKDISPLAY
 #if ENABLED(CR10_STOCKDISPLAY)
   #define RET6_12864_LCD  // Specific to the SoC (can either be RET / VET)
 #endif
-=======
 
 //
 // Generic 16x2, 16x4, 20x2, or 20x4 character-based LCD.
@@ -1749,7 +1735,6 @@ M500
 // SAV OLEd LCD module support using either SSD1306 or SH1106 based LCD modules
 //
 //#define SAV_3DGLCD
->>>>>>> 5ffa6f3331569c8fa0266c1395d7a6a8cf5515f9
 #if ENABLED(SAV_3DGLCD)
   #define U8GLIB_SSD1306
   //#define U8GLIB_SH1106
@@ -1821,8 +1806,6 @@ M500
   #define LCD_SERIAL_PORT 3  // Default is 3 for Anycubic
   //#define ANYCUBIC_LCD_DEBUG
 #endif
-<<<<<<< HEAD
-=======
 
 //
 // 320x240 Nextion 2.8" serial TFT Resistive Touch Screen NX3224T028
@@ -1838,7 +1821,6 @@ M500
 //
 //#define EXTENSIBLE_UI
 
->>>>>>> b51aed8aa54f41cc5897485d3b34b019ce38343d
 #if ENABLED(EXTENSIBLE_UI)
   //#define EXTUI_LOCAL_BEEPER // Enables use of local Beeper pin with external display
 #endif
