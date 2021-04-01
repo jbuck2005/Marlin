@@ -1079,23 +1079,13 @@
 #define PROBING_MARGIN 10
 
 // X and Y axis travel speed (mm/min) between probes
-<<<<<<< HEAD
-#define XY_PROBE_SPEED (150*60) // 20201221 default is  133 - 20210105 changing did not resolve homing error ---------------------------------------------------------------------
+#define XY_PROBE_FEEDRATE (150*60)
 
 // Feedrate (mm/min) for the first approach when double-probing (MULTIPLE_PROBING == 2)
-#define Z_PROBE_SPEED_FAST (8*60) // 20201220 was 4*60 - 20210105 changing did not resolve homing error --------------------------------------------------------------------------
+#define Z_PROBE_FEEDRATE_FAST (8*60)
 
 // Feedrate (mm/min) for the "accurate" probe of each point
-#define Z_PROBE_SPEED_SLOW (Z_PROBE_SPEED_FAST / 4) // 20210107 changed from 2 to 4 to respect original ratio (4*60)/2 = 120 thus, (8*60)/4 = 120 --------------------------------
-=======
-#define XY_PROBE_FEEDRATE (133*60)
-
-// Feedrate (mm/min) for the first approach when double-probing (MULTIPLE_PROBING == 2)
-#define Z_PROBE_FEEDRATE_FAST (4*60)
-
-// Feedrate (mm/min) for the "accurate" probe of each point
-#define Z_PROBE_FEEDRATE_SLOW (Z_PROBE_FEEDRATE_FAST / 2)
->>>>>>> f56929d0df85a7a05b28c06aaf0a45aec286a71f
+#define Z_PROBE_FEEDRATE_SLOW (Z_PROBE_FEEDRATE_FAST / 4)
 
 /**
  * Probe Activation Switch
@@ -1324,10 +1314,8 @@
   //#define WATCH_ALL_RUNOUT_SENSORS      // Execute runout script on any triggering sensor, not only for the active extruder.
                                           // This is automatically enabled for MIXING_EXTRUDERs.
 
-<<<<<<< HEAD
   // Set one or more commands to execute on filament runout.
   // (After 'M412 H' Marlin will ask the host to handle the process.)
-=======
   // Override individually if the runout sensors vary
   //#define FIL_RUNOUT1_STATE LOW
   //#define FIL_RUNOUT1_PULLUP
@@ -1364,7 +1352,6 @@
   // Commands to execute on filament runout.
   // With multiple runout sensors use the %c placeholder for the current tool in commands (e.g., "M600 T%c")
   // NOTE: After 'M412 H1' the host handles filament runout and this script does not apply.
->>>>>>> f56929d0df85a7a05b28c06aaf0a45aec286a71f
   #define FILAMENT_RUNOUT_SCRIPT "M600"
 
   // After a runout is detected, continue printing this length of filament
