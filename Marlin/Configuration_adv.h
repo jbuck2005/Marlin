@@ -3453,7 +3453,7 @@
  */
 
 // Custom Menu: Main Menu
-//#define CUSTOM_MENU_MAIN
+#define CUSTOM_MENU_MAIN
 #if ENABLED(CUSTOM_MENU_MAIN)
   //#define CUSTOM_MENU_MAIN_TITLE "Custom Commands"
   #define CUSTOM_MENU_MAIN_SCRIPT_DONE "M117 User Script Done"
@@ -3461,14 +3461,22 @@
   //#define CUSTOM_MENU_MAIN_SCRIPT_RETURN   // Return to status screen after a script
   #define CUSTOM_MENU_MAIN_ONLY_IDLE         // Only show custom menu when the machine is idle
 
-  #define MAIN_MENU_ITEM_1_DESC "Home & UBL Info"
+  #define MAIN_MENU_ITEM_1_DESC  "Home & UBL Info"
   #define MAIN_MENU_ITEM_1_GCODE "G28\nG29 W"
   //#define MAIN_MENU_ITEM_1_CONFIRM          // Show a confirmation dialog before this action
 
-  #define MAIN_MENU_ITEM_2_DESC "Preheat for " PREHEAT_1_LABEL
+  #define MAIN_MENU_ITEM_2_DESC  "Preheat for " PREHEAT_1_LABEL
   #define MAIN_MENU_ITEM_2_GCODE "M140 S" STRINGIFY(PREHEAT_1_TEMP_BED) "\nM104 S" STRINGIFY(PREHEAT_1_TEMP_HOTEND)
   //#define MAIN_MENU_ITEM_2_CONFIRM
 
+  #define MAIN_MENU_ITEM_3_DESC  "Extrude 100mm filament"
+  #define MAIN_MENU_ITEM_3_GCODE "G21\nG90\nG92 E0\nM109 S205\nG1 E100 F100\nG92 E0\nM104 S0" // 20210113 added G21 (specify mm), G90 (use absolute), G92 E0 (zero extruer position)
+  //#define USER_CONFIRM_3        // Show a confirmation dialog before this action
+
+  #define MAIN_MENU_ITEM_4_DESC  "Probe bed (5m heat time)"  // 20200102 last updated
+  #define MAIN_MENU_ITEM_4_GCODE "M118 E1 Starting bed probing routine\nM190 S60\nM117 Heating bed\nM117 Waiting 5 minutes for bed to heat evenly\nM118 E1 Waiting 5 minutes for bed to head\nG4 S300\nG28\nM117 Probing bed\nM118 E1 Probing bed\nG29 P1\nM104 S0\nG29 P3\nG29 F10\nG29 S1\nG29 A\nG29 L1\nM500\nM190 S0"
+
+  //#define USER_CONFIRM_4
   //#define MAIN_MENU_ITEM_3_DESC "Preheat for " PREHEAT_2_LABEL
   //#define MAIN_MENU_ITEM_3_GCODE "M140 S" STRINGIFY(PREHEAT_2_TEMP_BED) "\nM104 S" STRINGIFY(PREHEAT_2_TEMP_HOTEND)
   //#define MAIN_MENU_ITEM_3_CONFIRM
@@ -3541,39 +3549,6 @@
     #define BUTTON3_GCODE         "M140 S" STRINGIFY(PREHEAT_2_TEMP_BED) "\nM104 S" STRINGIFY(PREHEAT_2_TEMP_HOTEND)
     #define BUTTON3_DESC          "Preheat for " PREHEAT_2_LABEL
   #endif
-#endif
-
-/**
- * User-defined menu items to run custom G-code.
- * Up to 25 may be defined, but the actual number is LCD-dependent.
- */
-#define CUSTOM_USER_MENUS  // 20210102 - enabled for testing ------------------------------------------------------------------------------------------------------------
-#if ENABLED(CUSTOM_USER_MENUS)
-  #define CUSTOM_USER_MENU_TITLE "Custom Commands"
-  #define USER_SCRIPT_DONE "M117 User Script Done"
-  #define USER_SCRIPT_AUDIBLE_FEEDBACK
-  //#define USER_SCRIPT_RETURN    // Return to status screen after a script
-  #define CUSTOM_MENU_ONLY_IDLE   // Only show custom menu when the machine is idle
-
-  #define USER_DESC_1 "Home & UBL Info"
-  #define USER_GCODE_1 "G28\nG29W"
-  //#define USER_CONFIRM_1        // Show a confirmation dialog before this action
-
-  #define USER_DESC_2 "PID Autotune (Bed + Extruder)"
-  #define USER_GCODE_2 "M303 C10 E0 S205 U1\nM303 C10 E-1 S60 U1"
-  //#define USER_CONFIRM_2        // Show a confirmation dialog before this action
-
-  #define USER_DESC_3 "Extrude 100mm filament"
-  #define USER_GCODE_3 "G21\nG90\nG92 E0\nM109 S205\nG1 E100 F100\nG92 E0\nM104 S0" // 20210113 added G21 (specify mm), G90 (use absolute), G92 E0 (zero extruer position)
-  //#define USER_CONFIRM_3        // Show a confirmation dialog before this action
-
-  #define USER_DESC_4 "Probe bed (5m heat time)"  // 20200102 last updated
-  #define USER_GCODE_4 "M118 E1 Starting bed probing routine\nM190 S60\nM117 Heating bed\nM117 Waiting 5 minutes for bed to heat evenly\nM118 E1 Waiting 5 minutes for bed to head\nG4 S300\nG28\nM117 Probing bed\nM118 E1 Probing bed\nG29 P1\nM104 S0\nG29 P3\nG29 F10\nG29 S1\nG29 A\nG29 L1\nM500\nM190 S0"
-  //#define USER_CONFIRM_4
-
-  #define USER_DESC_5 "Home & Info"
-  #define USER_GCODE_5 "G28\nM503"
-  //#define USER_CONFIRM_5
 #endif
 
  /* Host Action Commands
