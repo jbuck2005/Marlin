@@ -1323,17 +1323,13 @@
 
     // Without a POWER_LOSS_PIN the following option helps reduce wear on the SD card,
     // especially with "vase mode" printing. Set too high and vases cannot be continued.
-<<<<<<< HEAD
     #define POWER_LOSS_MIN_Z_CHANGE 0.05 // (mm) Minimum Z change before saving power-loss data // 20201231 investigate the best value for this -----------------------------------
-=======
-    #define POWER_LOSS_MIN_Z_CHANGE 0.05 // (mm) Minimum Z change before saving power-loss data
 
     // Enable if Z homing is needed for proper recovery. 99.9% of the time this should be disabled!
     //#define POWER_LOSS_RECOVER_ZHOME
     #if ENABLED(POWER_LOSS_RECOVER_ZHOME)
       //#define POWER_LOSS_ZHOME_POS { 0, 0 } // Safe XY position to home Z while avoiding objects on the bed
     #endif
->>>>>>> f56929d0df85a7a05b28c06aaf0a45aec286a71f
   #endif
 
   /**
@@ -3548,7 +3544,6 @@
 #endif
 
 /**
-<<<<<<< HEAD
  * User-defined menu items to run custom G-code.
  * Up to 25 may be defined, but the actual number is LCD-dependent.
  */
@@ -3588,17 +3583,12 @@
 
   #define USER_DESC_5 "Home & Info"
   #define USER_GCODE_5 "G28\nM503"
-<<<<<<< HEAD
-  */
 
-=======
   //#define USER_CONFIRM_5
->>>>>>> 546e56ef3d28787035e53ec3f55d243c459edaca
 #endif
 
 /**
 =======
->>>>>>> 241d2e3fa38aad0396d29a339def244bc23ea47b
  * Host Action Commands
  *
  * Define host streamer action commands in compliance with the standard.
