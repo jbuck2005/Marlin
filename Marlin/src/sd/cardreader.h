@@ -91,7 +91,7 @@ public:
   static void manage_media();
 
   // SD Card Logging
-  static void openLogFile(char * const path);
+  static void openLogFile(const char * const path);
   static void write_command(char * const buf);
 
   #if DISABLED(NO_SD_AUTOSTART)     // Auto-Start auto#.g file handling
@@ -103,7 +103,7 @@ public:
 
   // Basic file ops
   static void openFileRead(char * const path, const uint8_t subcall=0);
-  static void openFileWrite(char * const path);
+  static void openFileWrite(const char * const path);
   static void closefile(const bool store_location=false);
   static bool fileExists(const char * const name);
   static void removeFile(const char * const name);
