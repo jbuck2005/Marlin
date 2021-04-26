@@ -730,6 +730,11 @@
  * Use G29 repeatedly, adjusting the Z height at each point with movement commands
  * or (with LCD_BED_LEVELING) the LCD controller.
  */
+<<<<<<< HEAD
+=======
+//#define PROBE_MANUALLY
+
+>>>>>>> 5ad473fc6246ddcddf6c5e0920bc7d4d389fd718
 /**
  * A Fix-Mounted Probe either doesn't deploy or needs manual deployment.
  *   (e.g., an inductive probe or a nozzle-based probe-switch.)
@@ -1098,6 +1103,16 @@ M500
  * Turn on with the command 'M111 S32'.
  * NOTE: Requires a lot of PROGMEM!
  */
+<<<<<<< HEAD
+=======
+//#define DEBUG_LEVELING_FEATURE
+
+#if ANY(MESH_BED_LEVELING, AUTO_BED_LEVELING_UBL, PROBE_MANUALLY)
+  // Set a height for the start of manual adjustment
+  #define MANUAL_PROBE_START_Z 0.2  // (mm) Comment out to use the last-measured height
+#endif
+
+>>>>>>> 5ad473fc6246ddcddf6c5e0920bc7d4d389fd718
 #if ANY(MESH_BED_LEVELING, AUTO_BED_LEVELING_BILINEAR, AUTO_BED_LEVELING_UBL)
   // Gradually reduce leveling correction until a set height is reached,
   // at which point movement will be level to the machine's XY plane.
