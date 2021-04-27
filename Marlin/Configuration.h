@@ -937,10 +937,23 @@
 #define X_HOME_DIR -1
 #define Y_HOME_DIR -1
 #define Z_HOME_DIR -1
+<<<<<<< HEAD
 #define X_BED_SIZE 220  // 20201109 was 235 - reduced to 220 to be more conservative about size ----------------------------------------------------------------------------------
 #define Y_BED_SIZE 220  // 20201109 was 235 - reduced to 220 to be more conservative about size ----------------------------------------------------------------------------------
 #define X_MIN_POS -5 // 20201109 was 0 - measured using https://www.thingiverse.com/thing:2280529 -------disabled because everything was off to the right big time ---------------
 #define Y_MIN_POS -15 // 20201109 was 0 measured using https://www.thingiverse.com/thing:2280529 ---------------------------------------------------------------------------------
+=======
+
+// @section machine
+
+// The size of the printable area
+#define X_BED_SIZE 200
+#define Y_BED_SIZE 200
+
+// Travel limits (mm) after homing, corresponding to endstop positions.
+#define X_MIN_POS 0
+#define Y_MIN_POS 0
+>>>>>>> 43fc1bd21c5171e324047e147ce41d0bcae5e3df
 #define Z_MIN_POS 0
 #define X_MAX_POS X_BED_SIZE
 #define Y_MAX_POS Y_BED_SIZE
