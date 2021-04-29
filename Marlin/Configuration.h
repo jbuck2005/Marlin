@@ -948,7 +948,6 @@
  * or (with LCD_BED_LEVELING) the LCD controller.
  */
 //#define PROBE_MANUALLY
-//#define MANUAL_PROBE_START_Z 0.2
 
 /**
  * A Fix-Mounted Probe either doesn't deploy or needs manual deployment.
@@ -1249,9 +1248,15 @@
 
 // @section machine
 
+<<<<<<< HEAD
 // The size of the print bed
 #define X_BED_SIZE 220  // 20201109 was 235 - reduced to 220 to be more conservative about size ----------------------------------------------------------------------------------
 #define Y_BED_SIZE 220  // 20201109 was 235 - reduced to 220 to be more conservative about size ----------------------------------------------------------------------------------
+=======
+// The size of the printable area
+#define X_BED_SIZE 200
+#define Y_BED_SIZE 200
+>>>>>>> 082fce5e3e68c7b8657201e5de5adba0e4f86a33
 
 // Travel limits (mm) after homing, corresponding to endstop positions.
 #define X_MIN_POS -5 // 20201109 was 0 - measured using https://www.thingiverse.com/thing:2280529 -------disabled because everything was off to the right big time ---------------
@@ -1446,6 +1451,11 @@ M500
  * NOTE: Requires a lot of PROGMEM!
  */
 //#define DEBUG_LEVELING_FEATURE
+
+#if ANY(MESH_BED_LEVELING, AUTO_BED_LEVELING_UBL, PROBE_MANUALLY)
+  // Set a height for the start of manual adjustment
+  #define MANUAL_PROBE_START_Z 0.2  // (mm) Comment out to use the last-measured height
+#endif
 
 #if ANY(MESH_BED_LEVELING, AUTO_BED_LEVELING_BILINEAR, AUTO_BED_LEVELING_UBL)
   // Gradually reduce leveling correction until a set height is reached,
