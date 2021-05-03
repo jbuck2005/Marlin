@@ -1185,6 +1185,12 @@ M500
   #define UBL_SAVE_ACTIVE_ON_M500   // Save the currently active mesh in the current slot on M500
   //#define UBL_Z_RAISE_WHEN_OFF_MESH 2.5 // When the nozzle is off the mesh, this value is used
                                           // as the Z-Height correction value.
+<<<<<<< HEAD
+=======
+
+  //#define UBL_MESH_WIZARD         // Run several commands in a row to get a complete mesh
+
+>>>>>>> dc187690109b9f66673bb6675c098af0644d40e1
 #elif ENABLED(MESH_BED_LEVELING)
   //===========================================================================
   //=================================== Mesh ==================================
