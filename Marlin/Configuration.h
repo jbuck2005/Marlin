@@ -2000,6 +2000,24 @@ M500
  *   TFT_ROTATE_270, TFT_ROTATE_270_MIRROR_X, TFT_ROTATE_270_MIRROR_Y,
  *   TFT_MIRROR_X, TFT_MIRROR_Y, TFT_NO_ROTATION
  */
+<<<<<<< HEAD
+=======
+//#define TFT_ROTATION TFT_NO_ROTATION
+
+//=============================================================================
+//============================  Other Controllers  ============================
+//=============================================================================
+
+//
+// Ender-3 v2 OEM display. A DWIN display with Rotary Encoder.
+//
+//#define DWIN_CREALITY_LCD
+
+//
+// Touch Screen Settings
+//
+//#define TOUCH_SCREEN
+>>>>>>> 4588d836a3b6fa7560c6f1bc5c23aa93a1609d71
 #if ENABLED(TOUCH_SCREEN)
   #define BUTTON_DELAY_EDIT  50 // (ms) Button repeat delay for edit screens
   #define BUTTON_DELAY_MENU 250 // (ms) Button repeat delay for menus
