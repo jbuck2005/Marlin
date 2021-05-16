@@ -34,7 +34,16 @@
  *
  * Advanced settings can be found in Configuration_adv.h
  */
+<<<<<<< HEAD
 #define CONFIGURATION_H_VERSION 020008
+=======
+#define CONFIGURATION_H_VERSION 02000801
+
+//===========================================================================
+//============================= Getting Started =============================
+//===========================================================================
+
+>>>>>>> 533ba2ac96ee63ecc74bc4ba4473eecf0e4dab65
 /**
  * Here are some useful links to help get your machine configured and calibrated:
  *
