@@ -105,12 +105,31 @@
 #define SERIAL_PORT -1 // 20210214 default should be -1 which allows USB communication with SKR -------------------------------------------------------------------------------------------------------
 
 /**
+ * Serial Port Baud Rate
+ * This is the default communication speed for all serial ports.
+ * Set the baud rate defaults for additional serial ports below.
+ *
+ * 250000 works in most cases, but you might try a lower speed if
+ * you commonly experience drop-outs during host printing.
+ * You may try up to 1000000 to speed up SD file transfer.
+ *
+ * :[2400, 9600, 19200, 38400, 57600, 115200, 250000, 500000, 1000000]
+ */
+#define BAUDRATE 250000
+//#define BAUD_RATE_GCODE     // Enable G-code M575 to set the baud rate
+
+/**
  * Select a secondary serial port on the board to use for communication with the host.
  * Currently Ethernet (-2) is only supported on Teensy 4.1 boards.
  * :[-2, -1, 0, 1, 2, 3, 4, 5, 6, 7]
  */
+<<<<<<< HEAD
 #define SERIAL_PORT_2 1 // 20210214 1 = TFT, and when set, allows USB communicatons with OctoPrint server ---------------------------------------------------------------------------------------------
 #define SERIAL_PORT_3 3 // 20210215 testing to see if additional UART is possible using (RX3/TX3) (PD9/PD8) respectively ------------------------------------------------------------------------------
+=======
+//#define SERIAL_PORT_2 -1
+//#define BAUDRATE_2 250000   // Enable to override BAUDRATE
+>>>>>>> 4ea4fa78aa6fcafc6f270bb543c2f8dc8ae695cd
 
 /**
  * Select a third serial port on the board to use for communication with the host.
@@ -118,6 +137,7 @@
  * :[-1, 0, 1, 2, 3, 4, 5, 6, 7]
  */
 //#define SERIAL_PORT_3 1
+<<<<<<< HEAD
 
 /**
  * This setting determines the communication speed of the printer.
@@ -129,6 +149,9 @@
  * :[2400, 9600, 19200, 38400, 57600, 115200, 250000, 500000, 1000000]
  */
 #define BAUDRATE 115200 // 20210214 115200 is the maximum speed for an ESP-01S and perhaps a good default value and works with OctoPrint --------------------------------------------------------------
+=======
+//#define BAUDRATE_3 250000   // Enable to override BAUDRATE
+>>>>>>> 4ea4fa78aa6fcafc6f270bb543c2f8dc8ae695cd
 
 // Enable the Bluetooth serial interface on AT90USB devices
 //#define BLUETOOTH
