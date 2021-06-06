@@ -35,9 +35,13 @@
  * Advanced settings can be found in Configuration_adv.h
  */
 <<<<<<< HEAD
+<<<<<<< HEAD
 #define CONFIGURATION_H_VERSION 020008
 =======
 #define CONFIGURATION_H_VERSION 02000801
+=======
+#define CONFIGURATION_H_VERSION 02000900
+>>>>>>> b4114553c81dea6a863fdd994946cd40f7c10d85
 
 //===========================================================================
 //============================= Getting Started =============================
@@ -147,7 +151,61 @@
 #ifndef MOTHERBOARD
   #define MOTHERBOARD BOARD_CREALITY_V4
 #endif
+<<<<<<< HEAD
 #define CUSTOM_MACHINE_NAME "Replicator v0.2.26" // does not appear to work if defined in Version.h -------------------------------------------------------------------------------
+=======
+
+// Name displayed in the LCD "Ready" message and Info menu
+//#define CUSTOM_MACHINE_NAME "3D Printer"
+
+// Printer's unique ID, used by some programs to differentiate between machines.
+// Choose your own or use a service like https://www.uuidgenerator.net/version4
+//#define MACHINE_UUID "00000000-0000-0000-0000-000000000000"
+
+/**
+ * Define the number of coordinated linear axes.
+ * See https://github.com/DerAndere1/Marlin/wiki
+ * Each linear axis gets its own stepper control and endstop:
+ *
+ *   Steppers: *_STEP_PIN, *_ENABLE_PIN, *_DIR_PIN, *_ENABLE_ON
+ *   Endstops: *_STOP_PIN, USE_*MIN_PLUG, USE_*MAX_PLUG
+ *       Axes: *_MIN_POS, *_MAX_POS, INVERT_*_DIR
+ *    Planner: DEFAULT_AXIS_STEPS_PER_UNIT, DEFAULT_MAX_FEEDRATE
+ *             DEFAULT_MAX_ACCELERATION, AXIS_RELATIVE_MODES,
+ *             MICROSTEP_MODES, MANUAL_FEEDRATE
+ *
+ * :[3, 4, 5, 6]
+ */
+//#define LINEAR_AXES 3
+
+/**
+ * Axis codes for additional axes:
+ * This defines the axis code that is used in G-code commands to
+ * reference a specific axis.
+ * 'A' for rotational axis parallel to X
+ * 'B' for rotational axis parallel to Y
+ * 'C' for rotational axis parallel to Z
+ * 'U' for secondary linear axis parallel to X
+ * 'V' for secondary linear axis parallel to Y
+ * 'W' for secondary linear axis parallel to Z
+ * Regardless of the settings, firmware-internal axis IDs are
+ * I (AXIS4), J (AXIS5), K (AXIS6).
+ */
+#if LINEAR_AXES >= 4
+  #define AXIS4_NAME 'A' // :['A', 'B', 'C', 'U', 'V', 'W']
+#endif
+#if LINEAR_AXES >= 5
+  #define AXIS5_NAME 'B' // :['A', 'B', 'C', 'U', 'V', 'W']
+#endif
+#if LINEAR_AXES >= 6
+  #define AXIS6_NAME 'C' // :['A', 'B', 'C', 'U', 'V', 'W']
+#endif
+
+// @section extruder
+
+// This defines the number of extruders
+// :[0, 1, 2, 3, 4, 5, 6, 7, 8]
+>>>>>>> b4114553c81dea6a863fdd994946cd40f7c10d85
 #define EXTRUDERS 1
 #define DEFAULT_NOMINAL_FILAMENT_DIA 1.75
 #if ENABLED(SINGLENOZZLE)
@@ -592,16 +650,37 @@
 // extra connectors. Leave undefined any used for non-endstop and non-probe purposes.
 #define USE_XMIN_PLUG
 #define USE_YMIN_PLUG
+<<<<<<< HEAD
 #define USE_ZMIN_PLUG // 20210102 should this be disabled for filament runout sensing? ---------------------------------------------------------------------------------------------
+=======
+#define USE_ZMIN_PLUG
+//#define USE_IMIN_PLUG
+//#define USE_JMIN_PLUG
+//#define USE_KMIN_PLUG
+//#define USE_XMAX_PLUG
+//#define USE_YMAX_PLUG
+//#define USE_ZMAX_PLUG
+//#define USE_IMAX_PLUG
+//#define USE_JMAX_PLUG
+//#define USE_KMAX_PLUG
+
+// Enable pullup for all endstops to prevent a floating state
+>>>>>>> b4114553c81dea6a863fdd994946cd40f7c10d85
 #define ENDSTOPPULLUPS
 #if DISABLED(ENDSTOPPULLUPS)
   // Disable ENDSTOPPULLUPS to set pullups individually
   //#define ENDSTOPPULLUP_XMAX
   //#define ENDSTOPPULLUP_YMAX
   //#define ENDSTOPPULLUP_ZMAX
+  //#define ENDSTOPPULLUP_IMAX
+  //#define ENDSTOPPULLUP_JMAX
+  //#define ENDSTOPPULLUP_KMAX
   //#define ENDSTOPPULLUP_XMIN
   //#define ENDSTOPPULLUP_YMIN
   //#define ENDSTOPPULLUP_ZMIN
+  //#define ENDSTOPPULLUP_IMIN
+  //#define ENDSTOPPULLUP_JMIN
+  //#define ENDSTOPPULLUP_KMIN
   //#define ENDSTOPPULLUP_ZMIN_PROBE
 #endif
 #if DISABLED(ENDSTOPPULLDOWNS)
@@ -609,19 +688,36 @@
   //#define ENDSTOPPULLDOWN_XMAX
   //#define ENDSTOPPULLDOWN_YMAX
   //#define ENDSTOPPULLDOWN_ZMAX
+  //#define ENDSTOPPULLDOWN_IMAX
+  //#define ENDSTOPPULLDOWN_JMAX
+  //#define ENDSTOPPULLDOWN_KMAX
   //#define ENDSTOPPULLDOWN_XMIN
   //#define ENDSTOPPULLDOWN_YMIN
   //#define ENDSTOPPULLDOWN_ZMIN
+  //#define ENDSTOPPULLDOWN_IMIN
+  //#define ENDSTOPPULLDOWN_JMIN
+  //#define ENDSTOPPULLDOWN_KMIN
   //#define ENDSTOPPULLDOWN_ZMIN_PROBE
 #endif
 #define X_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
 #define Y_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
 #define Z_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define I_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define J_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define K_MIN_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
 #define X_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
 #define Y_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
 #define Z_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+<<<<<<< HEAD
 #define Z_MIN_PROBE_ENDSTOP_INVERTING true // Set to true to invert the logic of the probe. // 20200915 was false; needs to be true in order to use probe for Z homing ----------
                                                                                             // don't know if this is required since BLTouch is being used for Z
+=======
+#define I_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define J_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define K_MAX_ENDSTOP_INVERTING false // Set to true to invert the logic of the endstop.
+#define Z_MIN_PROBE_ENDSTOP_INVERTING false // Set to true to invert the logic of the probe.
+
+>>>>>>> b4114553c81dea6a863fdd994946cd40f7c10d85
 /**
  * Stepper Drivers
  *
@@ -640,10 +736,37 @@
  *          TMC5130, TMC5130_STANDALONE, TMC5160, TMC5160_STANDALONE
  * :['A4988', 'A5984', 'DRV8825', 'LV8729', 'L6470', 'L6474', 'POWERSTEP01', 'TB6560', 'TB6600', 'TMC2100', 'TMC2130', 'TMC2130_STANDALONE', 'TMC2160', 'TMC2160_STANDALONE', 'TMC2208', 'TMC2208_STANDALONE', 'TMC2209', 'TMC2209_STANDALONE', 'TMC26X', 'TMC26X_STANDALONE', 'TMC2660', 'TMC2660_STANDALONE', 'TMC5130', 'TMC5130_STANDALONE', 'TMC5160', 'TMC5160_STANDALONE']
  */
+<<<<<<< HEAD
 #define X_DRIVER_TYPE A4988  // 20201220 set to detault A4988 -------------------------------------------------------------------------------------------------------------------
 #define Y_DRIVER_TYPE A4988  // 20201220 set to detault A4988 -------------------------------------------------------------------------------------------------------------------
 #define Z_DRIVER_TYPE A4988  // 20201220 set to detault A4988 -------------------------------------------------------------------------------------------------------------------
 #define E0_DRIVER_TYPE A4988 // 20201220 set to detault A4988 -------------------------------------------------------------------------------------------------------------------
+=======
+#define X_DRIVER_TYPE  A4988
+#define Y_DRIVER_TYPE  A4988
+#define Z_DRIVER_TYPE  A4988
+//#define X2_DRIVER_TYPE A4988
+//#define Y2_DRIVER_TYPE A4988
+//#define Z2_DRIVER_TYPE A4988
+//#define Z3_DRIVER_TYPE A4988
+//#define Z4_DRIVER_TYPE A4988
+//#define I_DRIVER_TYPE  A4988
+//#define J_DRIVER_TYPE  A4988
+//#define K_DRIVER_TYPE  A4988
+#define E0_DRIVER_TYPE A4988
+//#define E1_DRIVER_TYPE A4988
+//#define E2_DRIVER_TYPE A4988
+//#define E3_DRIVER_TYPE A4988
+//#define E4_DRIVER_TYPE A4988
+//#define E5_DRIVER_TYPE A4988
+//#define E6_DRIVER_TYPE A4988
+//#define E7_DRIVER_TYPE A4988
+
+// Enable this feature if all enabled endstop pins are interrupt-capable.
+// This will remove the need to poll the interrupt pins, saving many CPU cycles.
+//#define ENDSTOP_INTERRUPTS_FEATURE
+
+>>>>>>> b4114553c81dea6a863fdd994946cd40f7c10d85
 /**
  * Endstop Noise Threshold
  *
@@ -671,13 +794,13 @@
 /**
  * Default Axis Steps Per Unit (steps/mm)
  * Override with M92
- *                                      X, Y, Z, E0 [, E1[, E2...]]
+ *                                      X, Y, Z [, I [, J [, K]]], E0 [, E1[, E2...]]
  */
 #define DEFAULT_AXIS_STEPS_PER_UNIT   { 79.7, 79.6, 399.5, 98.85 }    // 20210213 direct drive value for E -----------------------------------------------------------------------
 /**
  * Default Max Feed Rate (mm/s)
  * Override with M203
- *                                      X, Y, Z, E0 [, E1[, E2...]]
+ *                                      X, Y, Z [, I [, J [, K]]], E0 [, E1[, E2...]]
  */
 #define DEFAULT_MAX_FEEDRATE          { 500, 500, 5, 25 }
 #if ENABLED(LIMITED_MAX_FR_EDITING)
@@ -687,7 +810,7 @@
  * Default Max Acceleration (change/s) change = mm/s
  * (Maximum start speed for accelerated moves)
  * Override with M201
- *                                      X, Y, Z, E0 [, E1[, E2...]]
+ *                                      X, Y, Z [, I [, J [, K]]], E0 [, E1[, E2...]]
  */
 #define DEFAULT_MAX_ACCELERATION      { 500, 500, 100, 5000 }
 #if ENABLED(LIMITED_MAX_ACCEL_EDITING)
@@ -716,6 +839,13 @@
   #define DEFAULT_XJERK 10.0
   #define DEFAULT_YJERK 10.0
   #define DEFAULT_ZJERK  0.3
+<<<<<<< HEAD
+=======
+  //#define DEFAULT_IJERK  0.3
+  //#define DEFAULT_JJERK  0.3
+  //#define DEFAULT_KJERK  0.3
+
+>>>>>>> b4114553c81dea6a863fdd994946cd40f7c10d85
   //#define TRAVEL_EXTRA_XYJERK 0.0     // Additional jerk allowance for all travel moves
   //#define LIMITED_JERK_EDITING        // Limit edit via M205 or LCD to DEFAULT_aJERK * 2
   #if ENABLED(LIMITED_JERK_EDITING)
@@ -955,13 +1085,46 @@
 #define Y_ENABLE_ON 0
 #define Z_ENABLE_ON 0
 #define E_ENABLE_ON 0 // For all extruders
+<<<<<<< HEAD
 #define DISABLE_X false
 #define DISABLE_Y false
 #define DISABLE_Z false
+=======
+//#define I_ENABLE_ON 0
+//#define J_ENABLE_ON 0
+//#define K_ENABLE_ON 0
+
+// Disable axis steppers immediately when they're not being stepped.
+// WARNING: When motors turn off there is a chance of losing position accuracy!
+#define DISABLE_X false
+#define DISABLE_Y false
+#define DISABLE_Z false
+//#define DISABLE_I false
+//#define DISABLE_J false
+//#define DISABLE_K false
+
+// Turn off the display blinking that warns about possible accuracy reduction
+//#define DISABLE_REDUCED_ACCURACY_WARNING
+
+// @section extruder
+
+>>>>>>> b4114553c81dea6a863fdd994946cd40f7c10d85
 #define DISABLE_E false             // Disable the extruder when not stepping
 #define INVERT_X_DIR false
+<<<<<<< HEAD
 #define INVERT_Y_DIR false
 #define INVERT_Z_DIR true
+=======
+#define INVERT_Y_DIR true
+#define INVERT_Z_DIR false
+//#define INVERT_I_DIR false
+//#define INVERT_J_DIR false
+//#define INVERT_K_DIR false
+
+// @section extruder
+
+// For direct drive extruder v9 set to true, for geared extruder set to false.
+>>>>>>> b4114553c81dea6a863fdd994946cd40f7c10d85
 #define INVERT_E0_DIR false
 #define INVERT_E1_DIR false
 #define INVERT_E2_DIR false
@@ -983,11 +1146,17 @@
 #define Y_HOME_DIR -1
 #define Z_HOME_DIR -1
 <<<<<<< HEAD
+<<<<<<< HEAD
 #define X_BED_SIZE 220  // 20201109 was 235 - reduced to 220 to be more conservative about size ----------------------------------------------------------------------------------
 #define Y_BED_SIZE 220  // 20201109 was 235 - reduced to 220 to be more conservative about size ----------------------------------------------------------------------------------
 #define X_MIN_POS -5 // 20201109 was 0 - measured using https://www.thingiverse.com/thing:2280529 -------disabled because everything was off to the right big time ---------------
 #define Y_MIN_POS -15 // 20201109 was 0 measured using https://www.thingiverse.com/thing:2280529 ---------------------------------------------------------------------------------
 =======
+=======
+//#define I_HOME_DIR -1
+//#define J_HOME_DIR -1
+//#define K_HOME_DIR -1
+>>>>>>> b4114553c81dea6a863fdd994946cd40f7c10d85
 
 // @section machine
 
@@ -1002,7 +1171,18 @@
 #define Z_MIN_POS 0
 #define X_MAX_POS X_BED_SIZE
 #define Y_MAX_POS Y_BED_SIZE
+<<<<<<< HEAD
 #define Z_MAX_POS 240 // 20201220 was 250 but lowered to 240 allowing for the Z_HOMING_HEIGHT  10 function -----------------------------------------------------------------------
+=======
+#define Z_MAX_POS 200
+//#define I_MIN_POS 0
+//#define I_MAX_POS 50
+//#define J_MIN_POS 0
+//#define J_MAX_POS 50
+//#define K_MIN_POS 0
+//#define K_MAX_POS 50
+
+>>>>>>> b4114553c81dea6a863fdd994946cd40f7c10d85
 /**
  * Software Endstops
  *
@@ -1015,13 +1195,23 @@
 #if ENABLED(MIN_SOFTWARE_ENDSTOPS)
   #define MIN_SOFTWARE_ENDSTOP_X
   #define MIN_SOFTWARE_ENDSTOP_Y
+<<<<<<< HEAD
   #define MIN_SOFTWARE_ENDSTOP_Z // 20200909 commented out - this is dangerous; crashed the tool on the bed once already - 20201220 re-enabled -----------------------------------
+=======
+  #define MIN_SOFTWARE_ENDSTOP_Z
+  #define MIN_SOFTWARE_ENDSTOP_I
+  #define MIN_SOFTWARE_ENDSTOP_J
+  #define MIN_SOFTWARE_ENDSTOP_K
+>>>>>>> b4114553c81dea6a863fdd994946cd40f7c10d85
 #endif
 #define MAX_SOFTWARE_ENDSTOPS
 #if ENABLED(MAX_SOFTWARE_ENDSTOPS)
   #define MAX_SOFTWARE_ENDSTOP_X
   #define MAX_SOFTWARE_ENDSTOP_Y
   #define MAX_SOFTWARE_ENDSTOP_Z
+  #define MAX_SOFTWARE_ENDSTOP_I
+  #define MAX_SOFTWARE_ENDSTOP_J
+  #define MAX_SOFTWARE_ENDSTOP_K
 #endif
 #if EITHER(MIN_SOFTWARE_ENDSTOPS, MAX_SOFTWARE_ENDSTOPS)
   #define SOFT_ENDSTOPS_MENU_ITEM  // 20200915 (enabled) Enable/Disable software endstops from the LCD ---------------------------------------------------------------------------
@@ -1289,8 +1479,38 @@ M500
  * Commands to execute at the end of G29 probing.
  * Useful to retract or move the Z probe out of the way.
  */
+<<<<<<< HEAD
 #define Z_SAFE_HOMING // 20200911 enabled for probing, works very nicely and homes in the center of the build plate --------------------------------------------------------------
                       // 20210102 may need to disable this to resolve homing failure issues --------------------------------------------------------------------------------------
+=======
+//#define Z_PROBE_END_SCRIPT "G1 Z10 F12000\nG1 X15 Y330\nG1 Z0.5\nG1 Z10"
+
+// @section homing
+
+// The center of the bed is at (X=0, Y=0)
+//#define BED_CENTER_AT_0_0
+
+// Manually set the home position. Leave these undefined for automatic settings.
+// For DELTA this is the top-center of the Cartesian print volume.
+//#define MANUAL_X_HOME_POS 0
+//#define MANUAL_Y_HOME_POS 0
+//#define MANUAL_Z_HOME_POS 0
+//#define MANUAL_I_HOME_POS 0
+//#define MANUAL_J_HOME_POS 0
+//#define MANUAL_K_HOME_POS 0
+
+// Use "Z Safe Homing" to avoid homing with a Z probe outside the bed area.
+//
+// With this feature enabled:
+//
+// - Allow Z homing only after X and Y homing AND stepper drivers still enabled.
+// - If stepper drivers time out, it will need X and Y homing again before Z homing.
+// - Move the Z probe (or nozzle) to a defined XY point before Z Homing.
+// - Prevent Z homing when the Z probe is outside bed area.
+//
+//#define Z_SAFE_HOMING
+
+>>>>>>> b4114553c81dea6a863fdd994946cd40f7c10d85
 #if ENABLED(Z_SAFE_HOMING)
   #define Z_SAFE_HOMING_X_POINT ((X_BED_SIZE - 10) / 2) + X_MIN_POS    // X point for Z homing - 20200915 added + X_MIN_POS to better center probe -------------------------------
   #define Z_SAFE_HOMING_Y_POINT Y_CENTER  // Y point for Z homing
