@@ -282,8 +282,15 @@ bool wait_for_heatup = true;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wnarrowing"
 
+#ifdef RUNTIME_ONLY_ANALOG_TO_DIGITAL
+  static const pin_t sensitive_pins[] PROGMEM = { SENSITIVE_PINS };
+#else
+  template <pin_t ...D>
+  constexpr pin_t OnlyPins<-2, D...>::table[sizeof...(D)];
+  #define sensitive_pins OnlyPins<SENSITIVE_PINS>::table
+#endif
+
 bool pin_is_protected(const pin_t pin) {
-  static const pin_t sensitive_pins[] PROGMEM = SENSITIVE_PINS;
   LOOP_L_N(i, COUNT(sensitive_pins)) {
     pin_t sensitive_pin;
     memcpy_P(&sensitive_pin, &sensitive_pins[i], sizeof(pin_t));
@@ -304,6 +311,9 @@ void enable_all_steppers() {
   ENABLE_AXIS_X();
   ENABLE_AXIS_Y();
   ENABLE_AXIS_Z();
+  ENABLE_AXIS_I(); // Marlin 6-axis support by DerAndere (https://github.com/DerAndere1/Marlin/wiki)
+  ENABLE_AXIS_J();
+  ENABLE_AXIS_K();
   enable_e_steppers();
 
   TERN_(EXTENSIBLE_UI, ExtUI::onSteppersEnabled());
@@ -325,6 +335,9 @@ void disable_all_steppers() {
   DISABLE_AXIS_X();
   DISABLE_AXIS_Y();
   DISABLE_AXIS_Z();
+  DISABLE_AXIS_I();
+  DISABLE_AXIS_J();
+  DISABLE_AXIS_K();
   disable_e_steppers();
 
   TERN_(EXTENSIBLE_UI, ExtUI::onSteppersDisabled());
@@ -444,6 +457,9 @@ inline void manage_inactivity(const bool ignore_stepper_queue=false) {
         if (ENABLED(DISABLE_INACTIVE_X)) DISABLE_AXIS_X();
         if (ENABLED(DISABLE_INACTIVE_Y)) DISABLE_AXIS_Y();
         if (ENABLED(DISABLE_INACTIVE_Z)) DISABLE_AXIS_Z();
+        if (ENABLED(DISABLE_INACTIVE_I)) DISABLE_AXIS_I();
+        if (ENABLED(DISABLE_INACTIVE_J)) DISABLE_AXIS_J();
+        if (ENABLED(DISABLE_INACTIVE_K)) DISABLE_AXIS_K();
         if (ENABLED(DISABLE_INACTIVE_E)) disable_e_steppers();
 
         TERN_(AUTO_BED_LEVELING_UBL, ubl.steppers_were_disabled());
@@ -934,6 +950,15 @@ inline void tmc_standby_setup() {
   #endif
   #if PIN_EXISTS(Z4_STDBY)
     SET_INPUT_PULLDOWN(Z4_STDBY_PIN);
+  #endif
+  #if PIN_EXISTS(I_STDBY)
+    SET_INPUT_PULLDOWN(I_STDBY_PIN);
+  #endif
+  #if PIN_EXISTS(J_STDBY)
+    SET_INPUT_PULLDOWN(J_STDBY_PIN);
+  #endif
+  #if PIN_EXISTS(K_STDBY)
+    SET_INPUT_PULLDOWN(K_STDBY_PIN);
   #endif
   #if PIN_EXISTS(E0_STDBY)
     SET_INPUT_PULLDOWN(E0_STDBY_PIN);
