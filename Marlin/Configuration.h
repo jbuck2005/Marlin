@@ -427,10 +427,12 @@
 #define TEMP_SENSOR_PROBE 0
 #define TEMP_SENSOR_CHAMBER 0
 #define TEMP_SENSOR_COOLER 0
+#define TEMP_SENSOR_REDUNDANT 0
 
 // Dummy thermistor constant temperature readings, for use with 998 and 999
 #define DUMMY_THERMISTOR_998_VALUE  25
 #define DUMMY_THERMISTOR_999_VALUE 100
+<<<<<<< HEAD
 #define MAX_REDUNDANT_TEMP_SENSOR_DIFF 10
 #define TEMP_RESIDENCY_TIME     10  // (seconds) Time to wait for hotend to "settle" in M109
 #define TEMP_WINDOW              1  // (°C) Temperature proximity for the "temperature reached" timer
@@ -442,6 +444,14 @@
 #define TEMP_CHAMBER_WINDOW      1  // (°C) Temperature proximity for the "temperature reached" timer
 #define TEMP_CHAMBER_HYSTERESIS  3  // (°C) Temperature proximity considered "close enough" to the target
 #define HEATER_0_MINTEMP   5 // 20210102 changed from default 5 20210107 back to default did not resolve firmware failures ---------------------------------------------------------
+=======
+
+// Resistor values when using MAX31865 sensors (-5) on TEMP_SENSOR_0 / 1
+//#define MAX31865_SENSOR_OHMS_0      100   // (Ω) Typically 100 or 1000 (PT100 or PT1000)
+//#define MAX31865_CALIBRATION_OHMS_0 430   // (Ω) Typically 430 for AdaFruit PT100; 4300 for AdaFruit PT1000
+//#define MAX31865_SENSOR_OHMS_1      100
+//#define MAX31865_CALIBRATION_OHMS_1 430
+>>>>>>> cc100429f2509463db1fad18901b0c1e0655c646
 
 #define TEMP_RESIDENCY_TIME         10  // (seconds) Time to wait for hotend to "settle" in M109
 #define TEMP_WINDOW                  1  // (°C) Temperature proximity for the "temperature reached" timer
@@ -454,6 +464,28 @@
 #define TEMP_CHAMBER_RESIDENCY_TIME 10  // (seconds) Time to wait for chamber to "settle" in M191
 #define TEMP_CHAMBER_WINDOW          1  // (°C) Temperature proximity for the "temperature reached" timer
 #define TEMP_CHAMBER_HYSTERESIS      3  // (°C) Temperature proximity considered "close enough" to the target
+
+/**
+ * Redundant Temperature Sensor (TEMP_SENSOR_REDUNDANT)
+ *
+ * Use a temp sensor as a redundant sensor for another reading. Select an unused temperature sensor, and another
+ * sensor you'd like it to be redundant for. If the two thermistors differ by TEMP_SENSOR_REDUNDANT_MAX_DIFF (°C),
+ * the print will be aborted. Whichever sensor is selected will have its normal functions disabled; i.e. selecting
+ * the Bed sensor (-1) will disable bed heating/monitoring.
+ *
+ * Use the following to select temp sensors:
+ *    -5 : Cooler
+ *    -4 : Probe
+ *    -3 : not used
+ *    -2 : Chamber
+ *    -1 : Bed
+ *   0-7 : E0 through E7
+ */
+#if TEMP_SENSOR_REDUNDANT
+  #define TEMP_SENSOR_REDUNDANT_SOURCE     1  // The sensor that will provide the redundant reading.
+  #define TEMP_SENSOR_REDUNDANT_TARGET     0  // The sensor that we are providing a redundant reading for.
+  #define TEMP_SENSOR_REDUNDANT_MAX_DIFF  10  // (°C) Temperature difference that will trigger a print abort.
+#endif
 
 // Below this temperature the heater will be switched off
 // because it probably indicates a broken thermistor wire.
