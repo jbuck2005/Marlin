@@ -1297,7 +1297,12 @@
 //#define WAIT_FOR_HOTEND         // Wait for hotend to heat back up between probes (to improve accuracy & prevent cold extrude)
 #endif
 //#define PROBING_FANS_OFF          // Turn fans off when probing
+<<<<<<< HEAD
 //#define PROBING_STEPPERS_OFF      // Turn steppers off (unless needed to hold position) when probing // 20210102 on next test, enable to test with firmware revision -------------------------
+=======
+//#define PROBING_ESTEPPERS_OFF     // Turn all extruder steppers off when probing
+//#define PROBING_STEPPERS_OFF      // Turn all steppers off (unless needed to hold position) when probing (including extruders)
+>>>>>>> 1f6768a87e70d24464cc365413e47111b291914e
 //#define DELAY_BEFORE_PROBING 200  // (ms) To prevent vibrations from triggering piezo sensors
 
 // Require minimum nozzle and/or bed temperature for probing
