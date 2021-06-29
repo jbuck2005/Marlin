@@ -36,12 +36,16 @@
  */
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #define CONFIGURATION_H_VERSION 020008
 =======
 #define CONFIGURATION_H_VERSION 02000801
 =======
 #define CONFIGURATION_H_VERSION 02000900
 >>>>>>> b4114553c81dea6a863fdd994946cd40f7c10d85
+=======
+#define CONFIGURATION_H_VERSION 02000901
+>>>>>>> c15d9e5b423cc35f2737439c2a08aba9d0a09108
 
 //===========================================================================
 //============================= Getting Started =============================
