@@ -1786,6 +1786,7 @@ M500
 //#define MANUAL_J_HOME_POS 0
 //#define MANUAL_K_HOME_POS 0
 
+<<<<<<< HEAD
 // Use "Z Safe Homing" to avoid homing with a Z probe outside the bed area.
 //
 // With this feature enabled:
@@ -1796,6 +1797,16 @@ M500
 // - Prevent Z homing when the Z probe is outside bed area.
 //
 #define Z_SAFE_HOMING // 20210214 enabled -------------------------------------------------------------------------------------------------------------------------------------------------------------
+=======
+/**
+ * Use "Z Safe Homing" to avoid homing with a Z probe outside the bed area.
+ *
+ * - Moves the Z probe (or nozzle) to a defined XY point before Z homing.
+ * - Allows Z homing only when XY positions are known and trusted.
+ * - If stepper drivers sleep, XY homing may be required again before Z homing.
+ */
+//#define Z_SAFE_HOMING
+>>>>>>> 03a469724af05223be2a8bac71a1082c9ebbc55c
 
 #if ENABLED(Z_SAFE_HOMING)
   #define Z_SAFE_HOMING_X_POINT X_CENTER  // X point for Z homing
