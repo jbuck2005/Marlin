@@ -45,6 +45,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 #define STRING_DISTRIBUTION_DATE "2021-01-12"
 =======
 //#define STRING_DISTRIBUTION_DATE "2021-07-08"
@@ -58,6 +59,9 @@
 =======
 //#define STRING_DISTRIBUTION_DATE "2021-07-11"
 >>>>>>> 95f96fec13eecafede6751a8b97828859005e95a
+=======
+//#define STRING_DISTRIBUTION_DATE "2021-07-12"
+>>>>>>> 37cf94b888d5866cab914166ef246f14969a2cb4
 
 /**
  * Defines a generic printer name to be output to the LCD after booting Marlin.
